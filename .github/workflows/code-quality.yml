@@ -2,38 +2,49 @@ name: Code Quality
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
 
 jobs:
   code-quality:
     runs-on: ubuntu-latest
 
+    # Make secrets available to all steps
+    env:
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      NEXT_PUBLIC_SMART_USER_API_URL: ${{ secrets.NEXT_PUBLIC_SMART_USER_API_URL }}
+
     steps:
+      # 1. Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: "pnpm"
 
+      # 3. Setup pnpm
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
+      # 4. Install dependencies
       - name: Install dependencies
         run: pnpm install
 
+      # 5. Run ESLint
       - name: Run ESLint
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          NEXT_PUBLIC_SMART_USER_API_URL: ${{ secrets.NEXT_PUBLIC_SMART_USER_API_URL }}
         run: pnpm lint
 
+      # 6. Run TypeScript type check
       - name: Run TypeScript type check
         run: pnpm typecheck
 
+      # 7. Run Prettier formatting check
       - name: Run Prettier formatting check
         run: pnpm format:check
