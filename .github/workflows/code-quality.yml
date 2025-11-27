@@ -10,7 +10,6 @@ jobs:
   code-quality:
     runs-on: ubuntu-latest
 
-    # Make secrets available to all steps
     env:
       NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
       NEXT_PUBLIC_SMART_USER_API_URL: ${{ secrets.NEXT_PUBLIC_SMART_USER_API_URL }}
@@ -25,7 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: "pnpm"
 
       # 3. Setup pnpm
       - name: Setup pnpm
@@ -33,18 +31,22 @@ jobs:
         with:
           version: 8
 
-      # 4. Install dependencies
+      # 4. Verify pnpm is available
+      - name: Check pnpm version
+        run: pnpm -v
+
+      # 5. Install dependencies
       - name: Install dependencies
         run: pnpm install
 
-      # 5. Run ESLint
+      # 6. Run ESLint
       - name: Run ESLint
         run: pnpm lint
 
-      # 6. Run TypeScript type check
+      # 7. Run TypeScript type check
       - name: Run TypeScript type check
         run: pnpm typecheck
 
-      # 7. Run Prettier formatting check
+      # 8. Run Prettier formatting check
       - name: Run Prettier formatting check
         run: pnpm format:check
