@@ -113,7 +113,7 @@ const WorkflowEditor = () => {
         name: step.stepName,
         approverType: step.approvalType,
         role: step.role,
-        users: step?.role?.trim() === "" ? step.users : [],
+        users: step.approvalType === "SpecificUsers" ? step.users : [],
         approverMode: step.approverMode,
         deadline: dayjs.utc(step.deadline).endOf("day").toISOString(),
         enableEscalation: step.enableEscalation,
