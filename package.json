@@ -61,12 +61,10 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
-      "pnpm exec eslint --max-warnings=0",
-      "git add"
+      "pnpm exec eslint --max-warnings=0 --fix"
     ],
     "*.{css,scss,md,mdx,json}": [
-      "pnpm exec prettier --write",
-      "git add"
+      "pnpm exec prettier --write"
     ]
   }
 }
