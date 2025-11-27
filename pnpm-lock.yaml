@@ -121,8 +121,8 @@ importers:
         specifier: 16.0.1
         version: 16.0.1(@typescript-eslint/parser@8.46.3(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-tailwindcss:
-        specifier: ^3.18.2
-        version: 3.18.2(tailwindcss@4.1.16)
+        specifier: ^3.16.0
+        version: 3.16.0(tailwindcss@4.1.16)
       husky:
         specifier: ^8.0.0
         version: 8.0.3
@@ -1652,9 +1652,9 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
 
-  eslint-plugin-tailwindcss@3.18.2:
-    resolution: {integrity: sha512-QbkMLDC/OkkjFQ1iz/5jkMdHfiMu/uwujUHLAJK5iwNHD8RTxVTlsUezE0toTZ6VhybNBsk+gYGPDq2agfeRNA==}
-    engines: {node: '>=18.12.0'}
+  eslint-plugin-tailwindcss@3.16.0:
+    resolution: {integrity: sha512-OVMNBDvSc7eqZTfLVoEo900bxZUu74W5Cp/VPa2hYqKIGbfTq/UfKIX6df+xkPmD3jVW21n4VblLBLd8dHTjeQ==}
+    engines: {node: '>=12.13.0'}
     peerDependencies:
       tailwindcss: ^3.4.0
 
@@ -4439,7 +4439,7 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-tailwindcss@3.18.2(tailwindcss@4.1.16):
+  eslint-plugin-tailwindcss@3.16.0(tailwindcss@4.1.16):
     dependencies:
       fast-glob: 3.3.3
       postcss: 8.5.6
