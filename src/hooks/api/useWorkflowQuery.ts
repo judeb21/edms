@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL, apiFetch } from "@/lib/apiClient";
 import {
@@ -129,7 +130,7 @@ export const useActivateWorkflow = (workflowId: string) => {
   const invalidateWorkflows = useInvalidateWorkflows();
 
   return useMutation({
-    mutationFn: (payload: string) => activateWorkflow(workflowId),
+    mutationFn: () => activateWorkflow(workflowId),
     onSuccess: () => {
       invalidateWorkflows();
     },

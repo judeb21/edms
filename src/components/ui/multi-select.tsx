@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable  @typescript-eslint/no-unused-vars */
-
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import {
