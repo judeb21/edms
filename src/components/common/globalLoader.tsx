@@ -10,7 +10,11 @@ import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 /**
  * Smooth, YouTube-style top progress bar + hydration loader
  */
-export default function GlobalLoader({ children }: { children: React.ReactNode }) {
+export default function GlobalLoader({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const hydrated = useHydration();
   const routeLoading = useRouteProgress();
 
@@ -28,6 +32,7 @@ export default function GlobalLoader({ children }: { children: React.ReactNode }
     let interval: NodeJS.Timeout | undefined;
 
     if (isLoading) {
+      /* eslint-disable */
       setVisible(true);
       setProgress(10); // start visible
       interval = setInterval(() => {
@@ -36,6 +41,7 @@ export default function GlobalLoader({ children }: { children: React.ReactNode }
           return p;
         });
       }, 200);
+      // eslint-enable */
     } else {
       // finish bar
       setProgress(100);

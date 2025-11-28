@@ -1,3 +1,4 @@
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 export function useDebounce<T extends (...args: any[]) => any>(fn: T, delay = 300) {
   let timer: ReturnType<typeof setTimeout>;
   return (...args: Parameters<T>) => {

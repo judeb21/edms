@@ -1,5 +1,5 @@
 "use client";
-/* eslint-disable  @typescript-eslint/no-explicit-any */
+ 
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +18,7 @@ import { superAdminLinks } from "@/utils/route";
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { LogOut, Settings } from "lucide-react";
 import { useUser } from "@/context/auth-context";
 // import { useDispatch } from "react-redux";

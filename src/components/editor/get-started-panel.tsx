@@ -33,7 +33,7 @@ const GettingStartedPanel = ({ onClose }: { onClose: () => void }) => {
           <div className="flex items-start">
             <div className="w-2 h-2 bg-brand-blue rounded-full mt-1.5 mr-3 flex-shrink-0"></div>
             <p className="text-sm text-gray-600">
-              Click "Add Approval Step" to begin
+              Click Add Approval Step to begin
             </p>
           </div>
           <div className="flex items-start">

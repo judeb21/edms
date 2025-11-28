@@ -1,5 +1,4 @@
 import AuthLayout from "@/components/auth/auth-layout";
-import ForgotPassword from "@/components/auth/forgot-password";
 import VerifyOTPForm from "@/components/auth/verifyotp-form";
 import { AUTH_CONTENT } from "@/constant/auth";
 

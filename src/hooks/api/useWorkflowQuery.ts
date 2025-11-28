@@ -1,3 +1,4 @@
+ 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL, apiFetch } from "@/lib/apiClient";
 import {
@@ -125,11 +126,11 @@ export const activateWorkflow = async (
 };
 
 //Hook to Validate workflow
-export const useActivateWorkflow = (workflowId: string) => {
+export const useActivateWorkflow = () => {
   const invalidateWorkflows = useInvalidateWorkflows();
 
   return useMutation({
-    mutationFn: (payload: string) => activateWorkflow(workflowId),
+    mutationFn: (workflowId: string) => activateWorkflow(workflowId),
     onSuccess: () => {
       invalidateWorkflows();
     },

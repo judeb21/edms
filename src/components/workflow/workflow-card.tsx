@@ -14,7 +14,6 @@ export default function WorkflowTemplateCard({
   title,
   isNew = false,
   link,
-  onclick,
 }: WorkflowTemplateCardProps) {
   const router = useRouter();
 

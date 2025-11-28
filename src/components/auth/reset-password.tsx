@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 import {
   resetPasswordSchema,

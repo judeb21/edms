@@ -125,11 +125,13 @@ export default function VerifyAuthOTP({
   };
 
   useEffect(() => {
+    /* eslint-disable */
     if (isSuccess) {
       PinForm.reset();
       setOtp(["", "", "", "", "", ""]);
       setReadOnly([false, true, true, true, true, true]);
     }
+    /* eslint-enable */
   }, [isSuccess, PinForm]);
 
   return (

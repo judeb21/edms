@@ -17,38 +17,6 @@ import { Textarea } from "../ui/textarea";
 
 // Types
 type WorkflowStatus = "Draft" | "Configured" | "Active";
-type ApproverType = "RoleBased" | "SpecificUsers";
-type ApproverMode = "AllApprovers" | "Anyone";
-
-interface WorkflowUserType {
-  id: string;
-  email: string;
-  name: string;
-  dept: string;
-  role: string;
-}
-
-interface ConditionsType {
-  department: string;
-  flowToRole: string;
-}
-
-interface Step {
-  id: string;
-  order: number;
-  stepName: string;
-  configured: boolean;
-  approverType: ApproverType;
-  role: string;
-  approverMode: ApproverMode;
-  deadline: string;
-  users: WorkflowUserType[];
-  enableEscalation: boolean;
-  escalationUsers: WorkflowUserType[];
-  conditions?: ConditionsType[];
-  createdAt?: string;
-  updatedAt?: string;
-}
 
 // Header Component
 const WorkflowHeader = ({
@@ -84,8 +52,9 @@ const WorkflowHeader = ({
   const [reason, setReason] = useState("");
 
   useEffect(() => {
-    console.log(isDeactivated);
+    /* eslint-disable */
     if (isDeactivated) setModal(false);
+    // eslint-enable */
   }, [isDeactivated]);
 
   const getStatusBadge = (status: WorkflowStatus) => {

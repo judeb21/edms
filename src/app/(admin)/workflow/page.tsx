@@ -8,7 +8,7 @@ import {
   useGetWorkflows,
 } from "@/hooks/api/useWorkflowQuery";
 import { WorkflowTypes } from "@/types/workflow";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosError } from "axios";
 import { Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -20,7 +20,7 @@ export default function WorkFlowPage() {
   const router = useRouter();
   const breadcrumbItems = [{ label: "Approval Workflow" }];
 
-  const { data, isLoading, refetch } = useGetWorkflows();
+  const { data, isLoading } = useGetWorkflows();
 
   //Delete workflow mutation
   const deleteWorkflow = useDeleteWorkflow();

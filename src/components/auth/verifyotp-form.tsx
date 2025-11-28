@@ -2,29 +2,15 @@
 
 import Image from "next/image";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { z } from "zod";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
-import { loginSchema, LoginValidation } from "@/validationSchemas/auth/loginSchema";
 import { useRouter } from "next/navigation";
-import { ExtendedFetchBaseQueryError } from "@/types";
 import { Button } from "../ui/button";
 import { useLoader } from "@/context/loader-context";
 import VerifyAuthOTP from "./otpPin";
 
 export default function VerifyOTPForm() {
-  const form = LoginValidation();
   const { buttonLoader } = useLoader();
 
   const router = useRouter();
@@ -32,7 +18,7 @@ export default function VerifyOTPForm() {
   const initialCountdown = 60; // Initial resend code timer
   const [countdown, setCountdown] = useState(initialCountdown);
   const [isRunning, setIsRunning] = useState(false);
-  const [isSuccess, setIsSuccessful] = useState(false);
+  const [isSuccess] = useState(false);
   const [pin, setPin] = useState("");
 
   const minutes = Math.floor(countdown / 60);
@@ -48,6 +34,7 @@ export default function VerifyOTPForm() {
     }
 
     if (countdown === 0) {
+      // eslint-disable-next-line
       setIsRunning(false);
     }
 

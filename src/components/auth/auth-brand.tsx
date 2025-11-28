@@ -11,7 +11,6 @@ interface AuthBrandProps {
 export default function AuthBrand({
   authTitle = "Welcome Back!",
   authDescription = "Log in to manage users, settings, and data with admin privileges.",
-  authsubTitle = "",
 }: AuthBrandProps) {
   return (
     <div className="relative flex flex-1 justify-center flex-col items-center hidden md:block min-h-screen">

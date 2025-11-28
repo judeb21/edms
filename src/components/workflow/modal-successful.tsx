@@ -1,4 +1,4 @@
-import { CircleCheckBig, X } from "lucide-react";
+import { CircleCheckBig } from "lucide-react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "@/lib/utils";

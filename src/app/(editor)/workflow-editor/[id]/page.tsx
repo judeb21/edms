@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useGetUserInfinite } from "@/hooks/api/useSmartUserQuery";
 import dayjs from "dayjs";
 import {
   ConditionsType,
@@ -56,7 +55,6 @@ const WorkflowEditor = () => {
   const [validated, setValidated] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showGettingStarted, setShowGettingStarted] = useState<boolean>(true);
-  const [search, setSearch] = React.useState("");
   const [stepIsSaved, setSavedStep] = useState<boolean>(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
   const [deactivatedaModal, setDeactivatedaModal] = useState(false);
@@ -68,7 +66,7 @@ const WorkflowEditor = () => {
   const validateWorkflows = useValidateWorkflow();
 
   //Activate workflow mutation
-  const activateWorkflows = useActivateWorkflow(params.id as string);
+  const activateWorkflows = useActivateWorkflow();
 
   //Deactivate workflow
   const deactivateWorkflows = useDeactivateWorkflow(params.id as string);
@@ -89,13 +87,6 @@ const WorkflowEditor = () => {
     },
   });
 
-  const {
-    data: userData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useGetUserInfinite(search);
-
   const { data: configureStepData, isLoading } = useGetConfiguredWorkflowSteps(
     params.id as string
   );
@@ -113,7 +104,7 @@ const WorkflowEditor = () => {
         name: step.stepName,
         approverType: step.approvalType,
         role: step.role,
-        users: step?.role?.trim() === "" ? step.users : [],
+        users: step.approvalType === "SpecificUsers" ? step.users : [],
         approverMode: step.approverMode,
         deadline: dayjs.utc(step.deadline).endOf("day").toISOString(),
         enableEscalation: step.enableEscalation,
@@ -122,7 +113,8 @@ const WorkflowEditor = () => {
         configured: true,
       };
     });
-
+    
+    // eslint-disable-next-line
     setSteps(updatedSteps?.length ? updatedSteps : []);
   }, [configureSteps]);
 

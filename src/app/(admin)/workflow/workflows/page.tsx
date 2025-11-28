@@ -4,9 +4,9 @@ import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
 import { Button } from "@/components/ui/button";
 import WorkflowTemplateCard from "@/components/workflow/workflow-card";
 import { useGetWorkflows } from "@/hooks/api/useWorkflowQuery";
-import { ArrowLeft, File, FileText, Loader2, Plus } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+// import { useMemo } from "react";
 
 export default function WorkFlowPage() {
   const router = useRouter();
@@ -15,15 +15,15 @@ export default function WorkFlowPage() {
     { label: "Create New Workflow" },
   ];
 
-  const { data, isLoading } = useGetWorkflows();
+  const { isLoading } = useGetWorkflows();
 
-  const workflows = useMemo(() => {
-    return data;
-  }, [data]);
+  // const workflows = useMemo(() => {
+  //   return data;
+  // }, [data]);
 
-  const goToNewWorkflow = () => {
-    router.push("/workflow/new");
-  };
+  // const goToNewWorkflow = () => {
+  //   router.push("/workflow/new");
+  // };
 
   const goBack = () => {
     router.back();
@@ -83,7 +83,7 @@ export default function WorkFlowPage() {
           </div>
 
           <div className="grid grid-cols-4 gap-[24px] mt-3">
-            {Array(1, 2, 3, 4).map((_, index) => {
+            {[1, 2, 3, 4].map((_, index) => {
               return (
                 <WorkflowTemplateCard
                   key={index}

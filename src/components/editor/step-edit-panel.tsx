@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Step, WorkflowUserType } from "@/types/workflow";
 import { AlertCircle, Loader2, X } from "lucide-react";
