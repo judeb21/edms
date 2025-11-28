@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import ForgotPassswordEmail from "./email-forgot-password";
-import { useState } from "react";
 
 export default function ForgotPassword() {
   return (
