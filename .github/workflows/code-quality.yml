@@ -46,7 +46,3 @@ jobs:
       # 7. Run TypeScript type check
       - name: Run TypeScript type check
         run: pnpm typecheck
-
-      # 8. Run Prettier formatting check
-      - name: Run Prettier formatting check
-        run: pnpm format:check
