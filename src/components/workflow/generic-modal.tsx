@@ -1,3 +1,4 @@
+import { XIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 interface ModalProps {
@@ -9,6 +10,7 @@ interface ModalProps {
   handleClose?: () => void;
   handleClick?: () => void;
   children: React.ReactNode;
+  showClose?: boolean;
 }
 
 const GenericModal = ({
@@ -18,22 +20,38 @@ const GenericModal = ({
   subTitle,
   description,
   children,
+  showClose = false,
 }: ModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent showCloseButton={false} className="max-w-lg p-0">
+      <DialogContent
+        showCloseButton={false}
+        className="max-w-lg p-0 font-[family-name:var(--font-dm)]"
+      >
         <DialogHeader className="flex flex-row items-center justify-between px-6 py-4">
           <DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
         </DialogHeader>
 
-        <div className="px-6 py-4 justify-center flex flex-col items-center font-[family-name:var(--font-dm)]">
-          <h4 className="text-primary-gray font-semibold text-[24px]">
-            {subTitle}
-          </h4>
+        {showClose && (
+          <div
+            className="absolute top-5 right-5 flex justify-center items-center h-[20px] w-[20px] bg-[#0284B21A] rounded-full cursor-pointer"
+            onClick={handleClose}
+          >
+            <XIcon className="w-[15px] h-[15px]" color="#0284B2" />
+          </div>
+        )}
 
-          <p className="font-[family-name:var(--font-poppins)] text-[16px] text-primary-gray font-medium mt-4">
-            {description}
-          </p>
+        <div className="px-6 justify-center flex flex-col items-center font-[family-name:var(--font-dm)]">
+          {subTitle && (
+            <h4 className=" pt-4 text-primary-gray font-semibold text-[24px]">
+              {subTitle}
+            </h4>
+          )}
+          {description && (
+            <p className="pb-4 font-[family-name:var(--font-poppins)] text-[16px] text-primary-gray font-medium mt-4">
+              {description}
+            </p>
+          )}
         </div>
 
         <div className="flex gap-3 px-6 justify-center flex flex-col items-center mb-10">
