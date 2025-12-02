@@ -96,4 +96,5 @@ jobs:
           netlify deploy --prod \
             --auth=$NETLIFY_AUTH_TOKEN \
             --site=$NETLIFY_SITE_ID \
-            --dir=.next
+            --build \
+            --message="Deployed from GitHub Actions - ${{ github.sha }}"
