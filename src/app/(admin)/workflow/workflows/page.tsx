@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import WorkflowTemplateCard from "@/components/workflow/workflow-card";
 import { useGetWorkflows } from "@/hooks/api/useWorkflowQuery";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 // import { useMemo } from "react";
 
@@ -80,6 +81,10 @@ export default function WorkFlowPage() {
             <h2 className="text-[20px] font-semibold text-primary-gray">
               Saved Templates
             </h2>
+
+            <Link href="/templates" className="text-brand-blue font-semibold">
+              See all
+            </Link>
           </div>
 
           <div className="grid grid-cols-4 gap-[24px] mt-3">
@@ -89,7 +94,7 @@ export default function WorkFlowPage() {
                   key={index}
                   title="Contract Review"
                   isNew={false}
-                  link="#"
+                  link="/workflow-editor/5298737c-7d06-4050-8c92-4278408207f9"
                 />
               );
             })}
