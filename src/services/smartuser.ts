@@ -7,8 +7,7 @@ import {
 import axios from "axios";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_SMART_USER_API_URL ||
-  "https://smartuser-dev.digitvant.com/api/v1";
+  process.env.NEXT_PUBLIC_SMART_USER_API_URL;
 
 export async function apiFetch<T>(
   endpoint: string,
