@@ -1,7 +1,8 @@
 "use-client";
 
-import { FileText, Trash2 } from "lucide-react";
+import { GitMerge, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 export interface WorkflowTemplateCardProps {
   title: string;
@@ -21,13 +22,17 @@ export default function WorkflowTemplateCard({
     router.push(`${link}`);
   };
 
+  const handleClick = () => {
+    if (isNew) return goToNewWorkflow();
+  };
+
   return (
     <div
-      className="cursor-pointer mt-6 md:w-[250px] w-full p-[16px] border-1 rounded-[8px] border-[#CCCCCCCC]"
-      onClick={goToNewWorkflow}
+      className={`mt-6 md:w-[250px] w-full p-[16px] border-1 rounded-[8px] border-[#CCCCCCCC] ${isNew && "cursor-pointer"}`}
+      onClick={handleClick}
     >
       <div className="bg-[#F8FAFC] py-[30px]">
-        <FileText strokeWidth={1} className="w-[36px] h-[36px] mx-auto" />
+        <GitMerge strokeWidth={1} className="w-[36px] h-[36px] mx-auto" />
       </div>
       <div className="w-full mt-3 flex items-center justify-betweeen gap-3">
         <div className="w-full">
@@ -40,10 +45,18 @@ export default function WorkflowTemplateCard({
         </div>
         {!isNew && (
           <div className="h-[24px] w-[24px] p-[10px] cursor-pointer">
-            <Trash2 color="#FC5A5A" className="w-4 h-4 mx-auto" />
+            <Trash2 color="#FC5A5A" className="w-5 h-5 mx-auto" />
           </div>
         )}
       </div>
+      {!isNew && (
+        <Button
+          className="bg-brand-blue w-full mt-4 hover:bg-brand-blue cursor-pointer"
+          onClick={goToNewWorkflow}
+        >
+          Use Template
+        </Button>
+      )}
     </div>
   );
 }

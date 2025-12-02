@@ -59,6 +59,9 @@ const WorkflowEditor = () => {
   const [showSuccessModal, setSuccessModal] = useState(false);
   const [deactivatedaModal, setDeactivatedaModal] = useState(false);
   const [isDeactivated, setIsDeactivated] = useState(false);
+  const [templateSaving, setTemplateSaving] = useState(false);
+  const [templateSaved, setSavedTemplate] = useState(false);
+  const [templateSuccessSaved, setSuccessTemplate] = useState(false);
 
   const configureWorkflow = useConfigureWorkflow(params.id as string);
 
@@ -103,7 +106,7 @@ const WorkflowEditor = () => {
         order: index + 1,
         name: step.stepName,
         approverType: step.approvalType,
-        role: step.role,
+        role: step?.role?.length ? step?.role[0] : step?.role,
         users: step.approvalType === "SpecificUsers" ? step.users : [],
         approverMode: step.approverMode,
         deadline: dayjs.utc(step.deadline).endOf("day").toISOString(),
@@ -113,7 +116,7 @@ const WorkflowEditor = () => {
         configured: true,
       };
     });
-    
+
     // eslint-disable-next-line
     setSteps(updatedSteps?.length ? updatedSteps : []);
   }, [configureSteps]);
@@ -538,6 +541,15 @@ const WorkflowEditor = () => {
     });
   };
 
+  const saveWorkflowAsTemplate = () => {
+    setTemplateSaving(true);
+    setTimeout(() => {
+      setTemplateSaving(false);
+      setSuccessTemplate(true);
+      setSavedTemplate(true);
+    }, 500);
+  };
+
   const selectStep = (step: Step): void => {
     setSelectedStep(step);
     setIsEditing(false);
@@ -555,6 +567,11 @@ const WorkflowEditor = () => {
   const viewWorkflows = () => {
     router.push("/workflow");
     setDeactivatedaModal(false);
+  };
+
+  const viewTemplates = () => {
+    router.push("/templates");
+    setSavedTemplate(false);
   };
 
   if (isLoading) {
@@ -580,9 +597,12 @@ const WorkflowEditor = () => {
         onValidate={validateWorkflow}
         onActivate={activateWorkflow}
         onDeactivate={deactivateWorkflow}
+        handleSave={saveWorkflowAsTemplate}
         deactivateLoader={deactivateLoader}
         isDeactivated={isDeactivated}
         validated={validated}
+        templateSaving={templateSaving}
+        templateSuccessSaved={templateSuccessSaved}
       />
 
       <div className="flex h-screen bg-gray-50">
@@ -654,6 +674,18 @@ const WorkflowEditor = () => {
         buttonText="Create New Workflow"
         buttonClass="-translate-y-[20px]"
         handleClick={viewWorkflows}
+      />
+
+      {/* Successfully saved workflow as template */}
+      <SuccessModal
+        isOpen={templateSaved}
+        description="Workflow Template Saved Successfully"
+        buttonText="View Templates"
+        buttonAdditionalText="Back"
+        buttonClass="-translate-y-[20px]"
+        showAdditionalButton={true}
+        handleAdditionalClick={() => setSavedTemplate(false)}
+        handleClick={viewTemplates}
       />
     </div>
   );

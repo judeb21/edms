@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import GenericModal from "../workflow/generic-modal";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
+import LoaderButton from "../common/loader-button";
 
 // Types
 type WorkflowStatus = "Draft" | "Configured" | "Active";
@@ -30,9 +31,12 @@ const WorkflowHeader = ({
   onValidate,
   onActivate,
   onDeactivate,
+  handleSave,
   validated,
   deactivateLoader,
   isDeactivated,
+  templateSaving,
+  templateSuccessSaved,
 }: {
   workflowName: string;
   status: WorkflowStatus;
@@ -44,11 +48,15 @@ const WorkflowHeader = ({
   onValidate: () => void;
   onActivate: () => void;
   onDeactivate: (reason: string) => void;
+  handleSave: () => void;
   validated: boolean;
   deactivateLoader: boolean;
   isDeactivated: boolean;
+  templateSaving: boolean;
+  templateSuccessSaved: boolean;
 }) => {
   const [deactivateModal, setModal] = useState(false);
+  const [templateConfirmationModal, setConfirmationModal] = useState(false);
   const [reason, setReason] = useState("");
 
   useEffect(() => {
@@ -56,6 +64,12 @@ const WorkflowHeader = ({
     if (isDeactivated) setModal(false);
     // eslint-enable */
   }, [isDeactivated]);
+
+  useEffect(() => {
+    /* eslint-disable */
+    if (templateSuccessSaved) setConfirmationModal(false);
+    // eslint-enable */
+  }, [templateSuccessSaved]);
 
   const getStatusBadge = (status: WorkflowStatus) => {
     const styles = {
@@ -75,6 +89,8 @@ const WorkflowHeader = ({
   };
 
   const deactivateWorkflow = () => setModal(true);
+
+  const onTemplateSave = () => setConfirmationModal(true);
 
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
@@ -128,6 +144,7 @@ const WorkflowHeader = ({
                   ? "border-[#A9A9A9] text-primary-gray cursor-not-allowed"
                   : "bg-white text-primary-gray hover:bg-white border-primary-gray"
               }`}
+              onClick={onTemplateSave}
             >
               <Save className="w-[20px] h-[20px] mr-1" color={"#464646"} />
               Save As Template
@@ -197,6 +214,30 @@ const WorkflowHeader = ({
               {deactivateLoader && <Loader2 className="animate-spin" />}
               Deactivate
             </Button>
+          </div>
+        </div>
+      </GenericModal>
+
+      {/* Confirm Save as Template */}
+      <GenericModal
+        isOpen={templateConfirmationModal}
+        subTitle="Save as Template"
+        description="Do you want to save this workflow as template?"
+      >
+        <div className="w-full">
+          <div className="mt-6 gap-[16px] flex justify-center items-center">
+            <Button
+              className="bg-[#FC5A5A] py-[24px] hover:bg-[#FC5A5A]"
+              onClick={() => setConfirmationModal(false)}
+            >
+              Cancel
+            </Button>
+            <LoaderButton
+              buttonText="Save Template"
+              isLoading={templateSaving}
+              className="bg-brand-blue py-[24px] hover:bg-brand-blue"
+              nextStep={handleSave}
+            />
           </div>
         </div>
       </GenericModal>

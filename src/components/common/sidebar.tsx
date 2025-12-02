@@ -1,5 +1,5 @@
 "use client";
- 
+
 import {
   Sidebar,
   SidebarContent,
@@ -24,7 +24,7 @@ import { useUser } from "@/context/auth-context";
 // import { useDispatch } from "react-redux";
 
 export default function AppSidebar() {
-//   const router = useRouter();
+  //   const router = useRouter();
   const pathname = usePathname();
 
   const { logout } = useUser();
@@ -93,8 +93,7 @@ export default function AppSidebar() {
                   >
                     <Settings
                       className={`${
-                        pathname === "/settings" ||
-                        pathname === "/settings"
+                        pathname === "/settings" || pathname === "/settings"
                           ? "text-[#FFFFFF]"
                           : "text-[#04B2F1]"
                       }`}
@@ -114,13 +113,7 @@ export default function AppSidebar() {
                     }`}
                     onClick={logout}
                   >
-                    <LogOut
-                      className={
-                        pathname === "/settings"
-                          ? "text-[#FFFFFF]"
-                          : "text-[#FC5A5A]"
-                      }
-                    />
+                    <LogOut className={"text-[#FC5A5A]"} />
                     <span className="text-[13px] text-[#FC5A5A] ml-2">
                       Logout
                     </span>
