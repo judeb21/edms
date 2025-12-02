@@ -7,6 +7,7 @@ const protectedRoutes = [
   "/settings/workflow",
   "/workflow",
   "/workflow/new",
+  "/approval-queue",
   "/more",
 ];
 const publicRoutes = ["/login"];
@@ -38,5 +39,6 @@ export const config = {
     "/settings/:path*",
     "/workflow/:path*",
     "/workflow-editor/:path*",
+    "/approval-queue/:path*",
   ],
 };
