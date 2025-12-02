@@ -17,12 +17,22 @@ export const workflowSchema = z
   })
   .superRefine((data, ctx) => {
     const scopeIsDepartment = data.scope === "department";
+    const scopeIsDocumentType = data.scope === "document";
     if (scopeIsDepartment) {
       if (!data.scopeValue || data.scopeValue.trim() === "") {
         ctx.addIssue({
           path: ["scopeValue"],
           code: z.ZodIssueCode.custom,
           message: "Select department for scope",
+        });
+      }
+    }
+     if (scopeIsDocumentType) {
+      if (!data.scopeValue || data.scopeValue.trim() === "") {
+        ctx.addIssue({
+          path: ["scopeValue"],
+          code: z.ZodIssueCode.custom,
+          message: "Select document type for scope",
         });
       }
     }

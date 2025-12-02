@@ -171,7 +171,7 @@ export function WorkFlowDataTable(props: DataTableProps) {
               />
             </Link>
 
-            {workflow.status?.toLowerCase() !== "archived" && (
+            {workflow.status?.toLowerCase() !== "inactive" && (
               <Trash2
                 color="#FC5A5A"
                 className="h-5 w-5 cursor-pointer"

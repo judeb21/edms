@@ -1,4 +1,4 @@
-import { BrickWallShield, GitMerge, SquareChartGantt } from "lucide-react";
+import { BrickWallShield, GitMerge, Save, SquareChartGantt } from "lucide-react";
 
 export const superAdminLinks = [
   {
@@ -12,8 +12,13 @@ export const superAdminLinks = [
     icon: BrickWallShield,
   },
   {
-    title: "Approval Workflow",
+    title: "Workflows",
     url: "/workflow",
     icon: GitMerge,
+  },
+  {
+    title: "Templates",
+    url: "/templates",
+    icon: Save,
   },
 ];

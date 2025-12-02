@@ -35,6 +35,21 @@ import SuccessModal from "@/components/workflow/modal-successful";
 import { useGetDepartmentsQuery } from "@/hooks/api/useSmartUserQuery";
 import { DepartmentType } from "@/types/smartUserTypes";
 
+const documentTypes = [
+  {
+    name: "Policy Document",
+    value: "Policy Document",
+  },
+  {
+    name: "Invoice",
+    value: "Invoice",
+  },
+  {
+    name: "Folder",
+    value: "Folder",
+  },
+];
+
 export default function WorkFlowPage() {
   const [loader, setLoader] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
@@ -264,14 +279,55 @@ export default function WorkFlowPage() {
                   </div>
                 )}
 
+                {isScopeDepartment === "document" && (
+                  <div className="space-y-2 mt-[24px]">
+                    <FormField
+                      control={form.control}
+                      name="scopeValue"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[15px] text-primary-gray font-semibold">
+                            Select Document Type
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-full !h-[50px]">
+                                  <SelectValue placeholder="Select Document Types" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="">
+                                {documentTypes?.map((doc) => {
+                                  return (
+                                    <SelectItem
+                                      value={doc?.name}
+                                      key={doc?.value}
+                                    >
+                                      {doc?.name}
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+
                 <div className="space-y-2 mt-[48px] flex justify-end items-center gap-4">
-                  <Button
+                  {/* <Button
                     variant="ghost"
                     className="text-brand-blue cursor-pointer"
                     type="button"
                   >
                     Save as Template
-                  </Button>
+                  </Button> */}
                   <LoaderButton
                     buttonText="Create Workflow"
                     isLoading={loader}

@@ -9,10 +9,13 @@ interface SuccessModalProps {
   subTitle?: string;
   description?: string;
   buttonText?: string;
+  buttonAdditionalText?: string;
   handleClose?: () => void;
   handleClick?: () => void;
+  handleAdditionalClick?: () => void;
   variant?: string;
   buttonClass?: string;
+  showAdditionalButton?: boolean;
 }
 
 const SuccessModal = ({
@@ -23,7 +26,10 @@ const SuccessModal = ({
   description,
   buttonText,
   handleClick,
+  handleAdditionalClick,
   buttonClass,
+  showAdditionalButton = false,
+  buttonAdditionalText,
 }: SuccessModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -48,9 +54,23 @@ const SuccessModal = ({
           </p>
         </div>
 
-        <div className="flex gap-3 px-6 py-4 justify-center flex flex-col items-center mb-10">
+        <div className="flex gap-3 px-6 py-4 justify-center flex items-center mb-10">
+          {showAdditionalButton && (
+            <Button
+              className={cn(
+                "bg-[#FC5A5A] hover:bg-[#FC5A5A] text-[14px] font-medium h-[50px]",
+                buttonClass
+              )}
+              onClick={handleAdditionalClick}
+            >
+              {buttonAdditionalText}
+            </Button>
+          )}
           <Button
-            className={cn("bg-brand-blue text-[14px] font-medium hover:bg-brand-blue h-[50px]", buttonClass)}
+            className={cn(
+              "bg-brand-blue text-[14px] font-medium hover:bg-brand-blue h-[50px]",
+              buttonClass
+            )}
             onClick={handleClick}
           >
             {buttonText}

@@ -1,5 +1,5 @@
 import "@/app/globals.css";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DM_Sans, Poppins } from "next/font/google";
 import { CSSProperties } from "react";
 import AppSidebar from "@/components/common/sidebar";
@@ -41,7 +41,7 @@ export default async function RootLayout({
               <div className="relative">
                 {/* Header */}
                 <div className="w-full flex pb-[18px] px-[1rem] md:px-[2rem] my-[22px] justify-between items-center shadow_[0_-1px_0px_0px_rgba(230,230,230,1)] border-b border-[#E7E7E7]">
-                  {/* <SidebarTrigger /> */}
+                  <SidebarTrigger className="mr-1" />
                   <div className="w-full flex items-center">
                     <HeaderDropdown />
                   </div>

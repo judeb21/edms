@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 "use client";
 import { Step, WorkflowUserType } from "@/types/workflow";
 import { AlertCircle, Loader2, X } from "lucide-react";
@@ -13,6 +13,7 @@ import {
   useGetUserInfinite,
 } from "@/hooks/api/useSmartUserQuery";
 import React from "react";
+import LoaderButton from "../common/loader-button";
 
 const StepEditFormPanel = ({
   step,
@@ -403,15 +404,24 @@ const StepEditFormPanel = ({
         )}
       </div>
 
-      <div className="p-6 border-t border-gray-200">
+      <div className="p-6 border-t border-gray-200 flex justify-start gap-2 items-center">
         <Button
           onClick={onSave}
           disabled={isSaving}
-          className="w-full px-4 py-2 bg-brand-blue text-white rounded hover:brand-blue/10 font-medium"
+          className={`${step.order < 3 ? "w-full" : ""} px-4 py-2 bg-brand-blue text-white rounded hover:brand-blue/10 font-medium`}
         >
           {isSaving && <Loader2 className="animate-spin" />}
           Save
         </Button>
+
+        {step.order > 2 && (
+          <LoaderButton
+            buttonText="Save as Template & Activate"
+            isLoading={isSaving}
+            disabled={isSaving}
+            className="bg-brand-blue hover:bg-brand-blue/90 rounded"
+          />
+        )}
       </div>
     </div>
   );
