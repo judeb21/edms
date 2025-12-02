@@ -6,8 +6,7 @@ import {
 } from "@/types/smartUserTypes";
 import axios from "axios";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_SMART_USER_API_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_SMART_USER_API_URL;
 
 export async function apiFetch<T>(
   endpoint: string,
@@ -51,14 +50,12 @@ export const smartUserService = {
     return data?.data;
   },
 
-//    async fetchWorkflows () =>
-//     apiFetch<WorkflowTypes[]>("/admin/workflows", { method: "GET" }, true);
+  //    async fetchWorkflows () =>
+  //     apiFetch<WorkflowTypes[]>("/admin/workflows", { method: "GET" }, true);
 
   async getAllDepartments() {
     try {
-      return await apiFetch<DepartmentResponse>(
-        `/administration/department`
-      );
+      return await apiFetch<DepartmentResponse>(`/administration/department`);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
