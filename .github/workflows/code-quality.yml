@@ -1,4 +1,4 @@
-name: Code Quality and Deploy
+name: Code Quality and Deploy to Netlify
 
 on:
   pull_request:
@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       # 3. Setup pnpm
       - name: Setup pnpm
@@ -64,7 +64,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       # 3. Setup pnpm
       - name: Setup pnpm
