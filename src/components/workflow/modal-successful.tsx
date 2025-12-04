@@ -45,11 +45,11 @@ const SuccessModal = ({
             strokeWidth={1}
           />
 
-          <h4 className="text-primary-gray font-semibold text-[24px]">
+          <h4 className="text-primary-gray font-semibold text-[24px] text-center">
             {subTitle}
           </h4>
 
-          <p className="font-[family-name:var(--font-poppins)] text-[16px] text-primary-gray font-medium mt-4">
+          <p className="font-[family-name:var(--font-poppins)] text-[16px] text-primary-gray font-medium mt-4 text-center">
             {description}
           </p>
         </div>

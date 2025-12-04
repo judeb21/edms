@@ -3,10 +3,13 @@
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
 import { Button } from "@/components/ui/button";
 import WorkflowTemplateCard from "@/components/workflow/workflow-card";
-import { useGetWorkflows } from "@/hooks/api/useWorkflowQuery";
+import {
+  useGetAllTemplatesWorkflows,
+} from "@/hooks/api/useWorkflowQuery";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 // import { useMemo } from "react";
 
 export default function WorkFlowPage() {
@@ -16,15 +19,11 @@ export default function WorkFlowPage() {
     { label: "Create New Workflow" },
   ];
 
-  const { isLoading } = useGetWorkflows();
+  const { data, isLoading } = useGetAllTemplatesWorkflows();
 
-  // const workflows = useMemo(() => {
-  //   return data;
-  // }, [data]);
-
-  // const goToNewWorkflow = () => {
-  //   router.push("/workflow/new");
-  // };
+  const templates = useMemo(() => {
+    return data?.splice(0, 8);
+  }, [data, isLoading]);
 
   const goBack = () => {
     router.back();
@@ -88,13 +87,14 @@ export default function WorkFlowPage() {
           </div>
 
           <div className="grid grid-cols-4 gap-[24px] mt-3">
-            {[1, 2, 3, 4].map((_, index) => {
+            {templates?.map((template) => {
               return (
                 <WorkflowTemplateCard
-                  key={index}
-                  title="Contract Review"
+                  key={template.id}
+                  title={template.templateName}
                   isNew={false}
-                  link="/workflow-editor/5298737c-7d06-4050-8c92-4278408207f9"
+                  createdAt={template.createdAt}
+                  link={`/template/${template.id}`}
                 />
               );
             })}

@@ -21,14 +21,18 @@ const StepEditFormPanel = ({
   onClose,
   onSave,
   onChange,
+  onActivate,
+  isActivating,
   isSaving,
 }: {
   step: Step;
   formData: any;
   onClose: () => void;
   onSave: () => void;
+  onActivate: () => void;
   onChange: (data: any) => void;
   isSaving: boolean;
+  isActivating: boolean;
 }) => {
   const [search, setSearch] = React.useState("");
   const {
@@ -156,7 +160,7 @@ const StepEditFormPanel = ({
             </label>
             <select
               value={formData.role}
-              onChange={(e) => onChange({ ...formData, role: e.target.value })}
+              onChange={(e) => onChange({ ...formData, role: [e.target.value] })}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brand-blue text-sm"
             >
               <option value="">Select a role</option>
@@ -184,7 +188,7 @@ const StepEditFormPanel = ({
                   email: user.email,
                   name: user.label,
                   dept: user.dept,
-                  role: user?.role?.length ? user.role[0] : "",
+                  roles: user?.role?.length ? user.role : [],
                 }));
                 onChange({ ...formData, users: formattedUsers });
               }}
@@ -417,8 +421,9 @@ const StepEditFormPanel = ({
         {step.order > 2 && (
           <LoaderButton
             buttonText="Save as Template & Activate"
-            isLoading={isSaving}
-            disabled={isSaving}
+            isLoading={isActivating}
+            disabled={isActivating}
+            nextStep={onActivate}
             className="bg-brand-blue hover:bg-brand-blue/90 rounded"
           />
         )}

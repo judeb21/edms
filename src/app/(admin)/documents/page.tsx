@@ -1,6 +1,10 @@
 "use client";
 
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
+import {
+  DocumentsTable,
+  DocumentType,
+} from "@/components/tables/documentTable";
 import { Button } from "@/components/ui/button";
 import { FileText, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -14,7 +18,24 @@ export default function TemplatesPage() {
 
   const goToNewDocument = () => router.push("/documents/new");
 
-  const documents = [];
+  const documents: DocumentType[] = [
+    {
+      id: "1",
+      title: "Staff Survey",
+      category: "Reports",
+      department: "HR",
+      dateModified: "02/04/2024",
+      status: "Submitted",
+    },
+    {
+      id: "1",
+      title: "Sales Contract",
+      category: "Policies",
+      department: "HR",
+      dateModified: "02/04/2024",
+      status: "Submitted",
+    },
+  ];
 
   return (
     <div className="bg-[#CCCCCC] min-h-screen font-[family-name:var(--font-dm)]">
@@ -52,7 +73,12 @@ export default function TemplatesPage() {
             </Button>
           </div>
         ) : (
-          <div></div>
+          <div>
+            <DocumentsTable
+              data={documents as DocumentType[]}
+              showPagination={false}
+            />
+          </div>
         )}
       </div>
     </div>

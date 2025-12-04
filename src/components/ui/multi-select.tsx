@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  CheckIcon,
-  XCircle,
-  ChevronDown,
-  XIcon,
-  Loader2,
-} from "lucide-react";
+import { CheckIcon, XCircle, ChevronDown, XIcon, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -50,11 +44,15 @@ const multiSelectVariants = cva(
 );
 
 interface MultiSelectProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof multiSelectVariants> {
   options: {
     label: string;
     value: string;
+    dept: string;
+    email: string;
+    role: string[];
     icon?: React.ComponentType<{ className?: string }>;
     [key: string]: any; // Allow additional properties like email, dept, role, etc.
   }[];
@@ -63,6 +61,9 @@ interface MultiSelectProps
   defaultOptions?: {
     label: string;
     value: string;
+    dept: string;
+    email: string;
+    role: string[];
     icon?: React.ComponentType<{ className?: string }>;
     [key: string]: any; // Allow additional properties like email, dept, role, etc.
   }[];
@@ -72,7 +73,7 @@ interface MultiSelectProps
   modalPopover?: boolean;
   asChild?: boolean;
   className?: string;
-  
+
   // New props for server-side search and infinite loading
   onSearch?: (value: string) => void;
   onLoadMore?: () => void;
@@ -105,18 +106,27 @@ export const MultiSelect = React.forwardRef<
     },
     ref
   ) => {
-    const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultOptions.map((u) => u.value));
+    const [selectedValues, setSelectedValues] = React.useState<string[]>(
+      defaultOptions.map((u) => u.value)
+    );
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState("");
-    
+
     // Store all options we've seen (both from initial load and searches)
-    const [optionsStore, setOptionsStore] = React.useState<Map<string, {
-      label: string;
-      value: string;
-      icon?: React.ComponentType<{ className?: string }>;
-    }>>(new Map());
+    const [optionsStore, setOptionsStore] = React.useState<
+      Map<
+        string,
+        {
+          label: string;
+          value: string;
+          dept: string;
+          email: string;
+          role: string[];
+          icon?: React.ComponentType<{ className?: string }>;
+        }
+      >
+    >(new Map());
 
     // Update options store whenever new options come in
     React.useEffect(() => {
@@ -160,11 +170,11 @@ export const MultiSelect = React.forwardRef<
         newSelectedValues.pop();
         setSelectedValues(newSelectedValues);
         onValueChange(newSelectedValues);
-        
+
         // Send full option objects if callback exists
         if (onSelectionChange) {
           const selectedOptions = newSelectedValues
-            .map(val => optionsStore.get(val))
+            .map((val) => optionsStore.get(val))
             .filter(Boolean);
           onSelectionChange(selectedOptions);
         }
@@ -177,11 +187,11 @@ export const MultiSelect = React.forwardRef<
         : [...selectedValues, option];
       setSelectedValues(newSelectedValues);
       onValueChange(newSelectedValues);
-      
+
       // Send full option objects if callback exists
       if (onSelectionChange) {
         const selectedOptions = newSelectedValues
-          .map(val => optionsStore.get(val))
+          .map((val) => optionsStore.get(val))
           .filter(Boolean);
         onSelectionChange(selectedOptions);
       }
@@ -190,19 +200,21 @@ export const MultiSelect = React.forwardRef<
     const handleClear = () => {
       setSelectedValues([]);
       onValueChange([]);
-      
+
       // Send empty array if callback exists
       if (onSelectionChange) {
         onSelectionChange([]);
       }
     };
 
-    const handleTogglePopover = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleTogglePopover = (
+      event: React.MouseEvent<HTMLButtonElement>
+    ) => {
       // Don't toggle if clicking on a badge or X icon
       const target = event.target as HTMLElement;
       if (
-        target.closest('[data-badge]') || 
-        target.closest('[data-remove-icon]')
+        target.closest("[data-badge]") ||
+        target.closest("[data-remove-icon]")
       ) {
         return;
       }
@@ -213,11 +225,11 @@ export const MultiSelect = React.forwardRef<
       const newSelectedValues = selectedValues.slice(0, maxCount);
       setSelectedValues(newSelectedValues);
       onValueChange(newSelectedValues);
-      
+
       // Send full option objects if callback exists
       if (onSelectionChange) {
         const selectedOptions = newSelectedValues
-          .map(val => optionsStore.get(val))
+          .map((val) => optionsStore.get(val))
           .filter(Boolean);
         onSelectionChange(selectedOptions);
       }
@@ -230,7 +242,7 @@ export const MultiSelect = React.forwardRef<
         const allValues = options.map((option) => option.value);
         setSelectedValues(allValues);
         onValueChange(allValues);
-        
+
         // Send full option objects if callback exists
         if (onSelectionChange) {
           onSelectionChange(options);
@@ -428,7 +440,9 @@ export const MultiSelect = React.forwardRef<
                 {/* Infinite scroll trigger */}
                 {hasMore && (
                   <div ref={observerTarget} className="py-2 text-center">
-                    {isLoading && <Loader2 className="h-4 w-4 animate-spin mx-auto" />}
+                    {isLoading && (
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                    )}
                   </div>
                 )}
               </CommandGroup>
