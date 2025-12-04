@@ -1,10 +1,13 @@
- 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL, apiFetch } from "@/lib/apiClient";
 import {
+  TemplatesResponse,
+  TemplateWorkflowDetails,
+  ValidateWorkflowPayload,
   WorkFlowConfigurationPayload,
   WorkflowDetails,
   WorkflowPayload,
+  WorkFlowTemplatePayload,
   WorkflowTypes,
 } from "@/types/workflow";
 import axios from "axios";
@@ -77,6 +80,7 @@ export const useConfigureWorkflow = (id: string) => {
   });
 };
 
+//Get configured steps
 export const fetchConfiguredWorkflowSteps = (id: string) =>
   apiFetch<WorkflowDetails>(
     `/admin/workflows/${id}/configuration`,
@@ -84,6 +88,8 @@ export const fetchConfiguredWorkflowSteps = (id: string) =>
     true
   );
 
+
+  // Hook to get configured steps
 export function useGetConfiguredWorkflowSteps(id: string) {
   return useQuery({
     queryKey: ["workflows", id],
@@ -91,9 +97,24 @@ export function useGetConfiguredWorkflowSteps(id: string) {
   });
 }
 
+// Get template steps
+export const fetchTemplateWorkflowSteps = (id: string) =>
+  apiFetch<TemplateWorkflowDetails>(
+    `/admin/workflows/templates/${id}`,
+    { method: "GET" },
+    true
+  );
+
+export function useGetTemplateWorkflowSteps(id: string) {
+  return useQuery({
+    queryKey: ["workflows", id],
+    queryFn: () => fetchTemplateWorkflowSteps(id), // no cache
+  });
+}
+
 //Validate Workflow
 export const validateWorkflow = async (
-  payload: WorkFlowConfigurationPayload
+  payload: ValidateWorkflowPayload
 ): Promise<WorkflowTypes> => {
   const { data } = await axios.post(
     `${API_BASE_URL}/admin/workflows/validate`,
@@ -107,8 +128,7 @@ export const useValidateWorkflow = () => {
   const invalidateWorkflows = useInvalidateWorkflows();
 
   return useMutation({
-    mutationFn: (payload: WorkFlowConfigurationPayload) =>
-      validateWorkflow(payload),
+    mutationFn: (payload: ValidateWorkflowPayload) => validateWorkflow(payload),
     onSuccess: () => {
       invalidateWorkflows();
     },
@@ -182,6 +202,45 @@ export const useDeleteWorkflow = () => {
     },
   });
 };
+
+// save workflow as template
+export const saveWorkflowTemplate = async (
+  payload: WorkFlowTemplatePayload
+): Promise<any> => {
+  const { data } = await axios.post(
+    `${API_BASE_URL}/admin/workflows/save-template`,
+    payload
+  );
+  return data;
+};
+
+//Hook to save workflow as template
+export const useSaveWorkflowTemplate = (id: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: WorkFlowTemplatePayload) =>
+      saveWorkflowTemplate(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: WORKFLOW_KEYS.details(id) });
+    },
+  });
+};
+
+// Get workflow templates
+export const fetchWorkflowTemplates = () =>
+  apiFetch<TemplatesResponse[]>(
+    "/admin/workflows/templates",
+    { method: "GET" },
+    true
+  );
+
+export function useGetAllTemplatesWorkflows() {
+  return useQuery({
+    queryKey: ["workflows", "templates"],
+    queryFn: () => fetchWorkflowTemplates(), // no cache
+  });
+}
 
 export function useInvalidateWorkflows() {
   const queryClient = useQueryClient();

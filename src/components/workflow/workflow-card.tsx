@@ -3,17 +3,20 @@
 import { GitMerge, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import dayjs from "dayjs";
 
 export interface WorkflowTemplateCardProps {
   title: string;
   isNew: boolean;
   link: string;
+  createdAt?: string;
   onclick?: () => void;
 }
 
 export default function WorkflowTemplateCard({
   title,
   isNew = false,
+  createdAt,
   link,
 }: WorkflowTemplateCardProps) {
   const router = useRouter();
@@ -40,7 +43,9 @@ export default function WorkflowTemplateCard({
             {title}
           </h6>
           <p className="text-[#A9A9A9] text-[12px] font-medium">
-            {isNew ? "Start from scratch" : `Created Jun 24, 2025`}
+            {isNew
+              ? "Start from scratch"
+              : `Created ${dayjs(createdAt).format("MMM DD, YYYY")}`}
           </p>
         </div>
         {!isNew && (

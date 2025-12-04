@@ -23,7 +23,7 @@ export interface WorkflowUserType {
   email: string;
   name: string;
   dept: string;
-  role: string[];
+  roles: string[];
 }
 
 export interface ConditionsType {
@@ -38,7 +38,24 @@ export interface Step {
   stepName: string;
   configured: boolean;
   approverType: "RoleBased" | "SpecificUsers";
-  role: string;
+  roles: string[];
+  users: WorkflowUserType[];
+  approverMode: "AllApprovers" | "Anyone";
+  deadline: string;
+  enableEscalation: boolean;
+  escalationUsers: WorkflowUserType[];
+  conditions?: ConditionsType[];
+  updatedAt?: string;
+}
+
+export interface StepTemplate {
+  createdAt?: string;
+  id?: string;
+  order: number;
+  stepName: string;
+  configured?: boolean;
+  approverType: "RoleBased" | "SpecificUsers";
+  roles: string[];
   users: WorkflowUserType[];
   approverMode: "AllApprovers" | "Anyone";
   deadline: string;
@@ -49,14 +66,27 @@ export interface Step {
 }
 
 export interface WorkFlowConfigurationPayload {
-  steps: Step[];
+  useTemplate: boolean;
+  templateId?: string;
+  saveAsTemplate: boolean;
+  templateName: string;
+  steps: StepTemplate[];
+}
+
+export interface WorkFlowTemplatePayload {
+  templateName: string;
+  steps: StepTemplate[];
+}
+
+export interface ValidateWorkflowPayload {
+  steps: StepTemplate[];
 }
 
 export interface WorkflowRetrievedSteps {
   id: string;
   stepName: string;
   approvalType: "RoleBased" | "SpecificUsers";
-  role: string;
+  roles: string[];
   users: WorkflowUserType[];
   approverMode: "AllApprovers" | "Anyone";
   deadline: string;
@@ -72,7 +102,20 @@ export interface WorkflowDetails {
   steps: WorkflowRetrievedSteps[];
 }
 
+export interface TemplatesResponse {
+  id: string;
+  templateName: string;
+  createdAt: string;
+}
+
 export enum WorkflowStatus {
-  Draft = 'Draft',
-  Configured = 'Configured',
+  Draft = "Draft",
+  Configured = "Configured",
+}
+
+export interface TemplateWorkflowDetails {
+  id: string;
+  templateName: string;
+  createdAt: string;
+  template: WorkflowRetrievedSteps[];
 }

@@ -9,7 +9,6 @@ import {
   StepTemplate,
   WorkFlowConfigurationPayload,
   WorkflowRetrievedSteps,
-  WorkflowStatus,
   WorkFlowTemplatePayload,
   WorkflowUserType,
 } from "@/types/workflow";
@@ -17,7 +16,7 @@ import {
   useActivateWorkflow,
   useConfigureWorkflow,
   useDeactivateWorkflow,
-  useGetConfiguredWorkflowSteps,
+  useGetTemplateWorkflowSteps,
   useSaveWorkflowTemplate,
   useValidateWorkflow,
 } from "@/hooks/api/useWorkflowQuery";
@@ -64,7 +63,8 @@ const WorkflowEditor = () => {
   const [isDeactivated, setIsDeactivated] = useState(false);
   const [templateSaving, setTemplateSaving] = useState(false);
   const [templateSaved, setSavedTemplate] = useState(false);
-  const [templateSavedAndActivated, setSavedAndActivatedTemplate] = useState(false);
+  const [templateSavedAndActivated, setSavedAndActivatedTemplate] =
+    useState(false);
   const [templateSuccessSaved, setSuccessTemplate] = useState(false);
   const [isActivating, setActivating] = useState(false);
   const [message, setMessage] = useState("");
@@ -99,16 +99,16 @@ const WorkflowEditor = () => {
     },
   });
 
-  const { data: configureStepData, isLoading } = useGetConfiguredWorkflowSteps(
+  const { data: configureStepData, isLoading } = useGetTemplateWorkflowSteps(
     params.id as string
   );
 
   const configureSteps: WorkflowRetrievedSteps[] = React.useMemo(() => {
-    return configureStepData?.steps as WorkflowRetrievedSteps[];
+    return configureStepData?.template as WorkflowRetrievedSteps[];
   }, [configureStepData, isLoading]);
 
   const configureStepName: string = React.useMemo(() => {
-    return configureStepData?.name as string;
+    return configureStepData?.templateName as string;
   }, [configureStepData, isLoading]);
 
   useEffect(() => {
@@ -251,9 +251,9 @@ const WorkflowEditor = () => {
           escalationUsers:
             formData.enableEscalation === "yes" ? formData.escalationUsers : [],
           conditions:
-            formData.conditions?.department?.trim() === ""
-              ? []
-              : [formData.conditions as ConditionsType],
+            formData.conditions && formData.conditions.department
+              ? [formData.conditions as ConditionsType]
+              : [],
           // configured: true,
         };
       }
@@ -262,7 +262,7 @@ const WorkflowEditor = () => {
 
     const payload: WorkFlowConfigurationPayload = {
       templateName: configureStepName,
-      useTemplate: false,
+      useTemplate: true,
       templateId: params.id as string,
       saveAsTemplate: false,
       steps: updatedSteps,
@@ -296,7 +296,7 @@ const WorkflowEditor = () => {
                   ? formData.escalationUsers
                   : [],
               conditions:
-                formData.conditions?.department?.trim() !== ""
+                formData.conditions && formData.conditions.department
                   ? [formData.conditions as ConditionsType]
                   : [],
               configured: response?.status === "Configured" ? true : false,
@@ -735,12 +735,12 @@ const WorkflowEditor = () => {
   };
 
   const saveWorkflowAsTemplate = () => {
-    // if (!selectedStep) return;
+    if (!selectedStep) return;
 
     setTemplateSaving(true);
 
     const updatedSteps = steps.map((step) => {
-      if (step.id === selectedStep?.id) {
+      if (step.id === selectedStep.id) {
         return {
           id: formData.id,
           stepName: formData.stepName,
@@ -832,8 +832,8 @@ const WorkflowEditor = () => {
   return (
     <div className="font-[family-name:var(--font-dm)]">
       <WorkflowHeader
-        workflowName={configureStepData?.name as string}
-        status={configureStepData?.status as WorkflowStatus}
+        workflowName={configureStepData?.templateName as string}
+        status={'Draft'}
         stepIsSaved={stepIsSaved}
         stepsLength={steps.length}
         validationLoader={validationLoader}
