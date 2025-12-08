@@ -100,7 +100,7 @@ export function useGetConfiguredWorkflowSteps(id: string) {
 // Get template steps
 export const fetchTemplateWorkflowSteps = (id: string) =>
   apiFetch<TemplateWorkflowDetails>(
-    `/admin/workflows/templates/${id}`,
+    `/templates/templates/${id}`,
     { method: "GET" },
     true
   );
@@ -230,7 +230,7 @@ export const useSaveWorkflowTemplate = (id: string) => {
 // Get workflow templates
 export const fetchWorkflowTemplates = () =>
   apiFetch<TemplatesResponse[]>(
-    "/admin/workflows/templates",
+    "/templates/fetch-templates",
     { method: "GET" },
     true
   );

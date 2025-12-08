@@ -3,3 +3,9 @@ export const WORKFLOW_KEYS = {
   all: ["workflows"] as const,
   details: (id: string) => ["workflows", id] as const,
 };
+
+export const DOCUMENT_KEYS = {
+  all: ["documents"] as const,
+  details: (id: string) => ["documents", id] as const,
+};
+

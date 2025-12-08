@@ -24,6 +24,7 @@ import {
 import { Badge } from "../ui/badge";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
+import { DocumentDetails, DocumentResponse } from "@/types/documents";
 
 export type DocumentType = {
   id: string;
@@ -42,23 +43,15 @@ export type ApprovalStatus =
   | "Closed";
 
 interface DataTableProps {
-  data: DocumentType[];
+  data: DocumentResponse;
   showPagination?: boolean;
-  deleteLoader?: boolean;
-  onSuccess?: boolean;
   previousTable?: () => void;
   nextTable?: () => void;
 }
 
 export function DocumentsTable(props: DataTableProps) {
   const router = useRouter();
-  const {
-    data,
-    showPagination = false,
-    previousTable,
-    nextTable,
-    onSuccess,
-  } = props;
+  const { data, showPagination = false, previousTable, nextTable } = props;
 
   const getStatusBadge = (status: ApprovalStatus) => {
     const styles = {
@@ -77,7 +70,7 @@ export function DocumentsTable(props: DataTableProps) {
     );
   };
 
-  const columns: ColumnDef<DocumentType>[] = [
+  const columns: ColumnDef<DocumentDetails>[] = [
     {
       accessorKey: "title",
       header: () => {
@@ -123,13 +116,13 @@ export function DocumentsTable(props: DataTableProps) {
     {
       accessorKey: "dateModified",
       header: () => {
-        return <div className="p-[10px]">Date Modified</div>;
+        return <div className="p-[10px]">Date Created</div>;
       },
       cell: ({ row }) => {
         const document = row.original;
         return (
           <div className="capitalize p-[10px]">
-            <p>{dayjs(document?.dateModified).format("MMM DD, YYYY")}</p>
+            <p>{dayjs(document?.createdAt).format("MMM DD, YYYY")}</p>
           </div>
         );
       },
@@ -152,7 +145,7 @@ export function DocumentsTable(props: DataTableProps) {
   ];
 
   const table = useReactTable({
-    data: data,
+    data: data?.items,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -162,8 +155,8 @@ export function DocumentsTable(props: DataTableProps) {
     router.push(`/documents/${id}`);
   };
 
-  //   const canNext = data?.page < data?.meta?.totalPages;
-  //   const canPrevious = data?.meta?.page > 1;
+  const canNext = data?.page < data?.totalPages;
+  const canPrevious = data?.page > 1;
 
   return (
     <div className="w-full min-h-[80vh]">
@@ -200,7 +193,7 @@ export function DocumentsTable(props: DataTableProps) {
                   key={row.id}
                   className="odd:bg-[#F9FAFB] w-full border-0 cursor-pointer"
                   onClick={() => {
-                    goToDetailsPage(row.original?.id);
+                    goToDetailsPage(row.original?.batchId);
                   }}
                   data-state={row?.getIsSelected() && "selected"}
                 >
@@ -234,7 +227,7 @@ export function DocumentsTable(props: DataTableProps) {
         <div className="flex items-center justify-between space-x-2 py-4 px-[24px]">
           <div className="space-x-2">
             <span className="font-[family-name:var(--font-dm)] text-[#344054] text-[12px]">
-              Page {1} of {1}
+              Page {data?.page} of {data?.totalPages}
             </span>
           </div>
           <div className="space-x-2">
@@ -242,7 +235,7 @@ export function DocumentsTable(props: DataTableProps) {
               variant="outline"
               size="sm"
               onClick={previousTable}
-              disabled={false}
+              disabled={!canPrevious}
             >
               Previous
             </Button>
@@ -250,7 +243,7 @@ export function DocumentsTable(props: DataTableProps) {
               variant="outline"
               size="sm"
               onClick={nextTable}
-              disabled={false}
+              disabled={!canNext}
             >
               Next
             </Button>
