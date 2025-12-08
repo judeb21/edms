@@ -6,8 +6,11 @@ import {
   DocumentType,
 } from "@/components/tables/documentTable";
 import { Button } from "@/components/ui/button";
-import { FileText, Plus } from "lucide-react";
+import { useGetDocuments } from "@/hooks/api/useDocumentQuery";
+import { DocumentResponse, FetchDocumentObject } from "@/types/documents";
+import { FileText, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 
 export default function TemplatesPage() {
   const router = useRouter();
@@ -15,6 +18,44 @@ export default function TemplatesPage() {
     { label: "Document Management", href: "/overview" },
     { label: "Document" },
   ];
+  const [payloadParams, setPayloadParams] = useState<FetchDocumentObject>({
+    page: 1,
+    pageSize: 10,
+    department: "",
+    category: "",
+    keyword: "",
+  });
+
+  // Get documents
+  const { data, isLoading } = useGetDocuments(payloadParams);
+
+  const getNext = () => {
+    const nextPayload = {
+      page: payloadParams.page + 1,
+      pageSize: payloadParams.pageSize,
+      department: payloadParams.department,
+      category: payloadParams.category,
+      keyword: payloadParams.keyword,
+    };
+    setPayloadParams(nextPayload);
+  };
+
+  const getPrev = () => {
+    const prevPayload = {
+      page: payloadParams.page - 1,
+      pageSize: payloadParams.pageSize,
+      department: payloadParams.department,
+      category: payloadParams.category,
+      keyword: payloadParams.keyword,
+    };
+    setPayloadParams(prevPayload);
+  };
+
+  const documentData = useMemo(() => {
+    const docData = data as DocumentResponse;
+
+    return docData;
+  }, [data]);
 
   const goToNewDocument = () => router.push("/documents/new");
 
@@ -36,6 +77,16 @@ export default function TemplatesPage() {
       status: "Submitted",
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <Loader2 className="animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#CCCCCC] min-h-screen font-[family-name:var(--font-dm)]">
@@ -75,8 +126,10 @@ export default function TemplatesPage() {
         ) : (
           <div>
             <DocumentsTable
-              data={documents as DocumentType[]}
-              showPagination={false}
+              data={documentData}
+              showPagination={true}
+              previousTable={() => getPrev()}
+              nextTable={() => getNext()}
             />
           </div>
         )}

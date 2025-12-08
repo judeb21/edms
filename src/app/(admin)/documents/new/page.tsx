@@ -1,6 +1,5 @@
 "use client";
 
-import LoaderButton from "@/components/common/loader-button";
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,23 +20,28 @@ import {
   CloudUpload,
   Eye,
   Info,
+  Loader2,
   Repeat,
   Trash,
 } from "lucide-react";
 import { ChangeEvent, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
-import { Progress } from "@/components/ui/progress";
+import axios, { AxiosError } from "axios";
 import { API_BASE_URL } from "@/lib/apiClient";
 import { useGetWorkflows } from "@/hooks/api/useWorkflowQuery";
 import { useGetDepartmentsQuery } from "@/hooks/api/useSmartUserQuery";
 import { DepartmentType } from "@/types/smartUserTypes";
 import { WorkflowTypes } from "@/types/workflow";
-import { DocumentFormData } from "@/types/documents";
+import { DocumentFormData, DocumentFormDataPayload } from "@/types/documents";
+import { useUploadProcessQuery } from "@/hooks/api/useDocumentQuery";
+import { toast } from "sonner";
+import GenericModal from "@/components/workflow/generic-modal";
+import Image from "next/image";
+import { SwiperCard } from "@/components/documents/swiperCard";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-type UploadFile = {
+export type UploadFile = {
   file: File;
   previewUrl: string;
   uploadedUrl?: string;
@@ -58,7 +62,38 @@ const ACCEPTED_TYPES = [
   "image/png",
 ];
 
-export default function TemplatesPage() {
+const categories = [
+  {
+    name: "Invoices",
+    value: "Invoices",
+  },
+  {
+    name: "Policies",
+    value: "Policies",
+  },
+  {
+    name: "Approvals",
+    value: "Approvals",
+  },
+  {
+    name: "Requisitions",
+    value: "Requisitions",
+  },
+  {
+    name: "Memos",
+    value: "Memos",
+  },
+  {
+    name: "Contracts",
+    value: "Contracts",
+  },
+  {
+    name: "Administrative/General Documents",
+    value: "Administrative/General Documents",
+  },
+];
+
+export default function NewDocumentPage() {
   const router = useRouter();
   const [loader, setLoader] = useState(false);
   const [successModal, showSuccessModal] = useState(false);
@@ -77,6 +112,7 @@ export default function TemplatesPage() {
   // eslint-disable-next-line
   const [errors, setErrors] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [previewModal, setPreviewModal] = useState(false);
 
   const breadcrumbItems = [
     { label: "Document Management", href: "/overview" },
@@ -84,6 +120,8 @@ export default function TemplatesPage() {
   ];
 
   const { data } = useGetWorkflows();
+
+  const uploadMutation = useUploadProcessQuery();
 
   const workflows = useMemo(() => {
     const sortedData =
@@ -110,13 +148,48 @@ export default function TemplatesPage() {
     return sortedData;
   }, [departmentsData]);
 
-  const uploadDocument = () => {
+  const uploadDocument = (e: React.FormEvent) => {
+    e.preventDefault();
     setLoader(true);
 
-    setTimeout(() => {
-      setLoader(false);
-      showSuccessModal(true);
-    }, 500);
+    const filesUp = files.map((file) => {
+      return file.file;
+    });
+
+    const payload: DocumentFormDataPayload = {
+      file: filesUp as File[],
+      title: formData.title,
+      description: formData.description,
+      category: formData.category,
+      tags: formData.tags,
+      department: formData.department,
+      addWorkflow: formData.workflowAdded,
+      workflowName: formData.workflow,
+    };
+
+    uploadMutation.mutate(payload, {
+      onSuccess: () => {
+        setLoader(false);
+        showSuccessModal(true);
+      },
+      onError: (error) => {
+        setLoader(false);
+        toast.error(
+          error instanceof AxiosError
+            ? error?.response?.data?.message
+            : "Failed to upload document",
+          {
+            unstyled: true,
+            position: "top-right",
+            classNames: {
+              toast:
+                "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+              title: "text-[#E71D36]",
+            },
+          }
+        );
+      },
+    });
   };
 
   const goToDocuments = () => {
@@ -191,15 +264,15 @@ export default function TemplatesPage() {
         const updated = [...prev, ...validFiles];
 
         // Trigger upload immediately for each new file
-        validFiles.forEach((fileObj) => {
-          uploadSingleFile(fileObj, (updatedFile) => {
-            setFiles((curr) =>
-              curr.map((f) =>
-                f.file === fileObj.file ? { ...f, ...updatedFile } : f
-              )
-            );
-          });
-        });
+        // validFiles.forEach((fileObj) => {
+        //   uploadSingleFile(fileObj, (updatedFile) => {
+        //     setFiles((curr) =>
+        //       curr.map((f) =>
+        //         f.file === fileObj.file ? { ...f, ...updatedFile } : f
+        //       )
+        //     );
+        //   });
+        // });
 
         return updated;
       });
@@ -248,15 +321,15 @@ export default function TemplatesPage() {
         const updated = [...prev, ...validFiles];
 
         // Trigger upload immediately for each new file
-        validFiles.forEach((fileObj) => {
-          uploadSingleFile(fileObj, (updatedFile) => {
-            setFiles((curr) =>
-              curr.map((f) =>
-                f.file === fileObj.file ? { ...f, ...updatedFile } : f
-              )
-            );
-          });
-        });
+        // validFiles.forEach((fileObj) => {
+        //   uploadSingleFile(fileObj, (updatedFile) => {
+        //     setFiles((curr) =>
+        //       curr.map((f) =>
+        //         f.file === fileObj.file ? { ...f, ...updatedFile } : f
+        //       )
+        //     );
+        //   });
+        // });
 
         return updated;
       });
@@ -272,7 +345,7 @@ export default function TemplatesPage() {
 
     try {
       const res = await axios.post(
-        `${API_BASE_URL}/document/upload`,
+        `${API_BASE_URL}/documents/api/documents/upload`,
         formData,
         {
           headers: {
@@ -328,6 +401,12 @@ export default function TemplatesPage() {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + "" + sizes[i];
   }
+
+  const handlePreview = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setPreviewModal(true);
+  };
 
   // eslint-disable-next-line
   const [suggestions, setSuggestions] = useState<string[]>([
@@ -405,6 +484,26 @@ export default function TemplatesPage() {
     addTag(tag);
   };
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const documentIsImage = (file: File) => {
+    return file.type.startsWith("image/");
+  };
+
+  const disableForm =
+    files.length === 0 || // must have at least one file
+    formData.title.trim() === "" ||
+    formData.description.trim() === "" ||
+    formData.category.trim() === "" ||
+    formData.department.trim() === "" ||
+    formData.tags.length === 0 ||
+    (formData.workflowAdded && formData?.workflow?.trim() === "");
+
   return (
     <div className="bg-[#CCCCCC] min-h-screen font-[family-name:var(--font-dm)]">
       {/* Page Breadcrumbs */}
@@ -453,6 +552,7 @@ export default function TemplatesPage() {
               <Input
                 type="file"
                 ref={fileInputRef}
+                multiple
                 accept="
                     application/pdf,
                     application/msword,
@@ -501,14 +601,13 @@ export default function TemplatesPage() {
                       <Button
                         type="button"
                         onClick={() => removeFile(f)}
-                        className="text-red-600 hover:underline cursor-pointer bg-transparent hover:bg-transparent text-center h-[36px] font-[family-name:var(--font-dm)] text-[14px] hover:text-red-600 shadow-none"
+                        className="text-primary-gray hover:underline cursor-pointer bg-transparent hover:bg-transparent text-center h-[36px] font-[family-name:var(--font-dm)] text-[14px] hover:text-red-600 shadow-none"
                       >
                         <Trash />
-                        Delete
                       </Button>
                     </div>
 
-                    {f.uploading && (
+                    {/* {f.uploading && (
                       <div className="w-full bg-gray-200 h-2 rounded">
                         <Progress
                           value={f.progress}
@@ -521,7 +620,7 @@ export default function TemplatesPage() {
                           }`}
                         />
                       </div>
-                    )}
+                    )} */}
 
                     {f.error && (
                       <div className="text-sm text-[#E71D36] flex items-center justify-between">
@@ -559,6 +658,7 @@ export default function TemplatesPage() {
             <Input
               placeholder="Add Document Title"
               className="focus-visible:ring-0 h-[50px] rounded-[8px] border-[#cccccc]"
+              onChange={(e) => handleInputChange("title", e.target.value)}
             />
           </div>
 
@@ -567,22 +667,35 @@ export default function TemplatesPage() {
             <Textarea
               placeholder="Add Document Description"
               className="focus-visible:ring-0 resize-none h-30 rounded-[8px] border-[#cccccc]"
+              onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>
 
           <div className="space-y-2 mt-[36px]">
             <Label>Category</Label>
-            <Input
-              placeholder="Add Category"
-              className="focus-visible:ring-0 h-[50px] rounded-[8px] border-[#cccccc]"
-            />
+            <Select
+              onValueChange={(e) => {
+                handleInputChange("category", e);
+              }}
+            >
+              <SelectTrigger className="w-full !h-[50px] focus-visible:ring-0">
+                <SelectValue placeholder="Select Category" />
+              </SelectTrigger>
+              <SelectContent className="">
+                {categories?.map((category, index) => (
+                  <SelectItem value={category.value} key={index}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2 mt-[36px]">
             <Label>Tags</Label>
             <div className="flex flex-wrap items-center gap-2 border rounded-md px-3 py-2 focus-within:ring-0 focus-within:ring-offset-0 transition h-auto min-h-[50px]">
               {/* Tags */}
-              {/* Use Space, Enter, or Comma to create tags */}
+              {/* Use Space, or Comma to create tags */}
               {formData?.tags?.map((tag, index) => (
                 <span
                   key={index}
@@ -628,8 +741,12 @@ export default function TemplatesPage() {
 
           <div className="space-y-2 mt-[36px]">
             <Label>Department</Label>
-            <Select>
-              <SelectTrigger className="w-full !h-[50px]">
+            <Select
+              onValueChange={(e) => {
+                handleInputChange("department", e);
+              }}
+            >
+              <SelectTrigger className="w-full !h-[50px] focus-visible:ring-0">
                 <SelectValue placeholder="Select Departments" />
               </SelectTrigger>
               <SelectContent className="">
@@ -663,13 +780,17 @@ export default function TemplatesPage() {
             {formData.workflowAdded && (
               <div className="space-y-2 mt-[16px]">
                 <Label>Select Workflow</Label>
-                <Select>
+                <Select
+                  onValueChange={(e) => {
+                    handleInputChange("workflow", e);
+                  }}
+                >
                   <SelectTrigger className="w-full !h-[50px]">
                     <SelectValue placeholder="Select Workflow" />
                   </SelectTrigger>
                   <SelectContent className="">
                     {workflows?.map((workflow) => (
-                      <SelectItem value={workflow.id} key={workflow.id}>
+                      <SelectItem value={workflow.name} key={workflow.id}>
                         {workflow.name}
                       </SelectItem>
                     ))}
@@ -682,30 +803,113 @@ export default function TemplatesPage() {
           <div className="mt-[30px] flex justify-end items-center gap-6">
             <Button
               variant={"ghost"}
+              type="button"
               className="hover:bg-white text-brand-blue hover:text-brand-blue"
+              disabled={disableForm || loader}
+              onClick={handlePreview}
             >
               <Eye />
               Preview
             </Button>
-            <LoaderButton
-              isLoading={loader}
-              buttonText="Upload Document"
-              className="bg-brand-blue hover:bg-brand-blue"
-              nextStep={uploadDocument}
-            />
+            <Button
+              type="submit"
+              className={`cursor-pointer text-center rounded-[8px] bg-brand-blue hover:bg-brand-blue`}
+              disabled={disableForm || loader}
+              onClick={uploadDocument}
+            >
+              {loader && (
+                <>
+                  <Loader2 className="mr-1 animate-spin" />
+                </>
+              )}
+              Upload Document
+            </Button>
           </div>
         </form>
 
         {/* Successfully approved document */}
         <SuccessModal
           isOpen={successModal}
-          description={
-            "The Document “Employment Contract” has been uploaded successfully"
-          }
+          description={`The Document “${formData.title}” has been uploaded successfully`}
           buttonText="Done"
           buttonClass="-translate-y-[20px]"
           handleClick={goToDocuments}
         />
+
+        {/* Preview Document upload */}
+        <GenericModal
+          isOpen={previewModal}
+          title="Document Preview"
+          showClose={true}
+          handleClose={() => setPreviewModal(false)}
+          className="!max-w-[600px] h-[600px] overflow-auto"
+        >
+          <div className="w-full -translate-y-8">
+            <div className="grid grid-cols-4 gap-3">
+              <div>
+                <h5 className="text-[14px] font-semibold">Document Title</h5>
+                <p className="text-[12px] font-semibold text-[#A9A9A9]">
+                  {formData?.title}
+                </p>
+              </div>
+
+              <div>
+                <h5 className="text-[14px] font-semibold">Category</h5>
+                <p className="text-[12px] font-semibold text-[#A9A9A9]">
+                  {formData?.category}
+                </p>
+              </div>
+
+              <div>
+                <h5 className="text-[14px] font-semibold">Tags</h5>
+                <p className="text-[12px] font-semibold text-[#FFC107]">
+                  {formData?.tags
+                    .map((tag) => {
+                      return tag;
+                    })
+                    .join(", ")}
+                </p>
+              </div>
+
+              <div>
+                <h5 className="text-[14px] font-semibold">Department</h5>
+                <p className="text-[12px] font-semibold text-[#A9A9A9]">
+                  {formData?.department}
+                </p>
+              </div>
+            </div>
+
+            {/* Document preview */}
+            <div className="my-[30px] translate-y-8">
+              {files.length === 1 && (
+                <div>
+                  {documentIsImage(files[0]?.file) ? (
+                    <Image
+                      src={files[0]?.previewUrl}
+                      alt="Comment attachment"
+                      width={32}
+                      height={32}
+                      className="w-[80%] mx-auto h-[250px] object-cover rounded"
+                    />
+                  ) : (
+                    <iframe
+                      src={files[0]?.previewUrl}
+                      className="w-[80%] mx-auto h-[400px] border rounded"
+                      title={formData.title}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* multiple file uploads */}
+              {files.length > 1 && (
+                <div className="w-[80%] mx-auto">
+                  <SwiperCard files={files} />
+                </div>
+              )}
+            </div>
+          </div>
+        </GenericModal>
       </div>
     </div>
   );

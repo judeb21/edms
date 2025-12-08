@@ -1,5 +1,6 @@
 import { XIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface ModalProps {
   handleClick?: () => void;
   children: React.ReactNode;
   showClose?: boolean;
+  className?: string;
 }
 
 const GenericModal = ({
@@ -21,12 +23,15 @@ const GenericModal = ({
   description,
   children,
   showClose = false,
+  className,
 }: ModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-lg p-0 font-[family-name:var(--font-dm)]"
+        className={cn(
+          `max-w-lg p-0 font-[family-name:var(--font-dm)] ${className}`
+        )}
       >
         <DialogHeader className="flex flex-row items-center justify-between px-6 py-4">
           <DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
