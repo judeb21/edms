@@ -18,14 +18,14 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex items-center justify-center font-[family-name:var(--font-dm)] p-4">
-      <div className="flex flex-col md:flex-row items-center gap-8 max-w-7xl w-full">
+      <div className="grid lg:grid-cols-2 items-center gap-8 lg:gap-16 max-w-7xl w-full">
         <AuthBrand
           authTitle={authTitle}
           authDescription={authDescription}
           authsubTitle={authsubTitle}
         />
 
-        <div className="flex-1 w-full overflow-hidden flex-1">
+        <div className="order-1 lg:order-2">
           <div className="rounded-[24px] border-5 border-brand-blue pt-[100px] pb-[50px] px-[44px] shadow-md">
             {children}
           </div>

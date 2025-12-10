@@ -16,6 +16,7 @@ jobs:
     env:
       NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
       NEXT_PUBLIC_SMART_USER_API_URL: ${{ secrets.NEXT_PUBLIC_SMART_USER_API_URL }}
+      NEXT_PUBLIC_BACKOFFICE_URL: ${{ secrets.NEXT_PUBLIC_BACKOFFICE_URL }}
 
     steps:
       # 1. Checkout code
@@ -85,6 +86,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_SMART_USER_API_URL: ${{ secrets.NEXT_PUBLIC_SMART_USER_API_URL }}
+          NEXT_PUBLIC_BACKOFFICE_URL: ${{ secrets.NEXT_PUBLIC_BACKOFFICE_URL }}
         run: pnpm build
 
       # 7. Deploy to Netlify

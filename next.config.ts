@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
+  images: {
+    domains: ["file360-dev.digitvant.com"],
+  },
 };
 
 export default nextConfig;

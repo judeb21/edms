@@ -2,6 +2,7 @@ import {
   DocumentBatchDetails,
   DocumentFormDataPayload,
   DocumentResponse,
+  DocumentSharePayload,
   FetchDocumentObject,
 } from "@/types/documents";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,9 +22,6 @@ function buildQuery(params: FetchDocumentObject): string {
 
   return query.toString();
 }
-
-// https://workflow-dev.digitvant.com/api/documents/api/documents?page=1&pageSize=5
-// https://workflow-dev.digitvant.com/api/documents/api/documents/page=1&pageSize=10
 
 export function toFormData(data: DocumentFormDataPayload): FormData {
   const formData = new FormData();
@@ -74,6 +72,26 @@ export function useUploadProcessQuery() {
   return useMutation({
     mutationFn: (payload: DocumentFormDataPayload) =>
       uploadProcessDocument(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: DOCUMENT_KEYS.all });
+    },
+  });
+}
+
+// Share documents with user emails
+async function shareDocumentsById(payload: DocumentSharePayload) {
+  const { data } = await axios.post(
+    `${API_BASE_URL}/documents/api/documents/${payload.documentId}/share`,
+    payload
+  );
+  return data;
+}
+
+// Hook to share documents
+export function useShareDocumentMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: DocumentSharePayload) => shareDocumentsById(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: DOCUMENT_KEYS.all });
     },

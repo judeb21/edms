@@ -122,7 +122,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
           <div className="capitalize p-[10px]">
             <p>{document?.documentName}</p>
             <span className="text-[#A9A9A9] text-[12px]">
-              PDF | 5MB Created{" "}
+              PDF | 5MB
             </span>
           </div>
         );

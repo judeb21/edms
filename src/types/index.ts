@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 export interface ErrorObject {
   [key: string]: string[] | string[][] | any;
 }
@@ -12,4 +12,20 @@ export interface ExtendedFetchBaseQueryError {
   data: ResponseErrorData;
   status: number | string;
   message?: string;
+}
+
+export interface AuthenticatedUserInfo {
+  id: string;
+  firstName: string;
+  lastName: string;
+  otherName: string;
+  phoneNumber: string;
+  username: string;
+  email: string;
+  defaultRole: string;
+  userType: string;
+  status: string;
+  departmentId: string;
+  roles: string[];
+  createdAt?: string;
 }

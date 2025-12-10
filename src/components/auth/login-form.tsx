@@ -16,7 +16,10 @@ import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 import Link from "next/link";
-import { loginSchema, LoginValidation } from "@/validationSchemas/auth/loginSchema";
+import {
+  loginSchema,
+  LoginValidation,
+} from "@/validationSchemas/auth/loginSchema";
 import { useRouter } from "next/navigation";
 import { ExtendedFetchBaseQueryError } from "@/types";
 import { Button } from "../ui/button";
@@ -27,6 +30,8 @@ export default function LoginForm() {
   const { setUser } = useUser();
   const form = LoginValidation();
   const [buttonLoader, setButtonLoader] = useState(false);
+
+  const forgotPasswordLink = process.env.NEXT_PUBLIC_BACKOFFICE_URL;
 
   const router = useRouter();
 
@@ -41,11 +46,12 @@ export default function LoginForm() {
       password: values.password,
     };
     setButtonLoader(true);
+
     try {
       const res = await fetch("/api/login", {
         method: "POST",
         body: JSON.stringify({
-          email: payload.email,
+          username: payload.email.trim(),
           password: payload.password,
         }),
         headers: { "Content-Type": "application/json" },
@@ -53,12 +59,14 @@ export default function LoginForm() {
 
       if (res.ok) {
         const data = await res.json();
+
         setUser(data);
+        router.push("/overview"); // move this ↑ first
         setButtonLoader(false);
-        router.push("/overview");
+        return;
       } else {
         setButtonLoader(false);
-        toast.error("Invalid credentials", {
+        toast.error(res.statusText, {
           unstyled: true,
           position: "top-right",
           classNames: {
@@ -69,7 +77,6 @@ export default function LoginForm() {
         });
       }
     } catch (error) {
-      console.log("Error", error);
       setButtonLoader(false);
       const requestError = error as ExtendedFetchBaseQueryError;
       toast.error(requestError?.data?.message, {
@@ -168,7 +175,8 @@ export default function LoginForm() {
 
             <div className="my-[16px] text-right">
               <Link
-                href="/forgot-password"
+                href={`${String(forgotPasswordLink)}?redirectfrom=edms`}
+                target="_blank"
                 className="text-[#464646] cursor-pointer font-[family-name:var(--font-dm)] text-[14px] text-right"
               >
                 Forgot password?
