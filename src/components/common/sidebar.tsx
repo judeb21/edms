@@ -18,16 +18,18 @@ import { superAdminLinks } from "@/utils/route";
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Settings } from "lucide-react";
-import { useUser } from "@/context/auth-context";
-// import { useDispatch } from "react-redux";
 
 export default function AppSidebar() {
-  //   const router = useRouter();
+  const router = useRouter();
   const pathname = usePathname();
 
-  const { logout } = useUser();
+  const logoutUser = async () => {
+    await fetch("/api/logout", { method: "POST" });
+
+    router.push("/login");
+  };
 
   return (
     <Sidebar variant="sidebar" collapsible="icon">
@@ -111,7 +113,7 @@ export default function AppSidebar() {
                       pathname === "/logout" &&
                       "hover:font-[family-name:var(--font-poppins)] !text-[#ffffff] bg-[#0284B2] hover:!bg-[#0284B2]"
                     }`}
-                    onClick={logout}
+                    onClick={logoutUser}
                   >
                     <LogOut className={"text-[#FC5A5A]"} />
                     <span className="text-[13px] text-[#FC5A5A] ml-2">

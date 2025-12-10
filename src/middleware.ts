@@ -9,12 +9,16 @@ const protectedRoutes = [
   "/workflow/new",
   "/approval-queue",
   "/settings",
-  "/more",
+  "/editor/:id",
+  "/template/:id",
+  "/workflow-editor/:id",
+  "/documents",
+  "/documents/:id",
 ];
 const publicRoutes = ["/login"];
 
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("cred-crm-ticket-tok")?.value;
   const { pathname } = req.nextUrl;
 
   const isProtectedRoute = protectedRoutes.includes(pathname);
@@ -40,7 +44,10 @@ export const config = {
     "/settings/:path*",
     "/workflow/:path*",
     "/workflow-editor/:path*",
+    "/eidtor/:path*",
     "/approval-queue/:path*",
     "/settings/:path*",
+    "/documents/:id*",
+    "/template/:path*",
   ],
 };

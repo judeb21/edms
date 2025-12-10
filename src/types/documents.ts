@@ -70,3 +70,10 @@ export interface DocumentBatchDetails {
   status: string;
   files: DocumentFiles[];
 }
+
+export interface DocumentSharePayload {
+  documentId: string;
+  shareWithEmail: string[];
+  permission: "viewer" | "commenter" | "editor";
+  message?: string;
+}

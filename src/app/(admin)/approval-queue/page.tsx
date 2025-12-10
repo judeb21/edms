@@ -6,6 +6,8 @@ import {
   ApprovalQueueType,
 } from "@/components/tables/approvalQueueTable";
 import SuccessModal from "@/components/workflow/modal-successful";
+import { useGetApprovalQueueQuery } from "@/hooks/api/useApprovalsQuery";
+import { Loader2 } from "lucide-react";
 // import { useDeleteWorkflow } from "@/hooks/api/useWorkflowQuery";
 // import { AxiosError } from "axios";
 import { useState } from "react";
@@ -21,6 +23,8 @@ export default function ApprovalQueuePage() {
     { label: "Overview", href: "/overview" },
     { label: "Approval Queue" },
   ];
+
+  const { isLoading } = useGetApprovalQueueQuery();
 
   //Delete workflow mutation
   //   const deleteWorkflow = useDeleteWorkflow();
@@ -75,15 +79,15 @@ export default function ApprovalQueuePage() {
     }, 500);
   };
 
-  //   if (isLoading) {
-  //     return (
-  //       <div className="flex items-center justify-center py-12">
-  //         <div className="text-center">
-  //           <Loader2 className="animate-spin" />
-  //         </div>
-  //       </div>
-  //     );
-  //   }
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <Loader2 className="animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#CCCCCC] min-h-screen font-[family-name:var(--font-dm)]">

@@ -13,8 +13,8 @@ export default function AuthBrand({
   authDescription = "Log in to manage users, settings, and data with admin privileges.",
 }: AuthBrandProps) {
   return (
-    <div className="relative flex flex-1 justify-center flex-col items-center hidden md:block min-h-screen">
-      <div className="flex-1 min-h-screen translate-y-[150px]">
+    <div className="order-2 lg:order-1 justify-center flex-col items-center hidden lg:block">
+      <div className="">
         <Image
           src="/assets/illustrations/auth/login.svg"
           alt="login screen"
