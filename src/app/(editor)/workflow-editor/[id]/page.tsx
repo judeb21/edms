@@ -806,7 +806,7 @@ const WorkflowEditor = () => {
   };
 
   const goBack = () => {
-    router.back();
+    router.push('/workflow');
   };
 
   const viewWorkflows = () => {

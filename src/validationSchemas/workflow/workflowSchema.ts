@@ -10,14 +10,14 @@ export const workflowSchema = z
       message: "Workflow name is required",
     }),
     description: z.string(),
-    scope: z.enum(["global", "department", "document"], {
+    scope: z.enum(["Global", "Department", "DocumentType"], {
       error: "Scope is required",
     }),
     scopeValue: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    const scopeIsDepartment = data.scope === "department";
-    const scopeIsDocumentType = data.scope === "document";
+    const scopeIsDepartment = data.scope === "Department";
+    const scopeIsDocumentType = data.scope === "DocumentType";
     if (scopeIsDepartment) {
       if (!data.scopeValue || data.scopeValue.trim() === "") {
         ctx.addIssue({
@@ -44,7 +44,7 @@ export const WorkflowCreationValidation = () =>
     defaultValues: {
       name: "",
       description: "",
-      scope: "global",
+      scope: "Global",
       scopeValue: "",
     },
   });

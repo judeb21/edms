@@ -222,13 +222,13 @@ export default function WorkFlowPage() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="">
-                              <SelectItem value="global">
+                              <SelectItem value="Global">
                                 Global (Everyone)
                               </SelectItem>
-                              <SelectItem value="department">
+                              <SelectItem value="Department">
                                 Department
                               </SelectItem>
-                              <SelectItem value="document">
+                              <SelectItem value="DocumentType">
                                 Document Type
                               </SelectItem>
                             </SelectContent>
@@ -240,7 +240,7 @@ export default function WorkFlowPage() {
                   />
                 </div>
 
-                {isScopeDepartment === "department" && (
+                {isScopeDepartment === "Department" && (
                   <div className="space-y-2 mt-[24px]">
                     <FormField
                       control={form.control}
@@ -281,7 +281,7 @@ export default function WorkFlowPage() {
                   </div>
                 )}
 
-                {isScopeDepartment === "document" && (
+                {isScopeDepartment === "DocumentType" && (
                   <div className="space-y-2 mt-[24px]">
                     <FormField
                       control={form.control}
