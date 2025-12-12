@@ -206,7 +206,7 @@ export const saveWorkflowTemplate = async (
   payload: WorkFlowTemplatePayload
 ): Promise<any> => {
   const { data } = await authenticatedAxios.post(
-    `${API_BASE_URL}/admin/workflows/save-template`,
+    `${API_BASE_URL}/templates/save-template`,
     payload
   );
   return data;
