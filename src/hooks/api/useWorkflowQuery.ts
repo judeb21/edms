@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL, apiFetch } from "@/lib/apiClient";
+import { API_BASE_URL, apiFetch, authenticatedAxios } from "@/lib/apiClient";
 import {
   TemplatesResponse,
   TemplateWorkflowDetails,
@@ -10,12 +10,12 @@ import {
   WorkFlowTemplatePayload,
   WorkflowTypes,
 } from "@/types/workflow";
-import axios from "axios";
+// import axios from "axios";
 import { WORKFLOW_KEYS } from "./query-keys";
 
 // Get workflows
 export const fetchWorkflows = () =>
-  apiFetch<WorkflowTypes[]>("/admin/workflows", { method: "GET" }, true);
+  apiFetch<WorkflowTypes[]>("/admin/workflows", { method: "GET" });
 
 // const createWorkflow = (payload: any): Promise<WorkflowTypes> => {
 //   const url = `/admin/workflows/create`;
@@ -29,8 +29,8 @@ export const fetchWorkflows = () =>
 export const createWorkflow = async (
   payload: WorkflowPayload
 ): Promise<WorkflowTypes> => {
-  const { data } = await axios.post(
-    `${API_BASE_URL}/admin/workflows/create`,
+  const { data } = await authenticatedAxios.post(
+    `/admin/workflows/create`,
     payload
   );
   return data;
@@ -60,8 +60,8 @@ export const configureWorkflow = async (
   workflowId: string,
   payload: WorkFlowConfigurationPayload
 ): Promise<any> => {
-  const { data } = await axios.patch(
-    `${API_BASE_URL}/admin/workflows/${workflowId}/configure`,
+  const { data } = await authenticatedAxios.patch(
+    `/admin/workflows/${workflowId}/configure`,
     payload
   );
   return data;
@@ -84,8 +84,7 @@ export const useConfigureWorkflow = (id: string) => {
 export const fetchConfiguredWorkflowSteps = (id: string) =>
   apiFetch<WorkflowDetails>(
     `/admin/workflows/${id}/configuration`,
-    { method: "GET" },
-    true
+    { method: "GET" }
   );
 
 
@@ -101,8 +100,7 @@ export function useGetConfiguredWorkflowSteps(id: string) {
 export const fetchTemplateWorkflowSteps = (id: string) =>
   apiFetch<TemplateWorkflowDetails>(
     `/templates/templates/${id}`,
-    { method: "GET" },
-    true
+    { method: "GET" }
   );
 
 export function useGetTemplateWorkflowSteps(id: string) {
@@ -116,8 +114,8 @@ export function useGetTemplateWorkflowSteps(id: string) {
 export const validateWorkflow = async (
   payload: ValidateWorkflowPayload
 ): Promise<WorkflowTypes> => {
-  const { data } = await axios.post(
-    `${API_BASE_URL}/admin/workflows/validate`,
+  const { data } = await authenticatedAxios.post(
+    `/admin/workflows/validate`,
     payload
   );
   return data;
@@ -139,8 +137,8 @@ export const useValidateWorkflow = () => {
 export const activateWorkflow = async (
   workflowId: string
 ): Promise<WorkflowTypes> => {
-  const { data } = await axios.post(
-    `${API_BASE_URL}/admin/workflows/${workflowId}/activate`
+  const { data } = await authenticatedAxios.post(
+    `/admin/workflows/${workflowId}/activate`
   );
   return data;
 };
@@ -162,8 +160,8 @@ export const deactivateWorkflow = async (
   workflowId: string,
   payload: any
 ): Promise<WorkflowTypes> => {
-  const { data } = await axios.post(
-    `${API_BASE_URL}/admin/workflows/${workflowId}/deactivate`,
+  const { data } = await authenticatedAxios.post(
+    `/admin/workflows/${workflowId}/deactivate`,
     payload
   );
   return data;
@@ -185,7 +183,7 @@ export const useDeactivateWorkflow = (workflowId: string) => {
 export const deleteWorkflow = async (
   workflowId: string
 ): Promise<{ message: string }> => {
-  const { data } = await axios.delete(
+  const { data } = await authenticatedAxios.delete(
     `${API_BASE_URL}/admin/workflows/${workflowId}`
   );
   return data;
@@ -207,7 +205,7 @@ export const useDeleteWorkflow = () => {
 export const saveWorkflowTemplate = async (
   payload: WorkFlowTemplatePayload
 ): Promise<any> => {
-  const { data } = await axios.post(
+  const { data } = await authenticatedAxios.post(
     `${API_BASE_URL}/admin/workflows/save-template`,
     payload
   );
@@ -232,7 +230,6 @@ export const fetchWorkflowTemplates = () =>
   apiFetch<TemplatesResponse[]>(
     "/templates/fetch-templates",
     { method: "GET" },
-    true
   );
 
 export function useGetAllTemplatesWorkflows() {

@@ -6,8 +6,8 @@ import {
   FetchDocumentObject,
 } from "@/types/documents";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { API_BASE_URL, apiFetch } from "@/lib/apiClient";
+// import axios from "axios";
+import { API_BASE_URL, apiFetch, authenticatedAxios } from "@/lib/apiClient";
 import { DOCUMENT_KEYS } from "./query-keys";
 
 // Helper function to build query strings
@@ -56,7 +56,7 @@ export function toFormData(data: DocumentFormDataPayload): FormData {
 async function uploadProcessDocument(payload: DocumentFormDataPayload) {
   const formData = toFormData(payload);
 
-  return axios.post(
+  return authenticatedAxios.post(
     `${API_BASE_URL}/documents/api/documents/upload`,
     formData,
     {
@@ -80,8 +80,8 @@ export function useUploadProcessQuery() {
 
 // Share documents with user emails
 async function shareDocumentsById(payload: DocumentSharePayload) {
-  const { data } = await axios.post(
-    `${API_BASE_URL}/documents/api/documents/${payload.documentId}/share`,
+  const { data } = await authenticatedAxios.post(
+    `/documents/api/documents/${payload.documentId}/share`,
     payload
   );
   return data;
@@ -104,7 +104,6 @@ export const fetchDocuments = async (payload: FetchDocumentObject) => {
   const data = await apiFetch<DocumentResponse>(
     `/documents/api/documents?${queryString}`,
     { method: "GET" },
-    true
   );
 
   return data;
@@ -122,8 +121,7 @@ export function useGetDocuments(payload: FetchDocumentObject) {
 export const fetchDocumentBatchById = (id: string) =>
   apiFetch<DocumentBatchDetails>(
     `/documents/api/documents/batch/${id}`,
-    { method: "GET" },
-    true
+    { method: "GET" }
   );
 
 export function useGetDocumentsIdQuery(id: string) {

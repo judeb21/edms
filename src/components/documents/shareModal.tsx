@@ -176,16 +176,11 @@ const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
         );
       },
     });
-
-    console.log("Sending to backend:", shareData);
-    // Add your API call here
-    // await shareDocument(shareData);
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(
-      "https://docs.google.com/document/d/example-link"
-    );
+    const origin = window.location.origin;
+    navigator.clipboard.writeText(`${origin}/documents/${params.id}/view`);
     setIsCopied(true);
     setTimeout(() => {
       setIsCopied(false);

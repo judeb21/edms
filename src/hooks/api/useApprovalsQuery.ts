@@ -23,9 +23,8 @@ import { APPROVAL_KEYS } from "./query-keys";
 export const fetchApprovalQueues = async () => {
 //   const queryString = buildQuery(payload);
   const data = await apiFetch<DocumentResponse>(
-    `/approval-queue`,
-    { method: "GET" },
-    true
+    `/admin/workflows/api/approval-queue`,
+    { method: "GET" }
   );
 
   return data;
@@ -42,9 +41,8 @@ export function useGetApprovalQueueQuery() {
 // Get template steps
 export const fetchApprovalQueueById = (id: string) =>
   apiFetch<DocumentBatchDetails>(
-    `/approval-queue/${id}`,
+    `/admin/workflows/api/approval-queue/${id}`,
     { method: "GET" },
-    true
   );
 
 export function useGetApprovalQueuesIdQuery(id: string) {

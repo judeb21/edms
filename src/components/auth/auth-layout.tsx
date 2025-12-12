@@ -26,7 +26,7 @@ export default function AuthLayout({
         />
 
         <div className="order-1 lg:order-2">
-          <div className="rounded-[24px] border-5 border-brand-blue pt-[100px] pb-[50px] px-[44px] shadow-md">
+          <div className="rounded-[24px] border-5 border-brand-blue pt-[100px] pb-[50px] px-[22px] md:px-[44px] shadow-md">
             {children}
           </div>
         </div>
