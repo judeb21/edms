@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
     // Set token in cookie
     response.cookies.set("cred-crm-ticket-tok", token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
 
     // Set user object in cookies
     response.cookies.set("cred-crm-ticket-auth-user", JSON.stringify(user), {
-      httpOnly: true,
+      httpOnly: false,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       path: "/",

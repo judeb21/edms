@@ -20,7 +20,7 @@ import {
   loginSchema,
   LoginValidation,
 } from "@/validationSchemas/auth/loginSchema";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ExtendedFetchBaseQueryError } from "@/types";
 import { Button } from "../ui/button";
 import { useUser } from "@/context/auth-context";
@@ -34,6 +34,12 @@ export default function LoginForm() {
   const forgotPasswordLink = process.env.NEXT_PUBLIC_BACKOFFICE_URL;
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/overview";
+
+  // / Add this to debug
+  console.log('Current callbackUrl:', callbackUrl);
+  console.log('All search params:', Object.fromEntries(searchParams.entries()));
 
   const togglePasswordVisibility = () => {
     if (passwordType === "password") return setPasswordType("text");
@@ -61,8 +67,10 @@ export default function LoginForm() {
         const data = await res.json();
 
         setUser(data);
-        router.push("/overview"); // move this ↑ first
-        setButtonLoader(false);
+
+        router.replace(callbackUrl); // move this ↑ first
+        // window.location.href = callbackUrl
+        // setButtonLoader(false);
         return;
       } else {
         setButtonLoader(false);

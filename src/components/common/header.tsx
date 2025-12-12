@@ -33,7 +33,7 @@ export default function HeaderDropdown() {
                 <UserRound className="text-[#04B2F1] w-[12px] h-[12px]" />
               </div>
               <span className="font-[family-name:var(--font-poppins)] text-[#3A3A3A]">
-                {user?.email}
+                {user?.firstName} {user?.lastName}
               </span>
             </SidebarMenuButton>
           </DropdownMenuTrigger>

@@ -1,53 +1,60 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Specify protectedRoutes
+// Specify protected route patterns
 const protectedRoutes = [
   "/overview",
-  "/settings/workflow",
-  "/workflow",
-  "/workflow/new",
-  "/approval-queue",
   "/settings",
-  "/editor/:id",
-  "/template/:id",
-  "/workflow-editor/:id",
+  "/workflow",
+  "/approval-queue",
+  "/editor",
+  "/template",
+  "/workflow-editor",
   "/documents",
-  "/documents/:id",
 ];
+
 const publicRoutes = ["/login"];
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("cred-crm-ticket-tok")?.value;
   const { pathname } = req.nextUrl;
 
-  const isProtectedRoute = protectedRoutes.includes(pathname);
-  const isPublicRoute = publicRoutes.includes(pathname);
+  // Check if current path starts with any protected route
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+  
+  const isPublicRoute = publicRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
 
-  // Public routes
+  // Redirect to login if accessing protected route without token
   if (isProtectedRoute && !token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    const loginUrl = new URL("/login", req.url);
+    const callbackUrl = req.nextUrl.pathname + req.nextUrl.search;
+    loginUrl.searchParams.set("callbackUrl", callbackUrl);
+
+    return NextResponse.redirect(loginUrl);
   }
 
-  // Protect dashboard routes
-  if (isPublicRoute && token && !req.nextUrl.pathname.startsWith("/overview")) {
+  // Redirect to overview if logged in user tries to access login page
+  if (isPublicRoute && token) {
     return NextResponse.redirect(new URL("/overview", req.url));
   }
 
   return NextResponse.next();
 }
 
-// Apply middleware to protected routes only
+// Apply middleware to protected routes
 export const config = {
   matcher: [
     "/overview/:path*",
     "/settings/:path*",
     "/workflow/:path*",
     "/workflow-editor/:path*",
-    "/eidtor/:path*",
+    "/editor/:path*",
     "/approval-queue/:path*",
-    "/settings/:path*",
-    "/documents/:id*",
+    "/documents/:path*",
     "/template/:path*",
   ],
 };
