@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL, apiFetch, authenticatedAxios } from "@/lib/apiClient";
+import { apiFetch, authenticatedAxios } from "@/lib/apiClient";
 import {
   TemplatesResponse,
   TemplateWorkflowDetails,
@@ -184,7 +184,7 @@ export const deleteWorkflow = async (
   workflowId: string
 ): Promise<{ message: string }> => {
   const { data } = await authenticatedAxios.delete(
-    `${API_BASE_URL}/admin/workflows/${workflowId}`
+    `/admin/workflows/${workflowId}`
   );
   return data;
 };
@@ -206,7 +206,7 @@ export const saveWorkflowTemplate = async (
   payload: WorkFlowTemplatePayload
 ): Promise<any> => {
   const { data } = await authenticatedAxios.post(
-    `${API_BASE_URL}/templates/save-template`,
+    `/templates/save-template`,
     payload
   );
   return data;
