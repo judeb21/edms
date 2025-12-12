@@ -95,8 +95,12 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          netlify deploy --prod \
-            --auth=$NETLIFY_AUTH_TOKEN \
-            --site=$NETLIFY_SITE_ID \
-            --build \
+          npx netlify-cli deploy --prod \
+            --dir=.next \
             --message="Deployed from GitHub Actions - ${{ github.sha }}"
+        # run: |
+        #   netlify deploy --prod \
+        #     --auth=$NETLIFY_AUTH_TOKEN \
+        #     --site=$NETLIFY_SITE_ID \
+        #     --build \
+        #     --message="Deployed from GitHub Actions - ${{ github.sha }}"
