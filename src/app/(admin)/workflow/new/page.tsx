@@ -34,6 +34,7 @@ import LoaderButton from "@/components/common/loader-button";
 import SuccessModal from "@/components/workflow/modal-successful";
 import { useGetDepartmentsQuery } from "@/hooks/api/useSmartUserQuery";
 import { DepartmentType } from "@/types/smartUserTypes";
+import { AxiosError } from "axios";
 
 const documentTypes = [
   {
@@ -98,8 +99,7 @@ export default function WorkFlowPage() {
       description: values?.description,
       scope: {
         type: values.scope,
-        value:
-          values.scope === "department" ? (values.scopeValue as string) : "",
+        value: values.scopeValue as string,
       },
     };
 
@@ -112,7 +112,9 @@ export default function WorkFlowPage() {
       onError: (error) => {
         setLoader(false);
         toast.error(
-          error instanceof Error ? error.message : "Failed to create workflow",
+          error instanceof AxiosError
+            ? error?.response?.data.message
+            : "Failed to create workflow",
           {
             unstyled: true,
             position: "top-right",
