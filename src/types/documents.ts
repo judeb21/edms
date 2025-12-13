@@ -21,7 +21,7 @@ export interface DocumentFormDataPayload {
   title: string;
   description: string;
   category: string;
-  tags: string[];
+  tags?: string[];
   department: string;
   addWorkflow: boolean;
   workflowName?: string;
