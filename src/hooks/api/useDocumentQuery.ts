@@ -7,7 +7,7 @@ import {
 } from "@/types/documents";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // import axios from "axios";
-import { API_BASE_URL, apiFetch, authenticatedAxios } from "@/lib/apiClient";
+import { apiFetch, authenticatedAxios } from "@/lib/apiClient";
 import { DOCUMENT_KEYS } from "./query-keys";
 
 // Helper function to build query strings
@@ -38,7 +38,7 @@ export function toFormData(data: DocumentFormDataPayload): FormData {
   formData.append("department", data.department);
 
   // 3. Append array of tags
-  data.tags.forEach((tag) => {
+  data?.tags?.forEach((tag) => {
     formData.append("tags", tag);
   });
 
@@ -57,7 +57,7 @@ async function uploadProcessDocument(payload: DocumentFormDataPayload) {
   const formData = toFormData(payload);
 
   return authenticatedAxios.post(
-    `${API_BASE_URL}/documents/api/documents/upload`,
+    `/documents/api/documents/upload`,
     formData,
     {
       headers: {

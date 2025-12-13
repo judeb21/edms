@@ -161,11 +161,13 @@ export default function NewDocumentPage() {
       title: formData.title,
       description: formData.description,
       category: formData.category,
-      tags: formData.tags,
+    //   tags: formData.tags,
       department: formData.department,
       addWorkflow: formData.workflowAdded,
       workflowName: formData.workflow,
     };
+
+    console.log("Payload", payload);
 
     uploadMutation.mutate(payload, {
       onSuccess: () => {
@@ -501,7 +503,7 @@ export default function NewDocumentPage() {
     formData.description.trim() === "" ||
     formData.category.trim() === "" ||
     formData.department.trim() === "" ||
-    formData.tags.length === 0 ||
+    // formData.tags.length === 0 ||
     (formData.workflowAdded && formData?.workflow?.trim() === "");
 
   return (
