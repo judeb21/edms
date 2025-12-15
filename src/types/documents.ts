@@ -64,6 +64,7 @@ export interface DocumentFiles {
 
 export interface DocumentBatchDetails {
   batchId: string;
+  documentId: string;
   title: string;
   category: string;
   department: string;
@@ -72,7 +73,7 @@ export interface DocumentBatchDetails {
 }
 
 export interface DocumentSharePayload {
-  documentId: string;
+  documentId?: string;
   shareWithEmail: string[];
   permission: "viewer" | "commenter" | "editor";
   message?: string;

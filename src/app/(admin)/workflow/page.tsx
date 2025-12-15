@@ -18,7 +18,7 @@ export default function WorkFlowPage() {
   const [deleteLoader, setLoader] = useState(false);
   const [onSuccess, setDeleteSuccessful] = useState(false);
   const router = useRouter();
-  const breadcrumbItems = [{ label: "Approval Workflow" }];
+  const breadcrumbItems = [{ label: "Workflow" }];
 
   const { data, isLoading } = useGetWorkflows();
 
