@@ -56,15 +56,11 @@ export function toFormData(data: DocumentFormDataPayload): FormData {
 async function uploadProcessDocument(payload: DocumentFormDataPayload) {
   const formData = toFormData(payload);
 
-  return authenticatedAxios.post(
-    `/documents/api/documents/upload`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  return authenticatedAxios.post(`/documents/upload`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 }
 
 export function useUploadProcessQuery() {
@@ -79,19 +75,20 @@ export function useUploadProcessQuery() {
 }
 
 // Share documents with user emails
-async function shareDocumentsById(payload: DocumentSharePayload) {
-  const { data } = await authenticatedAxios.post(
-    `/documents/api/documents/${payload.documentId}/share`,
-    payload
-  );
-  return data;
+async function shareDocumentsById(id: string, payload: DocumentSharePayload) {
+    const { data } = await authenticatedAxios.post(
+      `/documents/${id}/share`,
+      payload,
+    );
+    return data;
 }
 
 // Hook to share documents
-export function useShareDocumentMutation() {
+export function useShareDocumentMutation(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: DocumentSharePayload) => shareDocumentsById(payload),
+    mutationFn: (payload: DocumentSharePayload) =>
+      shareDocumentsById(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: DOCUMENT_KEYS.all });
     },
@@ -102,8 +99,8 @@ export function useShareDocumentMutation() {
 export const fetchDocuments = async (payload: FetchDocumentObject) => {
   const queryString = buildQuery(payload);
   const data = await apiFetch<DocumentResponse>(
-    `/documents/api/documents?${queryString}`,
-    { method: "GET" },
+    `/documents/documents?${queryString}`,
+    { method: "GET" }
   );
 
   return data;
@@ -119,10 +116,7 @@ export function useGetDocuments(payload: FetchDocumentObject) {
 
 // Get template steps
 export const fetchDocumentBatchById = (id: string) =>
-  apiFetch<DocumentBatchDetails>(
-    `/documents/api/documents/batch/${id}`,
-    { method: "GET" }
-  );
+  apiFetch<DocumentBatchDetails>(`/documents/batch/${id}`, { method: "GET" });
 
 export function useGetDocumentsIdQuery(id: string) {
   return useQuery({

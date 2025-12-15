@@ -39,9 +39,6 @@ export default function HeaderDropdown() {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -56,28 +56,36 @@ const getAvatarColor = (userId: string): string => {
   return avatarColors[index];
 };
 
-const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
+const ShareModal = ({
+  isOpen,
+  onClose,
+  title,
+}: ShareModalProps) => {
   const params = useParams();
+  const { id } = params;
   const [step, setStep] = useState<"initial" | "sharing">("initial");
   const [searchQuery, setSearchQuery] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [loader, setLoader] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<SelectedUser[]>([]);
+  const [storedSelectedUsers, setStoredSelectedUsers] = useState<
+    SelectedUser[]
+  >([]);
   const [message, setMessage] = useState("");
   //   const [notifyPeople, setNotifyPeople] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
 
-  const currentUser = {
-    name: "Jude Biose",
-    email: "judebiose20@gmail.com",
-  };
+  //   const currentUser = {
+  //     name: "Jude Biose",
+  //     email: "judebiose20@gmail.com",
+  //   };
 
   const { data: userData } = useGetUserInfinite(searchQuery);
 
   // share document mutation
-  const shareDocuments = useShareDocumentMutation();
+  const shareDocuments = useShareDocumentMutation(id as string);
 
-  //   searchResults
+  // searchResults
   const userOptions = React.useMemo(() => {
     return (
       userData?.pages
@@ -90,6 +98,13 @@ const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
     );
   }, [userData, searchQuery]);
 
+  // Check if user already exists in selected or stored users
+  const isUserAlreadySelected = (userId: string): boolean => {
+    const inSelected = selectedUsers.some((u) => u.id === userId);
+    const inStored = storedSelectedUsers.some((u) => u.id === userId);
+    return inSelected || inStored;
+  };
+
   const handleSearchQuery = (value: string) => {
     setSearchQuery(value);
     setIsTyping(true);
@@ -99,6 +114,22 @@ const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
     user: User,
     role: "editor" | "viewer" | "commenter" = "viewer"
   ) => {
+    // Check if user already exists
+    if (isUserAlreadySelected(user.id)) {
+      toast.warning("User already added", {
+        unstyled: false,
+        position: "top-right",
+        classNames: {
+          toast:
+            "capitalize bg-yellow-50 z-50 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+          title: "text-yellow-800",
+        },
+      });
+      setSearchQuery("");
+      setIsTyping(false);
+      return;
+    }
+
     setSelectedUsers([...selectedUsers, { ...user, role }]);
     setSearchQuery("");
     setIsTyping(false);
@@ -142,7 +173,7 @@ const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
     setLoader(true);
     // Prepare data to send to backend
     const shareData: DocumentSharePayload = {
-      documentId: params?.id as string,
+      //   documentId: params?.id as string,
       shareWithEmail: selectedUsers.map((u) => u.email),
       permission: "viewer",
       message,
@@ -154,9 +185,29 @@ const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
         // Reset and close
         setLoader(true);
         setStep("initial");
-        // setSelectedUsers([]);
+        setSelectedUsers([]);
+
+        // Only add unique users to stored list
+        setStoredSelectedUsers((prev) => {
+          const combined = [...prev, ...selectedUsers];
+          // Filter to keep only unique users based on ID
+          const unique = combined.filter(
+            (user, index, self) =>
+              index === self.findIndex((u) => u.id === user.id)
+          );
+          return unique;
+        });
+
         setMessage("");
-        toast.success("Document shared successfully");
+        toast.success("Document shared successfully", {
+          unstyled: false,
+          position: "top-right",
+          classNames: {
+            toast:
+              "capitalize bg-white z-50 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+            title: "text-primary-gray",
+          },
+        });
       },
       onError: (error) => {
         setLoader(false);
@@ -258,7 +309,7 @@ const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
             <h3 className="text-[15px] font-semibold text-primary-gray mb-2">
               Shared With
             </h3>
-            <div className="flex items-center gap-3 mb-6">
+            {/* <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                 <span className="text-sm font-medium">JB</span>
               </div>
@@ -269,11 +320,11 @@ const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
                 <div className="text-sm text-gray-600">{currentUser.email}</div>
               </div>
               <div className="text-gray-500 text-sm">Viewer</div>
-            </div>
+            </div> */}
 
-            {selectedUsers.length > 0 && (
+            {storedSelectedUsers.length > 0 && (
               <>
-                {selectedUsers?.map((user) => {
+                {storedSelectedUsers?.map((user) => {
                   return (
                     <div className="flex items-center gap-3 mb-3" key={user.id}>
                       <div
