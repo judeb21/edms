@@ -342,7 +342,7 @@ const ShareModal = ({
                           {user.email}
                         </div>
                       </div>
-                      <div className="text-gray-500 text-sm">{user.role}</div>
+                      <div className="text-gray-500 text-sm capitalize">{user.role}</div>
                     </div>
                   );
                 })}
