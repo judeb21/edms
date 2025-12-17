@@ -416,11 +416,11 @@ export default function NewDocumentPage() {
 
   // eslint-disable-next-line
   const [suggestions, setSuggestions] = useState<string[]>([
-    "Urgent",
+    "Invoice",
     "Finance",
     "HR",
     "Marketing",
-    "Client",
+    "Urgent",
   ]);
 
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);

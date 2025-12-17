@@ -5,7 +5,7 @@ import { WorkFlowDataTable } from "@/components/tables/workflowTable";
 import { Button } from "@/components/ui/button";
 import {
   useDeleteWorkflow,
-  useGetWorkflows,
+  useGetAllWorkflows,
 } from "@/hooks/api/useWorkflowQuery";
 import { WorkflowTypes } from "@/types/workflow";
 import { AxiosError } from "axios";
@@ -20,7 +20,7 @@ export default function WorkFlowPage() {
   const router = useRouter();
   const breadcrumbItems = [{ label: "Workflow" }];
 
-  const { data, isLoading } = useGetWorkflows({});
+  const { data, isLoading } = useGetAllWorkflows();
 
   //Delete workflow mutation
   const deleteWorkflow = useDeleteWorkflow();
