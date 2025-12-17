@@ -141,3 +141,8 @@ export interface ApprovalQueueResponseDetails {
   activeStep: ApprovalQueueDetails;
   document: QueueDocumentDetails;
 }
+
+export interface QueueActions {
+  approverEmail: string;
+  comment: string;
+}
