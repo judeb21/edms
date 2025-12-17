@@ -1,3 +1,5 @@
+import { WorkflowUserType } from "./workflow";
+
 export interface DocumentFormData {
   title: string;
   description: string;
@@ -12,6 +14,7 @@ export interface FetchDocumentObject {
   keyword?: string;
   category?: string;
   department?: string;
+  status?: string;
   page: number;
   pageSize: number;
 }
@@ -40,6 +43,26 @@ export interface DocumentDetails {
   status: string;
   createdAt: string;
   storageInfo: string | null;
+}
+
+export interface QueueDocumentDetails {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  tagsCsv: null;
+  department: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  fileUrl: string;
+  blobPath: string;
+  fileSize: number;
+  contentType: string;
+  workflowInstanceId: null;
+  workflowDefinitionId: null;
+  workflowName: string;
+  batchId: string;
 }
 
 export interface DocumentResponse {
@@ -77,4 +100,49 @@ export interface DocumentSharePayload {
   shareWithEmail: string[];
   permission: "viewer" | "commenter" | "editor";
   message?: string;
+}
+
+export interface FetchApprovalQueueObject {
+  reviewEmail?: string;
+  category?: string;
+  department?: string;
+  status?: string;
+  page: number;
+  pageSize: number;
+}
+
+export interface ApprovalQueueDetails {
+  stepInstanceId: string;
+  workflowInstanceId: string;
+  documentId: string;
+  documentTitle: string;
+  documentType: string;
+  department: string;
+  submittedBy: string;
+  submittedAt: string;
+  stepName: string;
+  status: number;
+  createdAt: string;
+  deadline: string;
+  canApprove: boolean;
+  canReject: boolean;
+  canRequestChanges: boolean;
+  assignedApprovers: WorkflowUserType[];
+}
+
+export interface ApprovalQueueResponse {
+  items: ApprovalQueueDetails[];
+  page: number;
+  pageSize: number;
+  total: number;
+}
+
+export interface ApprovalQueueResponseDetails {
+  activeStep: ApprovalQueueDetails;
+  document: QueueDocumentDetails;
+}
+
+export interface QueueActions {
+  approverEmail: string;
+  comment: string;
 }

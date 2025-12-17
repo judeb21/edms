@@ -119,7 +119,11 @@ export default function NewDocumentPage() {
     { label: "Upload Document" },
   ];
 
-  const { data } = useGetWorkflows();
+  const statusSearch = {
+    status: "Active",
+  };
+
+  const { data } = useGetWorkflows(statusSearch);
 
   const uploadMutation = useUploadProcessQuery();
 
@@ -161,7 +165,7 @@ export default function NewDocumentPage() {
       title: formData.title,
       description: formData.description,
       category: formData.category,
-    //   tags: formData.tags,
+      //   tags: formData.tags,
       department: formData.department,
       addWorkflow: formData.workflowAdded,
       workflowName: formData.workflow,

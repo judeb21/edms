@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch, authenticatedAxios } from "@/lib/apiClient";
 import {
+  FetchWorkflowObject,
   TemplatesResponse,
   TemplateWorkflowDetails,
   ValidateWorkflowPayload,
@@ -13,9 +14,31 @@ import {
 // import axios from "axios";
 import { WORKFLOW_KEYS } from "./query-keys";
 
+// Builder function
+function buildQuery(params: FetchWorkflowObject): string {
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.append(key, String(value));
+    }
+  });
+
+  return query.toString();
+}
+
 // Get workflows
-export const fetchWorkflows = () =>
-  apiFetch<WorkflowTypes[]>("/admin/workflows", { method: "GET" });
+export const fetchWorkflows = async (payload: FetchWorkflowObject) => {
+  const queryString = buildQuery(payload);
+  const data = await apiFetch<WorkflowTypes[]>(
+    `/admin/workflows?${queryString}`,
+    {
+      method: "GET",
+    }
+  );
+
+  return data;
+};
 
 // const createWorkflow = (payload: any): Promise<WorkflowTypes> => {
 //   const url = `/admin/workflows/create`;
@@ -37,10 +60,11 @@ export const createWorkflow = async (
 };
 
 //Hook to get Workflow
-export function useGetWorkflows() {
+export function useGetWorkflows({ status }: FetchWorkflowObject) {
   return useQuery({
     queryKey: ["workflows"],
-    queryFn: fetchWorkflows, // no cache
+    enabled: !!status,
+    queryFn: () => fetchWorkflows({status}), // no cache
   });
 }
 
@@ -82,13 +106,11 @@ export const useConfigureWorkflow = (id: string) => {
 
 //Get configured steps
 export const fetchConfiguredWorkflowSteps = (id: string) =>
-  apiFetch<WorkflowDetails>(
-    `/admin/workflows/${id}/configuration`,
-    { method: "GET" }
-  );
+  apiFetch<WorkflowDetails>(`/admin/workflows/${id}/configuration`, {
+    method: "GET",
+  });
 
-
-  // Hook to get configured steps
+// Hook to get configured steps
 export function useGetConfiguredWorkflowSteps(id: string) {
   return useQuery({
     queryKey: ["workflows", id],
@@ -98,10 +120,9 @@ export function useGetConfiguredWorkflowSteps(id: string) {
 
 // Get template steps
 export const fetchTemplateWorkflowSteps = (id: string) =>
-  apiFetch<TemplateWorkflowDetails>(
-    `/templates/templates/${id}`,
-    { method: "GET" }
-  );
+  apiFetch<TemplateWorkflowDetails>(`/templates/templates/${id}`, {
+    method: "GET",
+  });
 
 export function useGetTemplateWorkflowSteps(id: string) {
   return useQuery({
@@ -227,10 +248,9 @@ export const useSaveWorkflowTemplate = (id: string) => {
 
 // Get workflow templates
 export const fetchWorkflowTemplates = () =>
-  apiFetch<TemplatesResponse[]>(
-    "/templates/fetch-templates",
-    { method: "GET" },
-  );
+  apiFetch<TemplatesResponse[]>("/templates/fetch-templates", {
+    method: "GET",
+  });
 
 export function useGetAllTemplatesWorkflows() {
   return useQuery({

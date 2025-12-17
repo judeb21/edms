@@ -1,10 +1,7 @@
 "use client";
 
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
-import {
-  DocumentsTable,
-  DocumentType,
-} from "@/components/tables/documentTable";
+import { DocumentsTable } from "@/components/tables/documentTable";
 import { Button } from "@/components/ui/button";
 import { useGetDocuments } from "@/hooks/api/useDocumentQuery";
 import { DocumentResponse, FetchDocumentObject } from "@/types/documents";
@@ -59,25 +56,6 @@ export default function TemplatesPage() {
 
   const goToNewDocument = () => router.push("/documents/new");
 
-  const documents: DocumentType[] = [
-    {
-      id: "1",
-      title: "Staff Survey",
-      category: "Reports",
-      department: "HR",
-      dateModified: "02/04/2024",
-      status: "Submitted",
-    },
-    {
-      id: "1",
-      title: "Sales Contract",
-      category: "Policies",
-      department: "HR",
-      dateModified: "02/04/2024",
-      status: "Submitted",
-    },
-  ];
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -104,7 +82,7 @@ export default function TemplatesPage() {
       </div>
 
       <div className="bg-white mt-1 p-8 min-h-screen">
-        {!documents?.length ? (
+        {!documentData?.items ? (
           <div className="h-120 flex flex-col justify-center items-center w-80 mx-auto text-center">
             <FileText size={64} color="#A9A9A9" strokeWidth={1} />
             <h6 className="mt-[24px] text-[18px] text-primary-gray font-medium">

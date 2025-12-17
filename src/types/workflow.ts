@@ -119,3 +119,12 @@ export interface TemplateWorkflowDetails {
   createdAt: string;
   template: WorkflowRetrievedSteps[];
 }
+
+export interface FetchWorkflowObject {
+  keyword?: string;
+  category?: string;
+  department?: string;
+  status?: string;
+  page?: number;
+  pageSize?: number;
+}
