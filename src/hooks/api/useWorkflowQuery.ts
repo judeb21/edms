@@ -40,6 +40,18 @@ export const fetchWorkflows = async (payload: FetchWorkflowObject) => {
   return data;
 };
 
+// Get workflows without status
+export const fetchAllWorkflows = async () => {
+  const data = await apiFetch<WorkflowTypes[]>(
+    `/admin/workflows`,
+    {
+      method: "GET",
+    }
+  );
+
+  return data;
+};
+
 // const createWorkflow = (payload: any): Promise<WorkflowTypes> => {
 //   const url = `/admin/workflows/create`;
 //   return apiFetch(url, {
@@ -65,6 +77,14 @@ export function useGetWorkflows({ status }: FetchWorkflowObject) {
     queryKey: ["workflows"],
     enabled: !!status,
     queryFn: () => fetchWorkflows({status}), // no cache
+  });
+}
+
+//Hook to get all Workflow
+export function useGetAllWorkflows() {
+  return useQuery({
+    queryKey: ["workflows"],
+    queryFn: () => fetchAllWorkflows(), // no cache
   });
 }
 
