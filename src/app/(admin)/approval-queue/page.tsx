@@ -1,83 +1,188 @@
 "use client";
 
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
-import {
-  ApprovalQueueTable,
-  ApprovalQueueType,
-} from "@/components/tables/approvalQueueTable";
+import { ApprovalQueueTable } from "@/components/tables/approvalQueueTable";
 import SuccessModal from "@/components/workflow/modal-successful";
-import { useGetApprovalQueueQuery } from "@/hooks/api/useApprovalsQuery";
+import { useAuthUser } from "@/context/auth-context";
+import {
+  useApproveQueueMutation,
+  useGetApprovalQueueQuery,
+  useRejectQueueMutation,
+  useRequestChangeQueueMutation,
+} from "@/hooks/api/useApprovalsQuery";
+import {
+  ApprovalQueueResponse,
+  FetchApprovalQueueObject,
+  QueueActions,
+} from "@/types/documents";
 import { Loader2 } from "lucide-react";
 // import { useDeleteWorkflow } from "@/hooks/api/useWorkflowQuery";
 // import { AxiosError } from "axios";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 // import { toast } from "sonner";
 
 export default function ApprovalQueuePage() {
+  const { user } = useAuthUser();
   const [message, setSuccessMessage] = useState("");
   const [deleteLoader, setLoader] = useState(false);
   const [onSuccess, setDeleteSuccessful] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
+  // eslint-disable-next-line
+  const [payload, setPayload] = useState<FetchApprovalQueueObject>({
+    page: 1,
+    pageSize: 10,
+  });
+  const [formData, setFormData] = useState<QueueActions>({
+    approverEmail: user?.email || "",
+    comment: "",
+  });
 
   const breadcrumbItems = [
     { label: "Overview", href: "/overview" },
     { label: "Approval Queue" },
   ];
 
-  const { isLoading } = useGetApprovalQueueQuery();
+  const { data, refetch, isLoading } = useGetApprovalQueueQuery(payload);
+
+  //Approve Queue
+  const approveQueue = useApproveQueueMutation();
+
+  //Reject Queue
+  const rejectQueue = useRejectQueueMutation();
+
+  //Request change Queue
+  const requestChangeQueue = useRequestChangeQueueMutation();
 
   //Delete workflow mutation
   //   const deleteWorkflow = useDeleteWorkflow();
 
-  const queues: ApprovalQueueType[] = [
-    {
-      id: "1",
-      documentName: "National Identification Number",
-      contributor: "John Smith",
-      dateSubmitted: "02/04/2024",
-      status: "Pending",
-    },
-    {
-      id: "2",
-      documentName: "International Passport",
-      contributor: "John Smith",
-      dateSubmitted: "02/04/2024",
-      status: "Pending",
-    },
-  ];
-
-  const handleApproval = () => {
+  const handleApproval = (id: string) => {
     setDeleteSuccessful(false);
     setLoader(true);
-    setTimeout(() => {
-      setDeleteSuccessful(true);
-      setLoader(false);
-      setSuccessMessage("Document Approved Successfully");
-      setSuccessModal(true);
-    }, 500);
+
+    const payload: QueueActions = {
+      approverEmail: user?.email || "",
+      comment: "Approved",
+    };
+
+    approveQueue.mutate(
+      { id, payload },
+      {
+        onSuccess: () => {
+          setDeleteSuccessful(true);
+          setLoader(false);
+          setSuccessMessage("Document Approved Successfully");
+          setSuccessModal(true);
+          refetch();
+        },
+        onError: (error) => {
+          setLoader(false);
+          setDeleteSuccessful(false);
+          toast.error(
+            error instanceof Error ? error.message : "Failed to approve queue",
+            {
+              unstyled: true,
+              position: "top-right",
+              classNames: {
+                toast:
+                  "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+                title: "text-[#E71D36]",
+              },
+            }
+          );
+        },
+      }
+    );
   };
 
-  const handleRejection = () => {
+  const handleRejection = (id: string) => {
     setDeleteSuccessful(false);
     setLoader(true);
-    setTimeout(() => {
-      setDeleteSuccessful(true);
-      setLoader(false);
-      setSuccessMessage("This Document has been Rejected");
-      setSuccessModal(true);
-    }, 500);
+
+    const payload: QueueActions = {
+      approverEmail: user?.email || "",
+      comment: formData.comment,
+    };
+
+    rejectQueue.mutate(
+      { id, payload },
+      {
+        onSuccess: () => {
+          setDeleteSuccessful(true);
+          setLoader(false);
+          setSuccessMessage("This Document has been Rejected");
+          setSuccessModal(true);
+          setFormData({ ...formData, comment: "" });
+          refetch();
+        },
+        onError: (error) => {
+          setLoader(false);
+          setDeleteSuccessful(false);
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Failed to reject workflow",
+            {
+              unstyled: true,
+              position: "top-right",
+              classNames: {
+                toast:
+                  "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+                title: "text-[#E71D36]",
+              },
+            }
+          );
+        },
+      }
+    );
   };
 
-  const handleChangeRequest = () => {
+  const handleChangeRequest = (id: string) => {
     setDeleteSuccessful(false);
     setLoader(true);
-    setTimeout(() => {
-      setDeleteSuccessful(true);
-      setLoader(false);
-      setSuccessMessage("Your request has been sent");
-      setSuccessModal(true);
-    }, 500);
+
+    const payload: QueueActions = {
+      approverEmail: user?.email || "",
+      comment: formData.comment,
+    };
+
+    requestChangeQueue.mutate(
+      { id, payload },
+      {
+        onSuccess: () => {
+          setDeleteSuccessful(true);
+          setLoader(false);
+          setSuccessMessage("Your request has been sent");
+          setSuccessModal(true);
+          setFormData({ ...formData, comment: "" });
+          refetch();
+        },
+        onError: (error) => {
+          setLoader(false);
+          setDeleteSuccessful(false);
+          toast.error(
+            error instanceof Error ? error.message : "Failed to send changes",
+            {
+              unstyled: true,
+              position: "top-right",
+              classNames: {
+                toast:
+                  "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+                title: "text-[#E71D36]",
+              },
+            }
+          );
+        },
+      }
+    );
   };
+
+  const queueData = useMemo(() => {
+    const docData = data as ApprovalQueueResponse;
+
+    return docData;
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -98,12 +203,14 @@ export default function ApprovalQueuePage() {
 
       <div className="bg-white mt-1 p-8">
         <ApprovalQueueTable
-          data={queues as ApprovalQueueType[]}
+          data={queueData}
           showPagination={false}
           deleteLoader={deleteLoader}
           onDelete={handleApproval}
           onRejection={handleRejection}
           onRequestChange={handleChangeRequest}
+          onChange={setFormData}
+          formData={formData}
           onSuccess={onSuccess}
         />
 

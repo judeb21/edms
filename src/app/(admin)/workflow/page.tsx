@@ -20,7 +20,7 @@ export default function WorkFlowPage() {
   const router = useRouter();
   const breadcrumbItems = [{ label: "Workflow" }];
 
-  const { data, isLoading } = useGetWorkflows();
+  const { data, isLoading } = useGetWorkflows({});
 
   //Delete workflow mutation
   const deleteWorkflow = useDeleteWorkflow();

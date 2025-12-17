@@ -66,7 +66,7 @@ export const queryClient = new QueryClient({
         return failureCount < 2;
       },
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-      staleTime: 1000 * 60 * 5,
+      staleTime: 1000 * 60 * 1,
     },
     mutations: {
       retry: (failureCount, error) => {

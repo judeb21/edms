@@ -10,6 +10,6 @@ export const DOCUMENT_KEYS = {
 };
 
 export const APPROVAL_KEYS = {
-  all: ["approvals", "queues"] as const,
+  all: ["approvals", "queues", "documents"] as const,
   details: (id: string) => ["documents", id] as const,
 };

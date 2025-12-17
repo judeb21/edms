@@ -25,27 +25,40 @@ import { Badge } from "../ui/badge";
 import { FileText, Loader2 } from "lucide-react";
 import dayjs from "dayjs";
 import GenericModal from "../workflow/generic-modal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
-
-export type ApprovalQueueType = {
-  id: string;
-  documentName: string;
-  contributor: string;
-  dateSubmitted: string;
-  status: string;
-};
+import {
+  ApprovalQueueDetails,
+  ApprovalQueueResponse,
+  QueueActions,
+} from "@/types/documents";
+import { useGetApprovalQueuesIdQuery } from "@/hooks/api/useApprovalsQuery";
+import { toast } from "sonner";
+import { formatFileSize } from "@/utils/formatFileSize";
+import Image from "next/image";
 
 export type ApprovalStatus =
-  | "Draft"
-  | "Active"
-  | "Configured"
   | "Pending"
-  | "Closed";
+  | "Approved"
+  | "Rejected"
+  | "Escalated"
+  | "Completed"
+  | "Cancelled"
+  | "PendingChanges";
+
+export enum Status {
+  Pending = 1,
+  Approved = 2,
+  Rejected = 3,
+  Escalated = 4,
+  Completed = 5,
+  Cancelled = 6,
+  PendingChanges = 7,
+}
 
 interface DataTableProps {
-  data: ApprovalQueueType[];
+  data: ApprovalQueueResponse;
   showPagination?: boolean;
   deleteLoader?: boolean;
   onSuccess?: boolean;
@@ -54,6 +67,8 @@ interface DataTableProps {
   onDelete: (id: string) => void;
   onRejection: (id: string) => void;
   onRequestChange: (id: string) => void;
+  onChange: (data: any) => void;
+  formData?: QueueActions;
 }
 
 export function ApprovalQueueTable(props: DataTableProps) {
@@ -61,10 +76,10 @@ export function ApprovalQueueTable(props: DataTableProps) {
   const [approveModal, setModal] = useState(false);
   const [rejectModal, setRejectionModal] = useState(false);
   const [requestchangeModal, setRequestChangeModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<ApprovalQueueType | null>(
-    null
-  );
   const [openRowModal, setOpenRowModal] = useState(false);
+  const [queueId, setQueueId] = useState("");
+  const toastId = useRef<string | number | null>(null);
+  const hasOpenedModalRef = useRef(false);
 
   const {
     data,
@@ -76,12 +91,46 @@ export function ApprovalQueueTable(props: DataTableProps) {
     onRejection,
     onSuccess,
     onRequestChange,
+    formData,
+    onChange,
   } = props;
+
+  const {
+    data: queueData,
+    isSuccess,
+    refetch,
+    isFetching,
+  } = useGetApprovalQueuesIdQuery(queueId);
 
   //   const deleteItem = (id: string) => {
   //     setDeleteId(id);
   //     setModal(true);
   //   };
+  useEffect(() => {
+    if (isFetching && !toastId.current) {
+      toastId.current = toast.loading("Working on it, please wait...", {
+        position: "top-right",
+      });
+    }
+
+    if (isSuccess && !hasOpenedModalRef.current) {
+      if (toastId.current) {
+        toast.dismiss(toastId.current);
+        toastId.current = null;
+      }
+
+      toast.success("Done!", { position: "top-right" });
+      setOpenRowModal(true);
+
+      //Mark modal as already opened
+      hasOpenedModalRef.current = true;
+    }
+
+    if (!isFetching && toastId.current) {
+      toast.dismiss(toastId.current);
+      toastId.current = null;
+    }
+  }, [isFetching, isSuccess]);
 
   useEffect(() => {
     if (onSuccess) {
@@ -92,25 +141,38 @@ export function ApprovalQueueTable(props: DataTableProps) {
     }
   }, [onSuccess]);
 
+  const handleModalClose = () => {
+    setOpenRowModal(false);
+
+    hasOpenedModalRef.current = false;
+  };
+
   const getStatusBadge = (status: ApprovalStatus) => {
     const styles = {
-      Active: "border-0 text-[#36C58C]",
+      Approved: "border-0 text-[#36C58C]",
       Inactive: "border-0 text-[#FC5A5A]",
-      Archived: "border-0 text-yellow-700",
-      Configured: "border-0 text-blue-700",
+      Cancelled: "border-0 text-[#FC5A5A]",
+      Rejected: "border-0 text-[#FC5A5A]",
+      Escalated: "border-0 text-yellow-700",
+      PendingChanges: "border-0 text-blue-700",
       Pending: "border-0 text-[#D37C17]",
-      Draft: "border-0 text-primary-gray",
-      Closed: "border-0 text-gray-700",
+      Completed: "border-0 text-gray-700",
+    };
+
+    const getStatus = (value: string) => {
+      const status: ApprovalStatus = Status[Number(value)] as ApprovalStatus;
+
+      return styles[status];
     };
 
     return (
-      <Badge variant="outline" className={styles[status] || styles["Draft"]}>
-        {status}
+      <Badge variant="outline" className={getStatus(status)}>
+        {Status[Number(status)]}
       </Badge>
     );
   };
 
-  const columns: ColumnDef<ApprovalQueueType>[] = [
+  const columns: ColumnDef<ApprovalQueueDetails>[] = [
     {
       accessorKey: "document",
       header: () => {
@@ -120,16 +182,16 @@ export function ApprovalQueueTable(props: DataTableProps) {
         const document = row.original;
         return (
           <div className="capitalize p-[10px]">
-            <p>{document?.documentName}</p>
-            <span className="text-[#A9A9A9] text-[12px]">
+            <p>{document?.documentTitle}</p>
+            {/* <span className="text-[#A9A9A9] text-[12px]">
               PDF | 5MB
-            </span>
+            </span> */}
           </div>
         );
       },
     },
     {
-      accessorKey: "contributoe",
+      accessorKey: "contributor",
       header: () => {
         return <div className="p-[10px]">Contributor</div>;
       },
@@ -137,7 +199,9 @@ export function ApprovalQueueTable(props: DataTableProps) {
         const document = row.original;
         return (
           <div className="capitalize p-[10px]">
-            <span className="text-[12px] p-[10px]">{document.contributor}</span>
+            <span className="p-[10px]">
+              {document.assignedApprovers.map((item) => item.name).join(",")}
+            </span>
           </div>
         );
       },
@@ -151,7 +215,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
         const document = row.original;
         return (
           <div className="capitalize p-[10px]">
-            <p>{dayjs(document?.dateSubmitted).format("MMM DD, YYYY")}</p>
+            <p>{dayjs(document?.submittedAt).format("MMM DD, YYYY")}</p>
           </div>
         );
       },
@@ -173,8 +237,21 @@ export function ApprovalQueueTable(props: DataTableProps) {
     },
   ];
 
+  function getShortDocumentType(contentType?: string) {
+    if (!contentType) return "—";
+
+    const parts = contentType.split("/");
+    if (parts.length !== 2) return "—";
+
+    return parts[1].toUpperCase();
+  }
+
+  const documentIsImage = (type: string) => {
+    return type.startsWith("image/");
+  };
+
   const table = useReactTable({
-    data: data,
+    data: data?.items,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -218,8 +295,12 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   key={row.id}
                   className="odd:bg-[#F9FAFB] w-full border-0 cursor-pointer"
                   onClick={() => {
-                    setSelectedRow(row.original);
-                    setOpenRowModal(true);
+                    // setSelectedRow(row.original);
+                    setQueueId(row.original.stepInstanceId);
+                    setOpenRowModal(false);
+                    hasOpenedModalRef.current = false;
+
+                    refetch();
                   }}
                   data-state={row?.getIsSelected() && "selected"}
                 >
@@ -281,22 +362,39 @@ export function ApprovalQueueTable(props: DataTableProps) {
       <GenericModal
         isOpen={openRowModal}
         showClose={true}
-        handleClose={() => setOpenRowModal(false)}
+        handleClose={() => handleModalClose()}
         title="Approval Queue"
       >
-        {selectedRow && (
+        {queueData && (
           <div className="max-h-[70vh] overflow-y-auto pr-2 space-y-6 w-full font-[family-name:var(--font-dm)]">
             {/* FILE PREVIEW CARD */}
             <div className="border rounded-md p-4 flex items-center gap-4 bg-[#F9FAFB] shadow-sm">
-              <div className="p-3 bg-[#EEF8FF] rounded-md">
-                <FileText className="w-6 h-6 text-brand-blue" />
+              <div className="p-3 rounded-md w-1/2">
+                {documentIsImage(queueData.document.contentType) ? (
+                  <Image
+                    src={queueData.document.blobPath}
+                    alt="document preview"
+                    width={32}
+                    height={32}
+                    className="w-[80%] mx-auto h-[200px] object-contain rounded"
+                  />
+                ) : (
+                  <iframe
+                    src={queueData.document.blobPath}
+                    className="w-[80%] mx-auto h-[400px] border rounded"
+                    title={queueData.document.title}
+                  />
+                )}
               </div>
 
               <div>
-                <p className="font-medium text-[15px]">
-                  {selectedRow.documentName}
+                <p className="font-medium text-[15px] capitalize">
+                  {queueData.activeStep.documentTitle}
                 </p>
-                <p className="text-[12px] text-[#A9A9A9]">PDF | 5MB</p>
+                <p className="text-[12px] text-[#A9A9A9]">
+                  {getShortDocumentType(queueData.document.contentType)} |{" "}
+                  {formatFileSize(queueData.document.fileSize)}
+                </p>
                 <Button className="mt-1 bg-[#F4E4C6] text-[#AD8434] hover:bg-[#F4E4C6] hover:text-[#AD8434] font-medium text-[14px]">
                   View Document
                 </Button>
@@ -315,7 +413,9 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   Contributor
                 </p>
                 <p className="text-[13px] font-medium text-[#464646]">
-                  {selectedRow.contributor}
+                  {queueData.activeStep.assignedApprovers
+                    .map((item) => item.name)
+                    .join(",")}
                 </p>
               </div>
 
@@ -325,7 +425,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   Department
                 </p>
                 <div className="text-[13px] font-medium text-[#464646]">
-                  Human Resource (HR)
+                  {queueData.activeStep.department}
                 </div>
               </div>
 
@@ -335,7 +435,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   Document Type
                 </p>
                 <div className="text-[13px] font-medium text-[#464646]">
-                  Employment Contract
+                  {queueData.activeStep.documentType}
                 </div>
               </div>
 
@@ -345,7 +445,9 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   Submission Date
                 </p>
                 <p className="text-[13px] font-medium text-[#464646]">
-                  {dayjs(selectedRow.dateSubmitted).format("MMMM DD, YYYY")}
+                  {dayjs(queueData.activeStep.submittedAt).format(
+                    "MMMM DD, YYYY"
+                  )}
                 </p>
               </div>
 
@@ -355,7 +457,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   Workflow Step
                 </p>
                 <p className="text-[13px] font-medium text-[#464646]">
-                  Initial Review
+                  {queueData.activeStep.stepName}
                 </p>
               </div>
 
@@ -365,7 +467,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   Status
                 </p>
                 <div className="text-[13px] font-medium text-[#464646]">
-                  {selectedRow.status}
+                  {Status[queueData.activeStep.status]}
                 </div>
               </div>
             </div>
@@ -415,7 +517,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
             </Button>
             <Button
               className="bg-brand-blue py-[24px] hover:bg-brand-blue"
-              onClick={() => onDelete(deleteId)}
+              onClick={() => onDelete(queueId)}
               disabled={deleteLoader}
             >
               {deleteLoader && <Loader2 className="animate-spin" />}
@@ -438,6 +540,12 @@ export function ApprovalQueueTable(props: DataTableProps) {
           <Textarea
             className="resize-none h-25 w-full focus-visible:ring-0"
             placeholder="Kindly state reason for rejecting"
+            onChange={(e) => {
+              onChange({
+                ...formData,
+                comment: e.target.value,
+              });
+            }}
           />
 
           <div className="mt-6 gap-[16px] flex justify-center items-center">
@@ -449,7 +557,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
             </Button>
             <Button
               className="bg-brand-blue py-[24px] hover:bg-brand-blue"
-              onClick={() => onRejection(deleteId)}
+              onClick={() => onRejection(queueId)}
               disabled={deleteLoader}
             >
               {deleteLoader && <Loader2 className="animate-spin" />}
@@ -460,10 +568,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
       </GenericModal>
 
       {/* Document Request Change Modal */}
-      <GenericModal
-        isOpen={requestchangeModal}
-        subTitle="Request Change"
-      >
+      <GenericModal isOpen={requestchangeModal} subTitle="Request Change">
         <div className="w-full">
           <Label className="text-primary-gray text-[15px] font-semibold mb-1">
             Request change
@@ -471,6 +576,12 @@ export function ApprovalQueueTable(props: DataTableProps) {
           <Textarea
             className="resize-none h-25 w-full focus-visible:ring-0"
             placeholder="Kindly state your comments here"
+            onChange={(e) => {
+              onChange({
+                ...formData,
+                comment: e.target.value,
+              });
+            }}
           />
 
           <div className="mt-6 gap-[16px] flex justify-center items-center">
@@ -482,7 +593,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
             </Button>
             <Button
               className="bg-brand-blue py-[24px] hover:bg-brand-blue"
-              onClick={() => onRequestChange(deleteId)}
+              onClick={() => onRequestChange(queueId)}
               disabled={deleteLoader}
             >
               {deleteLoader && <Loader2 className="animate-spin" />}
