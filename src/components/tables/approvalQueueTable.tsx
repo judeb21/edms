@@ -80,6 +80,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
   const [queueId, setQueueId] = useState("");
   const toastId = useRef<string | number | null>(null);
   const hasOpenedModalRef = useRef(false);
+  const [previewModal, setPreviewModal] = useState(false);
 
   const {
     data,
@@ -380,7 +381,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   />
                 ) : (
                   <iframe
-                    src={queueData.document.blobPath}
+                    src={`https://docs.google.com/gview?url=${encodeURIComponent(queueData.document.blobPath)}&embedded=true`}
                     className="w-[80%] mx-auto h-[400px] border rounded"
                     title={queueData.document.title}
                   />
@@ -395,7 +396,10 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   {getShortDocumentType(queueData.document.contentType)} |{" "}
                   {formatFileSize(queueData.document.fileSize)}
                 </p>
-                <Button className="mt-1 bg-[#F4E4C6] text-[#AD8434] hover:bg-[#F4E4C6] hover:text-[#AD8434] font-medium text-[14px]">
+                <Button
+                  className="mt-1 bg-[#F4E4C6] text-[#AD8434] hover:bg-[#F4E4C6] hover:text-[#AD8434] font-medium text-[14px]"
+                  onClick={() => setPreviewModal(true)}
+                >
                   View Document
                 </Button>
               </div>
@@ -599,6 +603,47 @@ export function ApprovalQueueTable(props: DataTableProps) {
               {deleteLoader && <Loader2 className="animate-spin" />}
               Submit
             </Button>
+          </div>
+        </div>
+      </GenericModal>
+
+      {/* Preview Document upload */}
+      <GenericModal
+        isOpen={previewModal}
+        title="Document Preview"
+        showClose={true}
+        handleClose={() => setPreviewModal(false)}
+        className="!max-w-[600px] h-[600px] overflow-auto"
+      >
+        <div className="w-full -translate-y-25">
+          {/* Document preview */}
+          <div className="my-[30px] translate-y-8">
+            {queueData && (
+              <div>
+                {documentIsImage(queueData.document.contentType) ? (
+                  <Image
+                    src={queueData.document.blobPath}
+                    alt="Document"
+                    width={32}
+                    height={32}
+                    className="w-[80%] mx-auto h-[250px] object-cover rounded"
+                  />
+                ) : (
+                  <iframe
+                    src={`https://docs.google.com/gview?url=${encodeURIComponent(queueData.document.blobPath)}&embedded=true`}
+                    className="w-[80%] mx-auto h-[400px] border rounded"
+                    title={queueData.document.blobPath}
+                  />
+                )}
+              </div>
+            )}
+
+            {/* multiple file uploads */}
+            {/* {files.length > 1 && (
+              <div className="w-[80%] mx-auto">
+                <SwiperCard files={files} />
+              </div>
+            )} */}
           </div>
         </div>
       </GenericModal>

@@ -89,7 +89,9 @@ export default function DocumentDetailsPage() {
           <div className="my-[30px] translate-y-8">
             {documentDetails?.files.length === 1 && (
               <div>
-                <Card className={`h-[400px] border-0 shadow-md py-3 w-[80%] mx-auto`}>
+                <Card
+                  className={`h-[400px] border-0 shadow-md py-3 w-[80%] mx-auto`}
+                >
                   <CardContent className="flex items-center justify-center h-full p-0">
                     {isImage(documentDetails?.files[0]?.blobPath) ? (
                       <Image
@@ -101,7 +103,7 @@ export default function DocumentDetailsPage() {
                       />
                     ) : (
                       <iframe
-                        src={documentDetails?.files[0]?.blobPath}
+                        src={`https://docs.google.com/gview?url=${encodeURIComponent(documentDetails?.files[0]?.blobPath)}&embedded=true`}
                         className="w-[80%] h-[400px] mx-auto border rounded"
                         title={documentDetails?.files[0]?.blobPath}
                       />
