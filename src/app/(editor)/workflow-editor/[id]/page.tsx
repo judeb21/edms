@@ -64,7 +64,8 @@ const WorkflowEditor = () => {
   const [isDeactivated, setIsDeactivated] = useState(false);
   const [templateSaving, setTemplateSaving] = useState(false);
   const [templateSaved, setSavedTemplate] = useState(false);
-  const [templateSavedAndActivated, setSavedAndActivatedTemplate] = useState(false);
+  const [templateSavedAndActivated, setSavedAndActivatedTemplate] =
+    useState(false);
   const [templateSuccessSaved, setSuccessTemplate] = useState(false);
   const [isActivating, setActivating] = useState(false);
   const [message, setMessage] = useState("");
@@ -428,6 +429,16 @@ const WorkflowEditor = () => {
         // setSuccessTemplate(true);
         // setActivating(false);
         // setSavedStep(true);
+
+        const savePayload: WorkFlowConfigurationPayload = {
+          templateName: configureStepName,
+          useTemplate: false,
+          templateId: params.id as string,
+          saveAsTemplate: false,
+          steps: updatedSteps as StepTemplate[],
+        };
+
+        configureWorkflow.mutate(savePayload);
 
         activateWorkflows.mutate(params?.id as string, {
           onSuccess: () => {
@@ -806,7 +817,7 @@ const WorkflowEditor = () => {
   };
 
   const goBack = () => {
-    router.push('/workflow');
+    router.push("/workflow");
   };
 
   const viewWorkflows = () => {
