@@ -23,7 +23,7 @@ export default function AuthBrand({
           className="mx-auto mb-6 max-w-md"
         />
 
-        <div className="font-[family-name:var(--font-dm)] text-center w-[80%]">
+        <div className="font-[family-name:var(--font-dm)] text-center w-[80%] mx-auto">
           <h4 className="font-[family-name:var(--font-dm)] text-center text-[#0284B2] text-[30px] font-[700] mb-[13px]">
             {authTitle}
           </h4>
