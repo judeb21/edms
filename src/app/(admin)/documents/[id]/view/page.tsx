@@ -89,7 +89,7 @@ export default function DocumentDetailsPage() {
                   />
                 ) : (
                   <iframe
-                    src={documentDetails?.files[0]?.blobPath}
+                    src={`https://docs.google.com/gview?url=${encodeURIComponent(documentDetails?.files[0]?.blobPath)}&embedded=true`}
                     className="w-[80%] mx-auto h-[400px] border rounded"
                     title={documentDetails?.files[0]?.blobPath}
                   />

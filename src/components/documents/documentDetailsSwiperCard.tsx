@@ -38,7 +38,7 @@ export function DocumentSwiperCard({ files }: SwiperCardProp) {
                     />
                   ) : (
                     <iframe
-                      src={file?.blobPath}
+                      src={`https://docs.google.com/gview?url=${encodeURIComponent(file.blobPath)}&embedded=true`}
                       className="w-full h-[400px] mx-auto border rounded"
                       title={file.blobPath}
                     />
