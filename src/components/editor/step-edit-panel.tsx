@@ -1,4 +1,3 @@
- 
 "use client";
 import { Step, WorkflowUserType } from "@/types/workflow";
 import { AlertCircle, Loader2, X } from "lucide-react";
@@ -160,7 +159,9 @@ const StepEditFormPanel = ({
             </label>
             <select
               value={formData.role}
-              onChange={(e) => onChange({ ...formData, role: [e.target.value] })}
+              onChange={(e) =>
+                onChange({ ...formData, role: [e.target.value] })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brand-blue text-sm"
             >
               <option value="">Select a role</option>
@@ -198,6 +199,9 @@ const StepEditFormPanel = ({
                 label: u.name,
                 value: u.id,
                 _key: `${u.id}_${search}`,
+                email: u.email,
+                dept: u.dept,
+                role: u.roles,
               }))}
               // formData.users.map((u) => u.id
               isLoading={isFetchingNextPage}
@@ -384,7 +388,7 @@ const StepEditFormPanel = ({
                   email: user.email,
                   name: user.label,
                   dept: user.dept,
-                  role: user?.role?.length ? user.role[0] : "",
+                  role: user?.role?.length ? user.role : [],
                 }));
                 onChange({
                   ...formData,
@@ -398,6 +402,9 @@ const StepEditFormPanel = ({
                   label: u.name,
                   value: u.id,
                   _key: `${u.id}_${search}`,
+                  email: u.email,
+                  dept: u.dept,
+                  role: u.roles,
                 })
               )}
               isLoading={isFetchingNextPage}
