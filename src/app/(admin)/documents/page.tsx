@@ -9,7 +9,7 @@ import { FileText, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-export default function TemplatesPage() {
+export default function DocumentsPage() {
   const router = useRouter();
   const breadcrumbItems = [
     { label: "Document Management", href: "/overview" },
