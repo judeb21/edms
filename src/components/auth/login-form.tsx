@@ -20,7 +20,7 @@ import {
   loginSchema,
   LoginValidation,
 } from "@/validationSchemas/auth/loginSchema";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ExtendedFetchBaseQueryError } from "@/types";
 import { Button } from "../ui/button";
 import { useUser } from "@/context/auth-context";
@@ -33,7 +33,7 @@ export default function LoginForm() {
 
   const forgotPasswordLink = process.env.NEXT_PUBLIC_BACKOFFICE_URL;
 
-  const router = useRouter();
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/overview";
 
@@ -68,8 +68,8 @@ export default function LoginForm() {
 
         setUser(data);
 
-        router.replace(callbackUrl); // move this ↑ first
-        // window.location.href = callbackUrl
+        // router.replace(callbackUrl); // move this ↑ first
+        window.location.href = callbackUrl
         // setButtonLoader(false);
         return;
       } else {
