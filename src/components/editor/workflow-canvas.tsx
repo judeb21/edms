@@ -26,11 +26,13 @@ dayjs.extend(relativeTime);
 const WorkflowCanvas = ({
   steps,
   selectedStep,
+  stepCount,
   onAddStep,
   onSelectStep,
 }: {
   steps: Step[];
   selectedStep: Step | null;
+  stepCount: number;
   onAddStep: () => void;
   onSelectStep: (step: Step) => void;
 }) => {
@@ -67,7 +69,7 @@ const WorkflowCanvas = ({
                   onSelect={() => onSelectStep(step)}
                 />
                 {index < steps.length - 1 && <WorkflowArrow />}
-                {index === steps.length - 1 && steps.length < 4 && (
+                {index === steps.length - 1 && steps.length < stepCount && (
                   <WorkflowArrow />
                 )}
               </Fragment>
@@ -87,7 +89,7 @@ const WorkflowCanvas = ({
             )}
 
             {/* Add Step Button */}
-            {steps.length < 4 && (
+            {steps.length < stepCount && (
               <button
                 onClick={onAddStep}
                 className="w-12 h-12 rounded-full border border-dashed border-[#464646] flex items-center justify-center hover:border-brand-blue transition-colors"
@@ -132,8 +134,8 @@ const WorkflowStepNode = ({
         isSelected
           ? "border-[#D7E7EC] border-2 bg-[#F6FDFF] shadow-lg"
           : step.configured
-          ? "border-[#D7E7EC] border-4 bg-[#F6FDFF] hover:border-[#D7E7EC] shadow-lg"
-          : "border-dashed border-gray-300 bg-white hover:border-gray-400"
+            ? "border-[#D7E7EC] border-4 bg-[#F6FDFF] hover:border-[#D7E7EC] shadow-lg"
+            : "border-dashed border-gray-300 bg-white hover:border-gray-400"
       }`}
       onClick={onSelect}
     >

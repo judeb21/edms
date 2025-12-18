@@ -14,6 +14,9 @@ export const workflowSchema = z
       error: "Scope is required",
     }),
     scopeValue: z.string().optional(),
+    stepNo: z.number().int().min(1, {
+      message: "Steps must be greater than 0"
+    }),
   })
   .superRefine((data, ctx) => {
     const scopeIsDepartment = data.scope === "Department";
@@ -27,7 +30,7 @@ export const workflowSchema = z
         });
       }
     }
-     if (scopeIsDocumentType) {
+    if (scopeIsDocumentType) {
       if (!data.scopeValue || data.scopeValue.trim() === "") {
         ctx.addIssue({
           path: ["scopeValue"],
@@ -39,12 +42,13 @@ export const workflowSchema = z
   });
 
 export const WorkflowCreationValidation = () =>
-  useForm<z.infer<typeof workflowSchema>>({
+  useForm<z.input<typeof workflowSchema>>({
     resolver: zodResolver(workflowSchema),
     defaultValues: {
       name: "",
       description: "",
       scope: "Global",
       scopeValue: "",
+      stepNo: 0,
     },
   });
