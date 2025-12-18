@@ -155,7 +155,7 @@ const WorkflowHeader = ({
               className={`px-4 py-[14px] rounded text-[12px] flex items-center hover:bg-brand-blue cursor-pointer ${
                 validated
                   ? "bg-brand-blue text-white hover:bg-brand-blue"
-                  : "bg-brand-blue text-white cursor-not-allowed"
+                  : "bg-brand-blue text-white"
               }`}
             >
               {activationLoader ? (
