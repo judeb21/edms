@@ -136,8 +136,8 @@ const WorkflowEditor = () => {
   }, [configureSteps]);
 
   const addStep = (): void => {
-    if (steps.length >= 4) {
-      alert("Maximum of 4 steps allowed");
+    if (steps.length >= Number(configureStepData?.stepCount)) {
+      alert(`Maximum of ${Number(configureStepData?.stepCount)} steps allowed`);
       return;
     }
 
@@ -873,6 +873,7 @@ const WorkflowEditor = () => {
         {/* Main Canvas */}
         <WorkflowCanvas
           steps={steps}
+          stepCount={Number(configureStepData?.stepCount)}
           selectedStep={selectedStep}
           onAddStep={addStep}
           onSelectStep={setSelectedStep}
@@ -904,6 +905,7 @@ const WorkflowEditor = () => {
             isActivating={isActivating}
             onChange={setFormData}
             isSaving={loader}
+            stepLength={Number(configureStepData?.stepCount)}
           />
         )}
 

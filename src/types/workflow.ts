@@ -16,6 +16,7 @@ export interface WorkflowPayload {
     type: string;
     value: string;
   };
+  stepCount: number;
 }
 
 export interface WorkflowUserType {
@@ -98,6 +99,7 @@ export interface WorkflowRetrievedSteps {
 export interface WorkflowDetails {
   workflowId: string;
   name: string;
+  stepCount: number;
   status: WorkflowStatus;
   steps: WorkflowRetrievedSteps[];
 }
@@ -117,6 +119,7 @@ export interface TemplateWorkflowDetails {
   id: string;
   templateName: string;
   createdAt: string;
+  stepCount: number;
   template: WorkflowRetrievedSteps[];
 }
 

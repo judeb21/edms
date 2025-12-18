@@ -23,6 +23,7 @@ const StepEditFormPanel = ({
   onActivate,
   isActivating,
   isSaving,
+  stepLength,
 }: {
   step: Step;
   formData: any;
@@ -32,6 +33,7 @@ const StepEditFormPanel = ({
   onChange: (data: any) => void;
   isSaving: boolean;
   isActivating: boolean;
+  stepLength: number;
 }) => {
   const [search, setSearch] = React.useState("");
   const {
@@ -251,7 +253,7 @@ const StepEditFormPanel = ({
           </div>
         </div>
 
-        {step.order === 2 && (
+        {step.order > 2 && !stepLength && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
               Conditions per Department (Optional)

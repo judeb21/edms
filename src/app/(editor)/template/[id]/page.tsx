@@ -863,6 +863,7 @@ const WorkflowEditor = () => {
         <WorkflowCanvas
           steps={steps}
           selectedStep={selectedStep}
+          stepCount={Number(configureStepData?.stepCount)}
           onAddStep={addStep}
           onSelectStep={setSelectedStep}
         />
@@ -893,6 +894,7 @@ const WorkflowEditor = () => {
             isActivating={isActivating}
             onChange={setFormData}
             isSaving={loader}
+            stepLength={Number(configureStepData?.stepCount)}
           />
         )}
 

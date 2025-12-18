@@ -101,6 +101,7 @@ export default function WorkFlowPage() {
         type: values.scope,
         value: values.scopeValue as string,
       },
+      stepCount: values.stepNo,
     };
 
     createWorkflow.mutate(apiPayload, {
@@ -321,6 +322,29 @@ export default function WorkFlowPage() {
                     />
                   </div>
                 )}
+
+                <div className="space-y-2 mt-[24px]">
+                  <FormField
+                    control={form.control}
+                    name="stepNo"
+                    render={({}) => (
+                      <FormItem>
+                        <FormLabel className="text-primary-gray font-semibold text-[15px]">
+                          Number of Steps
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="string"
+                            placeholder="Enter Number of Steps you want this workflow to be configure with"
+                            {...form.register("stepNo", { valueAsNumber: true})}
+                            className="focus-visible:ring-0 h-[50px] rounded-[8px] border-[#cccccc]"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <div className="space-y-2 mt-[48px] flex justify-end items-center gap-4">
                   {/* <Button
