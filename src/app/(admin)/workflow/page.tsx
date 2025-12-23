@@ -95,13 +95,15 @@ export default function WorkFlowPage() {
       </div>
 
       <div className="bg-white mt-1 p-8">
-        <WorkFlowDataTable
-          data={workflows as WorkflowTypes[]}
-          showPagination={false}
-          deleteLoader={deleteLoader}
-          onDelete={handleDelete}
-          onSuccess={onSuccess}
-        />
+        {workflows?.length && (
+          <WorkFlowDataTable
+            data={workflows as WorkflowTypes[]}
+            showPagination={false}
+            deleteLoader={deleteLoader}
+            onDelete={handleDelete}
+            onSuccess={onSuccess}
+          />
+        )}
       </div>
     </div>
   );

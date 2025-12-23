@@ -15,6 +15,8 @@ export interface FetchDocumentObject {
   category?: string;
   department?: string;
   status?: string;
+  dateFrom?: string;
+  dateTo?: string;
   page: number;
   pageSize: number;
 }
