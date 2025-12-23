@@ -21,7 +21,7 @@ const GettingStartedPanel = ({ onClose }: { onClose: () => void }) => {
             Build Your Workflow
           </h4>
           <p className="text-[12px] text-primary-gray font-medium">
-            Add approval steps from the right sidebar. Each step represents a
+            Add approval steps from the left sidebar. Each step represents a
             point where someone needs to review and approve.
           </p>
         </div>

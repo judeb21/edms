@@ -821,7 +821,7 @@ const WorkflowEditor = () => {
   };
 
   const viewWorkflows = () => {
-    router.push("/workflow");
+    router.push("/workflow/workflows");
     setDeactivatedaModal(false);
   };
 
@@ -934,6 +934,9 @@ const WorkflowEditor = () => {
         buttonText="Create New Workflow"
         buttonClass="-translate-y-[20px]"
         handleClick={viewWorkflows}
+        buttonAdditionalText="Close"
+        showAdditionalButton={true}
+        handleAdditionalClick={() => setDeactivatedaModal(false)}
       />
 
       {/* Successfully saved workflow as template */}
