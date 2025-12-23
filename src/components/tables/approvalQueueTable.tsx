@@ -498,14 +498,14 @@ export function ApprovalQueueTable(props: DataTableProps) {
               )}
 
               {/* REQUEST CHANGE BUTTON */}
-              {queueData.activeStep.canRequestChanges && (
+              {/* {queueData.activeStep.canRequestChanges && (
                 <Button
                   className="bg-[#DD9B4F] w-full py-[20px] hover:bg-[#DD9B4F] mt-4"
                   onClick={() => setRequestChangeModal(true)}
                 >
                   Request Change
                 </Button>
-              )}
+              )} */}
             </div>
           </div>
         )}
