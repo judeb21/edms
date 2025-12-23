@@ -29,3 +29,8 @@ export interface AuthenticatedUserInfo {
   roles: string[];
   createdAt?: string;
 }
+
+export interface DateFilter {
+  dateFrom: Date | string | undefined;
+  dateTo: Date | string | undefined;
+}

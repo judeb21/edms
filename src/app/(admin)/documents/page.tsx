@@ -22,10 +22,12 @@ export default function DocumentsPage() {
     department: "",
     category: "",
     keyword: "",
+    dateFrom: "",
+    dateTo: "",
   });
 
   // Get documents
-  const { data, isLoading } = useGetDocuments(payloadParams);
+  const { data, isLoading, isFetching } = useGetDocuments(payloadParams);
 
   const handleSearchClear = () =>
     setPayloadParams({ ...payloadParams, keyword: "" });
@@ -37,6 +39,8 @@ export default function DocumentsPage() {
       department: payloadParams.department,
       category: payloadParams.category,
       keyword: payloadParams.keyword,
+      dateFrom: payloadParams.dateFrom,
+      dateTo: payloadParams.dateTo,
     };
     setPayloadParams(nextPayload);
   };
@@ -48,6 +52,8 @@ export default function DocumentsPage() {
       department: payloadParams.department,
       category: payloadParams.category,
       keyword: payloadParams.keyword,
+      dateFrom: payloadParams.dateFrom,
+      dateTo: payloadParams.dateTo,
     };
     setPayloadParams(prevPayload);
   };
@@ -90,6 +96,7 @@ export default function DocumentsPage() {
           formData={payloadParams}
           handleSearchClear={handleSearchClear}
           onChange={setPayloadParams}
+          isFetching={isFetching}
         />
       </div>
 
