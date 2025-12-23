@@ -69,9 +69,9 @@ export default function LoginForm() {
         // setButtonLoader(false);
         return;
       } else {
+        const errorData = await res.json();
         setButtonLoader(false);
-        console.log("response", res);
-        toast.error(res.statusText, {
+        toast.error(errorData.message, {
           unstyled: true,
           position: "top-right",
           classNames: {
@@ -84,7 +84,6 @@ export default function LoginForm() {
     } catch (error) {
       setButtonLoader(false);
       const requestError = error as ExtendedFetchBaseQueryError;
-      console.log("requestError", requestError);
       toast.error(requestError?.data?.message, {
         unstyled: true,
         position: "top-right",
