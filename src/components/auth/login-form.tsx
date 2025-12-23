@@ -37,10 +37,6 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/overview";
 
-  // / Add this to debug
-  console.log('Current callbackUrl:', callbackUrl);
-  console.log('All search params:', Object.fromEntries(searchParams.entries()));
-
   const togglePasswordVisibility = () => {
     if (passwordType === "password") return setPasswordType("text");
     return setPasswordType("password");
@@ -74,6 +70,7 @@ export default function LoginForm() {
         return;
       } else {
         setButtonLoader(false);
+        console.log("response", res);
         toast.error(res.statusText, {
           unstyled: true,
           position: "top-right",
@@ -87,6 +84,7 @@ export default function LoginForm() {
     } catch (error) {
       setButtonLoader(false);
       const requestError = error as ExtendedFetchBaseQueryError;
+      console.log("requestError", requestError);
       toast.error(requestError?.data?.message, {
         unstyled: true,
         position: "top-right",
