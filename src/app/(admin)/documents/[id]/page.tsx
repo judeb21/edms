@@ -77,7 +77,7 @@ export default function DocumentDetailsPage() {
               className="translate-x-0 transition-all duration-500 ease-in-out group-hover:-translate-x-[0.9px]"
             />
             <span className="font-[family-name:var(--font-dm)] text-[#A9A9A9]">
-              Back to workflow list
+              Back to document list
             </span>
           </Button>
         </div>

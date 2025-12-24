@@ -1,4 +1,3 @@
- 
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -212,6 +211,7 @@ export const MultiSelect = React.forwardRef<
     ) => {
       // Don't toggle if clicking on a badge or X icon
       const target = event.target as HTMLElement;
+
       if (
         target.closest("[data-badge]") ||
         target.closest("[data-remove-icon]")
@@ -295,12 +295,37 @@ export const MultiSelect = React.forwardRef<
           >
             {selectedValues.length > 0 ? (
               <div className="flex justify-between items-center w-full">
-                <div className="flex flex-wrap items-center">
+                <div className="flex flex-wrap items-center pointer-events-none">
                   {selectedValues.slice(0, maxCount).map((value) => {
                     // Use optionsStore instead of options to get the selected item
                     const option = optionsStore.get(value);
                     const IconComponent = option?.icon;
                     return (
+                      // <Badge
+                      //   key={value}
+                      //   data-badge
+                      //   className={cn(
+                      //     "!bg-[#E2F5FC] hover:bg-[#E2F5FC] !text-brand-blue capitalize",
+                      //     isAnimating ? "animate-bounce" : "",
+                      //     multiSelectVariants({ variant })
+                      //   )}
+                      //   style={{ animationDuration: `${animation}s` }}
+                      // >
+                      //   {IconComponent && (
+                      //     <IconComponent className="h-4 w-4 mr-2" />
+                      //   )}
+                      //   {option?.label}
+                      //   <XCircle
+                      //     data-remove-icon
+                      //     className="ml-2 h-4 w-4 cursor-pointer"
+                      //     onClick={(event) => {
+                      //       event.preventDefault();
+                      //       event.stopPropagation();
+                      //       toggleOption(value);
+                      //     }}
+                      //   />
+                      // </Badge>
+
                       <Badge
                         key={value}
                         data-badge
@@ -315,15 +340,18 @@ export const MultiSelect = React.forwardRef<
                           <IconComponent className="h-4 w-4 mr-2" />
                         )}
                         {option?.label}
-                        <XCircle
+                        <span
                           data-remove-icon
-                          className="ml-2 h-4 w-4 cursor-pointer"
+                          className="ml-2 inline-flex cursor-pointer"
                           onClick={(event) => {
                             event.preventDefault();
                             event.stopPropagation();
+                            console.log("Remove clicked!", value);
                             toggleOption(value);
                           }}
-                        />
+                        >
+                          <XCircle className="h-4 w-4" />
+                        </span>
                       </Badge>
                     );
                   })}
@@ -433,7 +461,10 @@ export const MultiSelect = React.forwardRef<
                       {option.icon && (
                         <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                       )}
-                      <span>{option.label}</span>
+                      <p>
+                        <span className="block">{option.label}</span>
+                        <span>{option.email}</span>
+                      </p>
                     </CommandItem>
                   );
                 })}
