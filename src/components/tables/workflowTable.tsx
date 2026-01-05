@@ -189,6 +189,11 @@ export function WorkFlowDataTable(props: DataTableProps) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: data.length,
+      },
+    },
   });
 
   //   const canNext = data?.page < data?.meta?.totalPages;
