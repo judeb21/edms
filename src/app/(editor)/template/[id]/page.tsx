@@ -86,7 +86,7 @@ const WorkflowEditor = () => {
   const [formData, setFormData] = useState<FormData>({
     id: "",
     stepName: "",
-    approverType: "RoleBased",
+    approverType: "SpecificUsers",
     role: [],
     users: [] as WorkflowUserType[],
     approverMode: "AllApprovers",
@@ -135,8 +135,8 @@ const WorkflowEditor = () => {
   }, [configureSteps]);
 
   const addStep = (): void => {
-    if (steps.length >= 4) {
-      alert("Maximum of 4 steps allowed");
+    if (steps.length >= Number(configureStepData?.stepCount)) {
+      alert(`Maximum of ${Number(configureStepData?.stepCount)} steps allowed`);
       return;
     }
 
@@ -145,14 +145,14 @@ const WorkflowEditor = () => {
     const newStep: Step = {
       id: `step-${steps.length + 1}`,
       order: steps.length + 1,
-      stepName: `Step ${steps.length + 1}`,
+      stepName: ``,
       configured: false,
-      approverType: "RoleBased",
+      approverType: "SpecificUsers",
       roles: [],
       approverMode: "AllApprovers",
       deadline: "",
       users: [],
-      enableEscalation: true,
+      enableEscalation: false,
       escalationUsers: [],
       conditions: [],
     };
@@ -581,6 +581,9 @@ const WorkflowEditor = () => {
       if (step.approverType === "RoleBased" && !step.roles.length) {
         errors.push(`Step ${index + 1} has no role selected`);
       }
+      if (formData.approverType === "SpecificUsers" && !step.users.length) {
+        errors.push(`Step ${index + 1} has no users selected`);
+      }
       if (!step.deadline) {
         errors.push(`Step ${index + 1} has no deadline set`);
       }
@@ -806,7 +809,7 @@ const WorkflowEditor = () => {
   };
 
   const goBack = () => {
-    router.push('/templates');
+    router.push("/templates");
   };
 
   const viewWorkflows = () => {
@@ -833,7 +836,7 @@ const WorkflowEditor = () => {
     <div className="font-[family-name:var(--font-dm)]">
       <WorkflowHeader
         workflowName={configureStepData?.templateName as string}
-        status={'Draft'}
+        status={"Draft"}
         stepIsSaved={stepIsSaved}
         stepsLength={steps.length}
         validationLoader={validationLoader}
