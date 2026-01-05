@@ -384,6 +384,19 @@ const WorkflowEditor = () => {
       return;
     }
 
+    if (!formData.deadline) {
+      toast.warning("Step has no deadline set", {
+        unstyled: false,
+        position: "top-right",
+        // classNames: {
+        //   toast:
+        //     "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        //   title: "text-[#E71D36]",
+        // },
+      });
+      return;
+    }
+
     if (
       formData.enableEscalation === "yes" &&
       !formData.escalationUsers.length
