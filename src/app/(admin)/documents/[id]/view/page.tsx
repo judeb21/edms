@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useGetDocumentsIdQuery } from "@/hooks/api/useDocumentQuery";
 import { DocumentFiles } from "@/types/documents";
 import { formatFileSize } from "@/utils/formatFileSize";
+import dayjs from "dayjs";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -128,7 +129,7 @@ export default function DocumentDetailsPage() {
               <div className="">
                 <h4 className="font-semibold mb-[8px] capitalize">Date</h4>
                 <p className="font-medium text-primary-gray text-[14px]">
-                  Employment Contract
+                  {dayjs(documentDetails?.files[0]?.createdAt).format("DD MMMM, YYYY")}
                 </p>
               </div>
               <div className="text-right">
@@ -147,7 +148,7 @@ export default function DocumentDetailsPage() {
                     {formatFileSize(
                       Number(
                         documentDetails?.files?.reduce(
-                          (acc, f) => acc + f.size,
+                          (acc, f) => acc + f.fileSize,
                           0
                         )
                       )

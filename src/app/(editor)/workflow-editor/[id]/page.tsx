@@ -671,12 +671,126 @@ const WorkflowEditor = () => {
   };
 
   const activateWorkflow = (): void => {
-    setActivationLoader(true);
-    activateWorkflows.mutate(params?.id as string, {
-      onSuccess: () => {
-        setActivationLoader(false);
-        setSuccessModal(true);
-        toast.success("Workflow activated successfully", {
+    const errors: string[] = [];
+
+    const updatedSteps: StepTemplate[] = steps.map((step) => {
+      if (step.id === selectedStep?.id) {
+        return {
+          id: formData.id,
+          approvalType: formData.approverType,
+          order: steps.length,
+          stepName: formData.stepName,
+          name: formData.stepName,
+          approverType: formData.approverType,
+          roles: formData.approverType === "SpecificUsers" ? [] : formData.role,
+          users:
+            formData.approverType === "SpecificUsers" ? formData.users : [],
+          approverMode: formData.approverMode,
+          deadline: dayjs.utc(formData.deadline).endOf("day").toISOString(),
+          enableEscalation: formData.enableEscalation === "yes" ? true : false,
+          escalationUsers:
+            formData.enableEscalation === "yes" ? formData.escalationUsers : [],
+          conditions:
+            formData.conditions && formData.conditions.department
+              ? [formData.conditions as ConditionsType]
+              : [],
+          configured: false,
+        };
+      }
+      return {
+        ...step,
+        conditions:
+          step.conditions?.length && step.conditions.filter(Boolean)
+            ? [formData.conditions as ConditionsType]
+            : [],
+      };
+    });
+
+    setSteps(
+      updatedSteps.map((step, index) => {
+        return {
+          ...step,
+          id: `step-${index + 1}`,
+          order: index + 1,
+          configured: false,
+        };
+      })
+    );
+
+    if (steps.length === 0) {
+      errors.push("At least one step is required");
+    }
+
+    updatedSteps.forEach((step, index) => {
+      // if (!step.configured) {
+      //   errors.push(`Step ${index + 1} is not configured`);
+      // }
+      if (!step.stepName.trim()) {
+        errors.push(`Step ${index + 1} has no name`);
+      }
+      if (step.approverType === "RoleBased" && !step.roles.length) {
+        errors.push(`Step ${index + 1} has no role selected`);
+      }
+      if (formData.approverType === "SpecificUsers" && !step.users.length) {
+        errors.push(`Step ${index + 1} has no users selected`);
+      }
+      if (!step.deadline) {
+        errors.push(`Step ${index + 1} has no deadline set`);
+      }
+      if (dayjs(step.deadline) < dayjs(new Date())) {
+        errors.push(`Step ${index + 1} deadline can not be in the past`);
+      }
+      if (step.enableEscalation && step.escalationUsers.length === 0) {
+        errors.push(
+          `Step ${index + 1} has escalation enabled but no users selected`
+        );
+      }
+    });
+
+    setValidationErrors(errors);
+
+    if (errors.length === 0) {
+      setActivationLoader(true);
+      activateWorkflows.mutate(params?.id as string, {
+        onSuccess: () => {
+          setActivationLoader(false);
+          setValidated(true);
+          setSuccessModal(true);
+          toast.success("Workflow activated successfully", {
+            unstyled: false,
+            position: "top-right",
+            classNames: {
+              toast:
+                "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+              title: "text-[#E71D36]",
+            },
+          });
+        },
+        onError: (error) => {
+          setLoader(false);
+          setActivationLoader(false);
+          toast.error(
+            error instanceof AxiosError
+              ? error.response?.data?.message
+              : "Failed to activate workflow",
+            {
+              unstyled: true,
+              position: "top-right",
+              classNames: {
+                toast:
+                  "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+                title: "text-[#E71D36]",
+              },
+            }
+          );
+        },
+      });
+    } else {
+      setValidated(false);
+      setActivationLoader(false);
+      toast.warning(
+        `Activation failed with ${errors.length} error(s). Please check the details.`,
+        {
           unstyled: false,
           position: "top-right",
           classNames: {
@@ -684,27 +798,9 @@ const WorkflowEditor = () => {
               "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
             title: "text-[#E71D36]",
           },
-        });
-      },
-      onError: (error) => {
-        setLoader(false);
-        setActivationLoader(false);
-        toast.error(
-          error instanceof AxiosError
-            ? error.response?.data?.message
-            : "Failed to activate workflow",
-          {
-            unstyled: true,
-            position: "top-right",
-            classNames: {
-              toast:
-                "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-              title: "text-[#E71D36]",
-            },
-          }
-        );
-      },
-    });
+        }
+      );
+    }
   };
 
   const deactivateWorkflow = (reason: string): void => {
