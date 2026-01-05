@@ -87,7 +87,7 @@ const WorkflowEditor = () => {
   const [formData, setFormData] = useState<FormData>({
     id: "",
     stepName: "",
-    approverType: "RoleBased",
+    approverType: "SpecificUsers",
     role: [],
     users: [] as WorkflowUserType[],
     approverMode: "AllApprovers",
@@ -146,9 +146,9 @@ const WorkflowEditor = () => {
     const newStep: Step = {
       id: `step-${steps.length + 1}`,
       order: steps.length + 1,
-      stepName: `Step ${steps.length + 1}`,
+      stepName: ``,
       configured: false,
-      approverType: "RoleBased",
+      approverType: "SpecificUsers",
       roles: [],
       approverMode: "AllApprovers",
       deadline: "",
@@ -167,7 +167,7 @@ const WorkflowEditor = () => {
     setFormData({
       id: `step-${steps.length + 1}`,
       stepName: newStep.stepName,
-      approverType: "RoleBased",
+      approverType: "SpecificUsers",
       role: [],
       approverMode: "AllApprovers",
       deadline: "",
@@ -591,6 +591,9 @@ const WorkflowEditor = () => {
       }
       if (step.approverType === "RoleBased" && !step.roles.length) {
         errors.push(`Step ${index + 1} has no role selected`);
+      }
+      if (formData.approverType === "SpecificUsers" && !step.users.length) {
+        errors.push(`Step ${index + 1} has no users selected`);
       }
       if (!step.deadline) {
         errors.push(`Step ${index + 1} has no deadline set`);
