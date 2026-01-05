@@ -83,8 +83,10 @@ export interface DocumentFiles {
   blobPath: string;
   url: string;
   container: string | null;
-  size: number;
+  size?: number;
+  fileSize: number;
   contentType: string;
+  createdAt?: string;
 }
 
 export interface DocumentBatchDetails {
