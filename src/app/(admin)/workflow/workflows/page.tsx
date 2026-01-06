@@ -2,14 +2,19 @@
 
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
 import { Button } from "@/components/ui/button";
+import GenericModal from "@/components/workflow/generic-modal";
+import SuccessModal from "@/components/workflow/modal-successful";
 import WorkflowTemplateCard from "@/components/workflow/workflow-card";
 import {
+  useDeleteTemplate,
   useGetAllTemplatesWorkflows,
 } from "@/hooks/api/useWorkflowQuery";
+import { AxiosError } from "axios";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 // import { useMemo } from "react";
 
 export default function WorkFlowPage() {
@@ -18,8 +23,14 @@ export default function WorkFlowPage() {
     { label: "Approval Workflow", href: "/workflow" },
     { label: "Create New Workflow" },
   ];
+  const [templateId, setTemplateId] = useState("");
+  const [deleteLoader, setDeleteLoader] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
 
-  const { data, isLoading } = useGetAllTemplatesWorkflows();
+  const { data, isLoading, refetch } = useGetAllTemplatesWorkflows();
+
+  const deleteWorkflow = useDeleteTemplate();
 
   const templates = useMemo(() => {
     return data?.splice(0, 8);
@@ -27,6 +38,52 @@ export default function WorkFlowPage() {
 
   const goBack = () => {
     router.back();
+  };
+
+  const onDelete = (id: string) => {
+    setTemplateId(id);
+    setDeleteModal(true);
+  };
+
+  const handleDelete = () => {
+    // setDeleteSuccessful(false);
+    setDeleteLoader(true);
+    deleteWorkflow.mutate(templateId, {
+      onSuccess: (response) => {
+        // setDeleteSuccessful(true);
+        setDeleteLoader(false);
+        setTemplateId("");
+        setDeleteModal(false);
+        setSuccessModal(true);
+        refetch();
+        toast.success(response?.message, {
+          unstyled: false,
+          position: "top-right",
+          classNames: {
+            toast:
+              "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+            title: "text-[#E71D36]",
+          },
+        });
+      },
+      onError: (error: Error) => {
+        setDeleteLoader(false);
+        toast.error(
+          error instanceof AxiosError
+            ? error.response?.data?.message
+            : "Failed to delete template",
+          {
+            unstyled: true,
+            position: "top-right",
+            classNames: {
+              toast:
+                "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+              title: "text-[#E71D36]",
+            },
+          }
+        );
+      },
+    });
   };
 
   if (isLoading) {
@@ -95,10 +152,48 @@ export default function WorkFlowPage() {
                   isNew={false}
                   createdAt={template.createdAt}
                   link={`/template/${template.id}`}
+                  onDelete={() => onDelete(template.id)}
                 />
               );
             })}
           </div>
+
+          <GenericModal
+            isOpen={deleteModal}
+            subTitle="Delete Template"
+            description="Are you sure you want to delete this template?"
+          >
+            <div className="w-full">
+              <div className="mt-6 gap-[16px] flex justify-center items-center">
+                <Button
+                  className="bg-[#FC5A5A] py-[24px] hover:bg-[#FC5A5A]"
+                  onClick={() => {
+                    setTemplateId("");
+                    setDeleteModal(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="bg-brand-blue py-[24px] hover:bg-brand-blue"
+                  onClick={() => handleDelete()}
+                  disabled={deleteLoader}
+                >
+                  {deleteLoader && <Loader2 className="animate-spin" />}
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </GenericModal>
+
+          {/* Template successfully deleted */}
+          <SuccessModal
+            isOpen={successModal}
+            description="Template Deleted Successully"
+            buttonText="Done"
+            buttonClass="-translate-y-[20px]"
+            handleClick={() => setSuccessModal(false)}
+          />
         </div>
       </div>
     </div>

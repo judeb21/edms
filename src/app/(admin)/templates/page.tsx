@@ -3,8 +3,12 @@
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
 import { Button } from "@/components/ui/button";
 import GenericModal from "@/components/workflow/generic-modal";
+import SuccessModal from "@/components/workflow/modal-successful";
 import WorkflowTemplateCard from "@/components/workflow/workflow-card";
-import { useDeleteTemplate, useGetAllTemplatesWorkflows } from "@/hooks/api/useWorkflowQuery";
+import {
+  useDeleteTemplate,
+  useGetAllTemplatesWorkflows,
+} from "@/hooks/api/useWorkflowQuery";
 import { AxiosError } from "axios";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,8 +24,9 @@ export default function TemplatesPage() {
   const [templateId, setTemplateId] = useState("");
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
 
-  const { data, isLoading } = useGetAllTemplatesWorkflows();
+  const { data, isLoading, refetch } = useGetAllTemplatesWorkflows();
 
   const deleteWorkflow = useDeleteTemplate();
 
@@ -45,6 +50,7 @@ export default function TemplatesPage() {
 
   const onDelete = (id: string) => {
     setTemplateId(id);
+    setDeleteModal(true);
   };
 
   const handleDelete = () => {
@@ -54,12 +60,17 @@ export default function TemplatesPage() {
       onSuccess: (response) => {
         // setDeleteSuccessful(true);
         setDeleteLoader(false);
+        setTemplateId("");
+        setDeleteModal(false);
+        setSuccessModal(true);
+        refetch();
         toast.success(response?.message, {
-          unstyled: true,
+          unstyled: false,
           position: "top-right",
           classNames: {
             toast:
-              "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+              "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+            title: "text-[#E71D36]",
           },
         });
       },
@@ -148,6 +159,15 @@ export default function TemplatesPage() {
             </div>
           </div>
         </GenericModal>
+
+        {/* Template successfully deleted */}
+        <SuccessModal
+          isOpen={successModal}
+          description="Template Deleted Successully"
+          buttonText="Done"
+          buttonClass="-translate-y-[20px]"
+          handleClick={() => setSuccessModal(false)}
+        />
       </div>
     </div>
   );
