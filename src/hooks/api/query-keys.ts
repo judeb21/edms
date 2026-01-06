@@ -1,6 +1,6 @@
 // api/query-keys.ts
 export const WORKFLOW_KEYS = {
-  all: ["workflows", "workflow"] as const,
+  all: ["workflows", "workflow", "templates", "template"] as const,
   details: (id: string) => ["workflows", id] as const,
 };
 
