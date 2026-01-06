@@ -23,7 +23,7 @@ export default function DocumentDetailsPage() {
   );
 
   const breadcrumbItems = [
-    { label: "Document Management", href: "/overview" },
+    { label: "Document Management", href: "/documents" },
     { label: "Document" },
   ];
 

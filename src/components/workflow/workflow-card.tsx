@@ -11,6 +11,7 @@ export interface WorkflowTemplateCardProps {
   link: string;
   createdAt?: string;
   onclick?: () => void;
+  onDelete?: () => void;
 }
 
 export default function WorkflowTemplateCard({
@@ -18,6 +19,7 @@ export default function WorkflowTemplateCard({
   isNew = false,
   createdAt,
   link,
+  onDelete,
 }: WorkflowTemplateCardProps) {
   const router = useRouter();
 
@@ -49,7 +51,10 @@ export default function WorkflowTemplateCard({
           </p>
         </div>
         {!isNew && (
-          <div className="h-[24px] w-[24px] p-[10px] cursor-pointer">
+          <div
+            className="h-[24px] w-[24px] p-[10px] cursor-pointer"
+            onClick={onDelete}
+          >
             <Trash2 color="#FC5A5A" className="w-5 h-5 mx-auto" />
           </div>
         )}

@@ -56,11 +56,7 @@ const getAvatarColor = (userId: string): string => {
   return avatarColors[index];
 };
 
-const ShareModal = ({
-  isOpen,
-  onClose,
-  title,
-}: ShareModalProps) => {
+const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
   const params = useParams();
   const { id } = params;
   const [step, setStep] = useState<"initial" | "sharing">("initial");
@@ -117,12 +113,11 @@ const ShareModal = ({
     // Check if user already exists
     if (isUserAlreadySelected(user.id)) {
       toast.warning("User already added", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
         classNames: {
           toast:
-            "capitalize bg-yellow-50 z-50 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-          title: "text-yellow-800",
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
         },
       });
       setSearchQuery("");
@@ -342,7 +337,9 @@ const ShareModal = ({
                           {user.email}
                         </div>
                       </div>
-                      <div className="text-gray-500 text-sm capitalize">{user.role}</div>
+                      <div className="text-gray-500 text-sm capitalize">
+                        {user.role}
+                      </div>
                     </div>
                   );
                 })}

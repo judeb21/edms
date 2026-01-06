@@ -41,12 +41,11 @@ export const fetchWorkflows = async (payload: FetchWorkflowObject) => {
 };
 
 // Get workflows without status
-export const fetchAllWorkflows = async () => {
+export const fetchAllWorkflows = async (payload: FetchWorkflowObject) => {
+  const queryString = buildQuery(payload);
   const data = await apiFetch<WorkflowTypes[]>(
-    `/admin/workflows`,
-    {
-      method: "GET",
-    }
+    `/admin/workflows?${queryString}`,
+    { method: "GET" }
   );
 
   return data;
@@ -76,15 +75,15 @@ export function useGetWorkflows({ status }: FetchWorkflowObject) {
   return useQuery({
     queryKey: ["workflows"],
     enabled: !!status,
-    queryFn: () => fetchWorkflows({status}), // no cache
+    queryFn: () => fetchWorkflows({ status }), // no cache
   });
 }
 
 //Hook to get all Workflow
-export function useGetAllWorkflows() {
+export function useGetAllWorkflows(payload: FetchWorkflowObject) {
   return useQuery({
-    queryKey: ["workflows"],
-    queryFn: () => fetchAllWorkflows(), // no cache
+    queryKey: ["workflows", "workflow", payload],
+    queryFn: () => fetchAllWorkflows(payload), // no cache
   });
 }
 
@@ -236,6 +235,28 @@ export const useDeleteWorkflow = () => {
 
   return useMutation({
     mutationFn: (id: string) => deleteWorkflow(id),
+    onSuccess: () => {
+      invalidateWorkflows();
+    },
+  });
+};
+
+//Delete Template
+export const deleteTemplate = async (
+  templateId: string
+): Promise<{ message: string }> => {
+  const { data } = await authenticatedAxios.delete(
+    `/templates/templates/${templateId}`
+  );
+  return data;
+};
+
+//Hook to delete workflow template
+export const useDeleteTemplate = () => {
+  const invalidateWorkflows = useInvalidateWorkflows();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteTemplate(id),
     onSuccess: () => {
       invalidateWorkflows();
     },

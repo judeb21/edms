@@ -160,7 +160,7 @@ export default function FilterHeader({
           />
           <Input
             id="keyword"
-            placeholder="Search with Document Title"
+            placeholder="Search with Title"
             className="max-w-[250px] w-full md:w-[250px] h-[50px] focus-visible:ring-0 rounded-[8px] placeholder:text-[#A9A9A9] font-[family-name:var(--font-dm)] pl-[35px] text-[#101828] font-[500] pr-[35px]"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
