@@ -15,6 +15,7 @@ import {
   FetchApprovalQueueObject,
   QueueActions,
 } from "@/types/documents";
+import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 // import { useDeleteWorkflow } from "@/hooks/api/useWorkflowQuery";
 // import { AxiosError } from "axios";
@@ -80,7 +81,9 @@ export default function ApprovalQueuePage() {
           setLoader(false);
           setDeleteSuccessful(false);
           toast.error(
-            error instanceof Error ? error.message : "Failed to approve queue",
+            error instanceof AxiosError
+              ? error?.response?.data?.message
+              : "Failed to approve queue",
             {
               unstyled: true,
               position: "top-right",
@@ -120,8 +123,8 @@ export default function ApprovalQueuePage() {
           setLoader(false);
           setDeleteSuccessful(false);
           toast.error(
-            error instanceof Error
-              ? error.message
+            error instanceof AxiosError
+              ? error?.response?.data?.message
               : "Failed to reject workflow",
             {
               unstyled: true,
@@ -162,7 +165,9 @@ export default function ApprovalQueuePage() {
           setLoader(false);
           setDeleteSuccessful(false);
           toast.error(
-            error instanceof Error ? error.message : "Failed to send changes",
+            error instanceof AxiosError
+              ? error?.response?.data?.message
+              : "Failed to send changes",
             {
               unstyled: true,
               position: "top-right",

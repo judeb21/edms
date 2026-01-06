@@ -128,6 +128,7 @@ export interface FetchWorkflowObject {
   category?: string;
   department?: string;
   status?: string;
+  workflowName?: string;
   page?: number;
   pageSize?: number;
 }

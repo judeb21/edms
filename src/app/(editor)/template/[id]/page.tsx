@@ -179,39 +179,36 @@ const WorkflowEditor = () => {
   const saveStep = (): void => {
     if (!formData.stepName.trim()) {
       toast.warning("Step name is required", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
-        // classNames: {
-        //   toast:
-        //     "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-        //   title: "text-[#E71D36]",
-        // },
+        classNames: {
+          toast:
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        },
       });
       return;
     }
 
     if (formData.approverType === "RoleBased" && !formData.role) {
       toast.warning("Please select a role", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
-        // classNames: {
-        //   toast:
-        //     "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-        //   title: "text-[#E71D36]",
-        // },
+        classNames: {
+          toast:
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        },
       });
       return;
     }
 
     if (formData.approverType === "SpecificUsers" && !formData.users.length) {
       toast.warning("Please select a user", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
-        // classNames: {
-        //   toast:
-        //     "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-        //   title: "text-[#E71D36]",
-        // },
+        classNames: {
+          toast:
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        },
       });
       return;
     }
@@ -221,12 +218,11 @@ const WorkflowEditor = () => {
       !formData.escalationUsers.length
     ) {
       toast.warning("Please select a users to escalate to", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
         classNames: {
           toast:
-            "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-          title: "text-[#E71D36]",
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
         },
       });
       return;
@@ -333,39 +329,36 @@ const WorkflowEditor = () => {
   const saveAndActivateStep = () => {
     if (!formData.stepName.trim()) {
       toast.warning("Step name is required", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
-        // classNames: {
-        //   toast:
-        //     "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-        //   title: "text-[#E71D36]",
-        // },
+        classNames: {
+          toast:
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        },
       });
       return;
     }
 
     if (formData.approverType === "RoleBased" && !formData.role) {
       toast.warning("Please select a role", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
-        // classNames: {
-        //   toast:
-        //     "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-        //   title: "text-[#E71D36]",
-        // },
+        classNames: {
+          toast:
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        },
       });
       return;
     }
 
     if (formData.approverType === "SpecificUsers" && !formData.users.length) {
       toast.warning("Please select a user", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
-        // classNames: {
-        //   toast:
-        //     "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-        //   title: "text-[#E71D36]",
-        // },
+        classNames: {
+          toast:
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        },
       });
       return;
     }
@@ -375,12 +368,11 @@ const WorkflowEditor = () => {
       !formData.escalationUsers.length
     ) {
       toast.warning("Please select a users to escalate to", {
-        unstyled: false,
+        unstyled: true,
         position: "top-right",
         classNames: {
           toast:
-            "bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-          title: "text-[#E71D36]",
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
         },
       });
       return;
@@ -647,7 +639,7 @@ const WorkflowEditor = () => {
       toast.warning(
         `Validation failed with ${errors.length} error(s). Please check the details.`,
         {
-          unstyled: false,
+          unstyled: true,
           position: "top-right",
           classNames: {
             toast:

@@ -45,6 +45,7 @@ export interface DocumentDetails {
   status: string;
   createdAt: string;
   storageInfo: string | null;
+  submittedBy: string;
 }
 
 export interface QueueDocumentDetails {

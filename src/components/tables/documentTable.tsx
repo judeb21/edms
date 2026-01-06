@@ -114,6 +114,20 @@ export function DocumentsTable(props: DataTableProps) {
       },
     },
     {
+      accessorKey: "submittedBy",
+      header: () => {
+        return <div className="p-[10px]">Submitted By</div>;
+      },
+      cell: ({ row }) => {
+        const document = row.original;
+        return (
+          <div className="p-[10px]">
+            <p>{document.submittedBy}</p>
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "dateModified",
       header: () => {
         return <div className="p-[10px]">Date Created</div>;

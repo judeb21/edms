@@ -2,11 +2,14 @@
 
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
 import { Button } from "@/components/ui/button";
+import GenericModal from "@/components/workflow/generic-modal";
 import WorkflowTemplateCard from "@/components/workflow/workflow-card";
-import { useGetAllTemplatesWorkflows } from "@/hooks/api/useWorkflowQuery";
+import { useDeleteTemplate, useGetAllTemplatesWorkflows } from "@/hooks/api/useWorkflowQuery";
+import { AxiosError } from "axios";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export default function TemplatesPage() {
   const router = useRouter();
@@ -14,8 +17,13 @@ export default function TemplatesPage() {
     { label: "Document Management", href: "/overview" },
     { label: "Templates" },
   ];
+  const [templateId, setTemplateId] = useState("");
+  const [deleteLoader, setDeleteLoader] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const { data, isLoading } = useGetAllTemplatesWorkflows();
+
+  const deleteWorkflow = useDeleteTemplate();
 
   const templates = useMemo(() => {
     return data;
@@ -33,6 +41,46 @@ export default function TemplatesPage() {
 
   const goBack = () => {
     router.back();
+  };
+
+  const onDelete = (id: string) => {
+    setTemplateId(id);
+  };
+
+  const handleDelete = () => {
+    // setDeleteSuccessful(false);
+    setDeleteLoader(true);
+    deleteWorkflow.mutate(templateId, {
+      onSuccess: (response) => {
+        // setDeleteSuccessful(true);
+        setDeleteLoader(false);
+        toast.success(response?.message, {
+          unstyled: true,
+          position: "top-right",
+          classNames: {
+            toast:
+              "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+          },
+        });
+      },
+      onError: (error: Error) => {
+        setDeleteLoader(false);
+        toast.error(
+          error instanceof AxiosError
+            ? error.response?.data?.message
+            : "Failed to delete template",
+          {
+            unstyled: true,
+            position: "top-right",
+            classNames: {
+              toast:
+                "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+              title: "text-[#E71D36]",
+            },
+          }
+        );
+      },
+    });
   };
 
   return (
@@ -67,10 +115,39 @@ export default function TemplatesPage() {
                 isNew={false}
                 createdAt={template.createdAt}
                 link={`/template/${template.id}`}
+                onDelete={() => onDelete(template.id)}
               />
             );
           })}
         </div>
+
+        <GenericModal
+          isOpen={deleteModal}
+          subTitle="Delete Template"
+          description="Are you sure you want to delete this template?"
+        >
+          <div className="w-full">
+            <div className="mt-6 gap-[16px] flex justify-center items-center">
+              <Button
+                className="bg-[#FC5A5A] py-[24px] hover:bg-[#FC5A5A]"
+                onClick={() => {
+                  setTemplateId("");
+                  setDeleteModal(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-brand-blue py-[24px] hover:bg-brand-blue"
+                onClick={() => handleDelete()}
+                disabled={deleteLoader}
+              >
+                {deleteLoader && <Loader2 className="animate-spin" />}
+                Delete
+              </Button>
+            </div>
+          </div>
+        </GenericModal>
       </div>
     </div>
   );
