@@ -184,13 +184,17 @@ export const activateWorkflow = async (
 };
 
 //Hook to Validate workflow
-export const useActivateWorkflow = () => {
+export const useActivateWorkflow = (workflowId: string) => {
+  const queryClient = useQueryClient();
   const invalidateWorkflows = useInvalidateWorkflows();
 
   return useMutation({
     mutationFn: (workflowId: string) => activateWorkflow(workflowId),
     onSuccess: () => {
       invalidateWorkflows();
+      queryClient.invalidateQueries({
+        queryKey: WORKFLOW_KEYS.details(workflowId),
+      });
     },
   });
 };
@@ -209,12 +213,16 @@ export const deactivateWorkflow = async (
 
 //Hook to Deactivate workflow
 export const useDeactivateWorkflow = (workflowId: string) => {
+  const queryClient = useQueryClient();
   const invalidateWorkflows = useInvalidateWorkflows();
 
   return useMutation({
     mutationFn: (payload: any) => deactivateWorkflow(workflowId, payload),
     onSuccess: () => {
       invalidateWorkflows();
+      queryClient.invalidateQueries({
+        queryKey: WORKFLOW_KEYS.details(workflowId),
+      });
     },
   });
 };

@@ -78,7 +78,7 @@ const WorkflowEditor = () => {
   const validateWorkflows = useValidateWorkflow();
 
   //Activate workflow mutation
-  const activateWorkflows = useActivateWorkflow();
+  const activateWorkflows = useActivateWorkflow(params.id as string);
 
   //Deactivate workflow
   const deactivateWorkflows = useDeactivateWorkflow(params.id as string);
