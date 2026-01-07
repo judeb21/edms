@@ -431,6 +431,16 @@ const WorkflowEditor = () => {
             setActivating(false);
             setSavedAndActivatedTemplate(true);
             setSavedStep(true);
+
+            const responseSteps = steps.map((step) => {
+              return {
+                ...step,
+                configured: true,
+              };
+            });
+
+            setSteps(responseSteps);
+
             toast.success("Workflow activated successfully", {
               unstyled: false,
               position: "top-right",
