@@ -226,6 +226,18 @@ const WorkflowEditor = () => {
       return;
     }
 
+    if (dayjs(formData.deadline) < dayjs(new Date())) {
+      toast.warning("Step deadline can not be in the past", {
+        unstyled: true,
+        position: "top-right",
+        classNames: {
+          toast:
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        },
+      });
+      return;
+    }
+
     if (
       formData.enableEscalation === "yes" &&
       !formData.escalationUsers.length
@@ -378,6 +390,18 @@ const WorkflowEditor = () => {
 
     if (!formData.deadline) {
       toast.warning("Step has no deadline set", {
+        unstyled: true,
+        position: "top-right",
+        classNames: {
+          toast:
+            "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+        },
+      });
+      return;
+    }
+
+    if (dayjs(formData.deadline) < dayjs(new Date())) {
+      toast.warning("Step deadline can not be in the past", {
         unstyled: true,
         position: "top-right",
         classNames: {
