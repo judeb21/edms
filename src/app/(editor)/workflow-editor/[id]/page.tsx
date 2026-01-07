@@ -79,7 +79,7 @@ const WorkflowEditor = () => {
   const validateWorkflows = useValidateWorkflow();
 
   //Activate workflow mutation
-  const activateWorkflows = useActivateWorkflow();
+  const activateWorkflows = useActivateWorkflow(params.id as string);
 
   //Deactivate workflow
   const deactivateWorkflows = useDeactivateWorkflow(params.id as string);
@@ -100,9 +100,10 @@ const WorkflowEditor = () => {
     },
   });
 
-  const { data: configureStepData, isLoading } = useGetConfiguredWorkflowSteps(
-    params.id as string
-  );
+  const {
+    data: configureStepData,
+    isLoading,
+  } = useGetConfiguredWorkflowSteps(params.id as string);
 
   const configureSteps: WorkflowRetrievedSteps[] = React.useMemo(() => {
     return configureStepData?.steps as WorkflowRetrievedSteps[];
@@ -153,7 +154,7 @@ const WorkflowEditor = () => {
       approverMode: "AllApprovers",
       deadline: "",
       users: [],
-      enableEscalation: true,
+      enableEscalation: false,
       escalationUsers: [],
       conditions: [],
     };
@@ -805,6 +806,15 @@ const WorkflowEditor = () => {
               title: "text-[#E71D36]",
             },
           });
+
+          const responseSteps = steps.map((step) => {
+            return {
+              ...step,
+              configured: true,
+            };
+          });
+
+          setSteps(responseSteps);
         },
         onError: (error) => {
           setLoader(false);
@@ -1063,7 +1073,10 @@ const WorkflowEditor = () => {
         description="Workflow Activated Successully"
         buttonText="Done"
         buttonClass="-translate-y-[20px]"
-        handleClick={() => setSuccessModal(false)}
+        handleClick={() => {
+          // refetch();
+          setSuccessModal(false);
+        }}
       />
 
       {/* Successfully deactivated workflow */}
@@ -1075,7 +1088,10 @@ const WorkflowEditor = () => {
         handleClick={viewWorkflows}
         buttonAdditionalText="Close"
         showAdditionalButton={true}
-        handleAdditionalClick={() => setDeactivatedaModal(false)}
+        handleAdditionalClick={() => {
+          // refetch();
+          setDeactivatedaModal(false);
+        }}
       />
 
       {/* Successfully saved workflow as template */}
