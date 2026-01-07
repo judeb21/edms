@@ -226,7 +226,7 @@ const WorkflowEditor = () => {
       return;
     }
 
-    if (dayjs(formData.deadline) < dayjs(new Date())) {
+    if (dayjs(formData.deadline).isBefore(dayjs(), "day")) {
       toast.warning("Step deadline can not be in the past", {
         unstyled: true,
         position: "top-right",
@@ -400,7 +400,7 @@ const WorkflowEditor = () => {
       return;
     }
 
-    if (dayjs(formData.deadline) < dayjs(new Date())) {
+    if ((dayjs(formData.deadline).isBefore(dayjs(), "day"))) {
       toast.warning("Step deadline can not be in the past", {
         unstyled: true,
         position: "top-right",
