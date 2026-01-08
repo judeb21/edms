@@ -169,11 +169,16 @@ const ShareModal = ({ isOpen, onClose, title }: ShareModalProps) => {
     // Prepare data to send to backend
     const shareData: DocumentSharePayload = {
       //   documentId: params?.id as string,
-      shareWithEmail: selectedUsers.map((u) => u.email),
+      users: selectedUsers.map((u) => ({
+        email: u.email,
+        name: u.name,
+      })),
       permission: "viewer",
       message,
       //   notifyPeople,
     };
+
+    console.log("Payload", shareData);
 
     shareDocuments.mutate(shareData, {
       onSuccess: () => {

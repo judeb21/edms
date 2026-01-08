@@ -42,7 +42,7 @@ export interface Step {
   roles: string[];
   users: WorkflowUserType[];
   approverMode: "AllApprovers" | "Anyone";
-  deadline: string;
+  deadlineHours: string;
   enableEscalation: boolean;
   escalationUsers: WorkflowUserType[];
   conditions?: ConditionsType[];
@@ -59,7 +59,7 @@ export interface StepTemplate {
   roles: string[];
   users: WorkflowUserType[];
   approverMode: "AllApprovers" | "Anyone";
-  deadline: string;
+  deadlineHours: string;
   enableEscalation: boolean;
   escalationUsers: WorkflowUserType[];
   conditions?: ConditionsType[];
@@ -90,7 +90,7 @@ export interface WorkflowRetrievedSteps {
   roles: string[];
   users: WorkflowUserType[];
   approverMode: "AllApprovers" | "Anyone";
-  deadline: string;
+  deadlineHours: string;
   enableEscalation: boolean;
   escalationUsers: WorkflowUserType[];
   conditions?: ConditionsType[];
