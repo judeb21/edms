@@ -2,6 +2,7 @@
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
 import { DocumentSwiperCard } from "@/components/documents/documentDetailsSwiperCard";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useGetDocumentsIdQuery } from "@/hooks/api/useDocumentQuery";
 import { DocumentFiles } from "@/types/documents";
 import { formatFileSize } from "@/utils/formatFileSize";
@@ -80,21 +81,27 @@ export default function DocumentDetailsPage() {
           <div className="my-[30px] translate-y-8">
             {documentDetails?.files.length === 1 && (
               <div>
-                {isImage(documentDetails?.files[0]?.blobPath) ? (
-                  <Image
-                    src={documentDetails?.files[0]?.blobPath}
-                    alt="Comment attachment"
-                    width={32}
-                    height={32}
-                    className="w-[80%] mx-auto h-[250px] object-cover rounded"
-                  />
-                ) : (
-                  <iframe
-                    src={`https://docs.google.com/gview?url=${encodeURIComponent(documentDetails?.files[0]?.blobPath)}&embedded=true`}
-                    className="w-[80%] mx-auto h-[400px] border rounded"
-                    title={documentDetails?.files[0]?.blobPath}
-                  />
-                )}
+                <Card
+                  className={`h-[400px] border-0 shadow-md py-3 w-[80%] mx-auto`}
+                >
+                  <CardContent className="flex items-center justify-center h-full p-0">
+                    {isImage(documentDetails?.files[0]?.blobPath) ? (
+                      <Image
+                        src={documentDetails?.files[0]?.blobPath}
+                        alt="Documemt preview"
+                        width={360}
+                        height={120}
+                        className="md:w-[400px] w-full h-full mx-auto object-contain rounded"
+                      />
+                    ) : (
+                      <iframe
+                        src={`https://docs.google.com/gview?url=${encodeURIComponent(documentDetails?.files[0]?.blobPath)}&embedded=true`}
+                        className="w-[80%] h-[400px] mx-auto border rounded"
+                        title={documentDetails?.files[0]?.blobPath}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
               </div>
             )}
 
@@ -129,7 +136,9 @@ export default function DocumentDetailsPage() {
               <div className="">
                 <h4 className="font-semibold mb-[8px] capitalize">Date</h4>
                 <p className="font-medium text-primary-gray text-[14px]">
-                  {dayjs(documentDetails?.files[0]?.createdAt).format("DD MMMM, YYYY")}
+                  {dayjs(documentDetails?.files[0]?.createdAt).format(
+                    "DD MMMM, YYYY"
+                  )}
                 </p>
               </div>
               <div className="text-right">
