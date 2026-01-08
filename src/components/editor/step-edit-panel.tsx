@@ -86,6 +86,76 @@ const StepEditFormPanel = ({
     );
   }, [userData, search]);
 
+  const defaultOptions = React.useMemo(() => {
+    return formData.users.map((u: WorkflowUserType) => ({
+      label: u.name,
+      value: u.id,
+      _key: `${u.id}_${search}`,
+      email: u.email,
+      dept: u.dept,
+      role: u.roles,
+    }));
+  }, [formData.users, search]);
+
+  const defaultEscalatedOptions = React.useMemo(() => {
+    return formData.escalationUsers.map((u: WorkflowUserType) => ({
+      label: u.name,
+      value: u.id,
+      _key: `${u.id}_${search}`,
+      email: u.email,
+      dept: u.dept,
+      role: u.roles,
+    }));
+  }, [formData.escalationUsers, search]);
+
+  const reconciledDefaultOptions = React.useMemo(() => {
+    if (!userOptions.length) return defaultOptions;
+
+    const userOptionMap = new Map(
+      userOptions.map((u) => [u.email?.toLowerCase(), u])
+    );
+
+    return defaultOptions.map(
+      (d: WorkflowUserType) => userOptionMap.get(d.email?.toLowerCase()) ?? d
+    );
+  }, [defaultOptions, userOptions]);
+
+  const reconciledEscalatedOptions = React.useMemo(() => {
+    if (!userOptions.length) return defaultOptions;
+
+    const userOptionMap = new Map(
+      userOptions.map((u) => [u.email?.toLowerCase(), u])
+    );
+
+    return defaultEscalatedOptions.map(
+      (d: WorkflowUserType) => userOptionMap.get(d.email?.toLowerCase()) ?? d
+    );
+  }, [defaultEscalatedOptions, userOptions]);
+
+  const mergedOptions = React.useMemo(() => {
+    const map = new Map<string, any>();
+
+    reconciledDefaultOptions.forEach((u: WorkflowUserType) =>
+      map.set(u.email.toLowerCase(), u)
+    );
+
+    userOptions.forEach((u) => map.set(u.email.toLowerCase(), u));
+
+    return Array.from(map.values());
+  }, [reconciledDefaultOptions, userOptions]);
+
+  const mergedEscalatedOptions = React.useMemo(() => {
+    const map = new Map<string, any>();
+
+    reconciledEscalatedOptions.forEach((u: WorkflowUserType) =>
+      map.set(u.email.toLowerCase(), u)
+    );
+
+    userOptions.forEach((u) => map.set(u.email.toLowerCase(), u));
+
+    return Array.from(map.values());
+  }, [reconciledEscalatedOptions, userOptions]);
+
   return (
     <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
       <div className="p-6 border-b border-gray-200">
@@ -182,7 +252,8 @@ const StepEditFormPanel = ({
               Users
             </label>
             <MultiSelect
-              options={userOptions}
+              key={mergedOptions.length}
+              options={mergedOptions}
               onValueChange={(userIds) => console.log("User IDs:", userIds)} // Optional: keep for debugging
               onSelectionChange={(selectedUsers) => {
                 // This receives the full option objects with all properties
@@ -197,14 +268,7 @@ const StepEditFormPanel = ({
               }}
               onLoadMore={fetchNextPage}
               hasMore={hasNextPage}
-              defaultOptions={formData.users.map((u: WorkflowUserType) => ({
-                label: u.name,
-                value: u.id,
-                _key: `${u.id}_${search}`,
-                email: u.email,
-                dept: u.dept,
-                role: u.roles,
-              }))}
+              defaultOptions={mergedOptions ? reconciledDefaultOptions : []}
               // formData.users.map((u) => u.id
               isLoading={isFetchingNextPage}
               onSearch={setSearch}
@@ -324,7 +388,7 @@ const StepEditFormPanel = ({
                   deadlineHours: e.target.value,
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brand-blue"
+              className="w-[60%] px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brand-blue"
               placeholder="0"
             />
             <div>Hours</div>
@@ -379,7 +443,8 @@ const StepEditFormPanel = ({
               Escalate to
             </label>
             <MultiSelect
-              options={userOptions}
+              key={mergedEscalatedOptions?.length}
+              options={mergedEscalatedOptions}
               onValueChange={(userIds) =>
                 console.log("Escalated User IDs:", userIds)
               } // Optional: keep for debugging
@@ -399,16 +464,7 @@ const StepEditFormPanel = ({
               }}
               onLoadMore={fetchNextPage}
               hasMore={hasNextPage}
-              defaultOptions={formData.escalationUsers.map(
-                (u: WorkflowUserType) => ({
-                  label: u.name,
-                  value: u.id,
-                  _key: `${u.id}_${search}`,
-                  email: u.email,
-                  dept: u.dept,
-                  role: u.roles,
-                })
-              )}
+              defaultOptions={mergedEscalatedOptions ? reconciledEscalatedOptions : []}
               isLoading={isFetchingNextPage}
               onSearch={setSearch}
               placeholder="Select users"

@@ -1,7 +1,7 @@
 "use client";
 
 import { Step } from "@/types/workflow";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { CheckCircle, Edit2, Trash2, X } from "lucide-react";
 import utc from "dayjs/plugin/utc";
 import calendar from "dayjs/plugin/calendar";
@@ -24,49 +24,49 @@ const StepOverviewPanel = ({
   onEdit: () => void;
   onDelete: () => void;
 }) => {
-  function formatDate(targetDate: Dayjs) {
-    // dayjs.utc(selectedStep.deadline)
-    const now = dayjs();
-    // const targetDate = now.add(hours, "hour");
+  // function formatDate(targetDate: Dayjs) {
+  //   // dayjs.utc(selectedStep.deadline)
+  //   const now = dayjs();
+  //   // const targetDate = now.add(hours, "hour");
 
-    const diffHours = targetDate.diff(now, "hour");
+  //   const diffHours = targetDate.diff(now, "hour");
 
-    // --- 1) Expired ---
-    if (diffHours < 0) {
-      return "expired";
-    }
+  //   // --- 1) Expired ---
+  //   if (diffHours < 0) {
+  //     return "expired";
+  //   }
 
-    // --- 2) Within 24 hours → “in 3 hours” ---
-    if (diffHours < 24) {
-      return targetDate.fromNow();
-    }
+  //   // --- 2) Within 24 hours → “in 3 hours” ---
+  //   if (diffHours < 24) {
+  //     return targetDate.fromNow();
+  //   }
 
-    // --- 3) Exact day-based formatting ---
-    const diffDays = targetDate.diff(now, "day");
+  //   // --- 3) Exact day-based formatting ---
+  //   const diffDays = targetDate.diff(now, "day");
 
-    // 48 hours → “in 2 days”
-    if (diffDays >= 1 && diffDays <= 6) {
-      return `in ${diffDays} day${diffDays > 1 ? "s" : ""}`;
-    }
+  //   // 48 hours → “in 2 days”
+  //   if (diffDays >= 1 && diffDays <= 6) {
+  //     return `in ${diffDays} day${diffDays > 1 ? "s" : ""}`;
+  //   }
 
-    // --- 4) Next week ---
-    if (
-      targetDate.isAfter(now.startOf("week").add(7, "day")) &&
-      targetDate.isBefore(now.startOf("week").add(14, "day"))
-    ) {
-      return `Next ${targetDate.format("dddd")}`; // Next Monday, etc.
-    }
+  //   // --- 4) Next week ---
+  //   if (
+  //     targetDate.isAfter(now.startOf("week").add(7, "day")) &&
+  //     targetDate.isBefore(now.startOf("week").add(14, "day"))
+  //   ) {
+  //     return `Next ${targetDate.format("dddd")}`; // Next Monday, etc.
+  //   }
 
-    // --- 5) Fallback to calendar format ---
-    return targetDate.calendar(null, {
-      sameDay: "[Today]",
-      nextDay: "[Tomorrow]",
-      nextWeek: "[Next] dddd",
-      lastDay: "[Yesterday]",
-      lastWeek: "[Last] dddd",
-      sameElse: "MMM D",
-    });
-  }
+  //   // --- 5) Fallback to calendar format ---
+  //   return targetDate.calendar(null, {
+  //     sameDay: "[Today]",
+  //     nextDay: "[Tomorrow]",
+  //     nextWeek: "[Next] dddd",
+  //     lastDay: "[Yesterday]",
+  //     lastWeek: "[Last] dddd",
+  //     sameElse: "MMM D",
+  //   });
+  // }
 
   return (
     <div className="w-96 bg-white border-l border-gray-200">
@@ -151,7 +151,8 @@ const StepOverviewPanel = ({
             <div className="flex justify-between">
               <span className="text-[#999999]">Deadline</span>
               <span className="text-primary-gray capitalize">
-                {formatDate(dayjs.utc(step.deadlineHours)) || "Not set"}
+                {`${step.deadlineHours} hour${step.deadlineHours === 1 ? "" : "s"}` ||
+                  "Not set"}
               </span>
             </div>
             <div className="flex justify-between">
