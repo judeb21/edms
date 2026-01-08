@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import dayjs from "dayjs";
 import {
   ConditionsType,
   Step,
@@ -39,7 +38,7 @@ interface FormData {
   role: string[];
   users: WorkflowUserType[];
   approverMode: "AllApprovers" | "Anyone";
-  deadline: string;
+  deadlineHours: number;
   enableEscalation: "yes" | "no";
   escalationUsers: WorkflowUserType[];
   conditions?: ConditionsType;
@@ -91,7 +90,7 @@ const WorkflowEditor = () => {
     role: [],
     users: [] as WorkflowUserType[],
     approverMode: "AllApprovers",
-    deadline: "",
+    deadlineHours: 0,
     enableEscalation: "yes",
     escalationUsers: [] as WorkflowUserType[],
     conditions: {
@@ -124,7 +123,8 @@ const WorkflowEditor = () => {
         roles: step?.roles,
         users: step.approvalType === "SpecificUsers" ? step.users : [],
         approverMode: step.approverMode,
-        deadline: dayjs.utc(step.deadline).endOf("day").toISOString(),
+        // deadlineHours: dayjs.utc(step.deadlineHours).endOf("day").toISOString(),
+        deadlineHours: step.deadlineHours,
         enableEscalation: step.enableEscalation,
         escalationUsers: step.enableEscalation ? step.escalationUsers : [],
         conditions: step.conditions,
@@ -152,7 +152,7 @@ const WorkflowEditor = () => {
       approverType: "SpecificUsers",
       roles: [],
       approverMode: "AllApprovers",
-      deadline: "",
+      deadlineHours: 0,
       users: [],
       enableEscalation: false,
       escalationUsers: [],
@@ -171,7 +171,7 @@ const WorkflowEditor = () => {
       approverType: "SpecificUsers",
       role: [],
       approverMode: "AllApprovers",
-      deadline: "",
+      deadlineHours: 0,
       users: [],
       enableEscalation: "yes",
       escalationUsers: [],
@@ -227,8 +227,8 @@ const WorkflowEditor = () => {
       return;
     }
 
-    if (dayjs(formData.deadline, "DD/MM/YYYY").isBefore(dayjs(), "day")) {
-      toast.warning("Step deadline can not be in the past", {
+    if (formData.deadlineHours <= 0) {
+      toast.warning("Step deadline must be greater than zero (0)", {
         unstyled: true,
         position: "top-right",
         classNames: {
@@ -268,7 +268,7 @@ const WorkflowEditor = () => {
           users:
             formData.approverType === "SpecificUsers" ? formData.users : [],
           approverMode: formData.approverMode,
-          deadline: dayjs.utc(formData.deadline).endOf("day").toISOString(),
+          deadlineHours: formData.deadlineHours,
           enableEscalation: formData.enableEscalation === "yes" ? true : false,
           escalationUsers:
             formData.enableEscalation === "yes" ? formData.escalationUsers : [],
@@ -310,7 +310,7 @@ const WorkflowEditor = () => {
               users:
                 formData.approverType === "SpecificUsers" ? formData.users : [],
               approverMode: formData.approverMode,
-              deadline: dayjs.utc(formData.deadline).endOf("day").toISOString(),
+              deadlineHours: formData.deadlineHours,
               enableEscalation:
                 formData.enableEscalation === "yes" ? true : false,
               escalationUsers:
@@ -389,7 +389,7 @@ const WorkflowEditor = () => {
       return;
     }
 
-    if (!formData.deadline) {
+    if (!formData.deadlineHours) {
       toast.warning("Step has no deadline set", {
         unstyled: true,
         position: "top-right",
@@ -401,8 +401,8 @@ const WorkflowEditor = () => {
       return;
     }
 
-    if (dayjs(formData.deadline, "DD/MM/YYYY").isBefore(dayjs(), "day")) {
-      toast.warning("Step deadline can not be in the past", {
+    if (formData.deadlineHours <= 0) {
+      toast.warning("Step deadline must be greater than zero (0)", {
         unstyled: true,
         position: "top-right",
         classNames: {
@@ -442,7 +442,7 @@ const WorkflowEditor = () => {
           users:
             formData.approverType === "SpecificUsers" ? formData.users : [],
           approverMode: formData.approverMode,
-          deadline: dayjs.utc(formData.deadline).endOf("day").toISOString(),
+          deadlineHours: formData.deadlineHours,
           enableEscalation: formData.enableEscalation === "yes" ? true : false,
           escalationUsers:
             formData.enableEscalation === "yes" ? formData.escalationUsers : [],
@@ -550,7 +550,7 @@ const WorkflowEditor = () => {
       approverType: step.approverType,
       role: step.roles,
       approverMode: step.approverMode,
-      deadline: dayjs.utc(step.deadline).format("YYYY-MM-DD"),
+      deadlineHours: step.deadlineHours,
       users: step.users,
       enableEscalation: step.enableEscalation ? "yes" : "no",
       escalationUsers: step.escalationUsers,
@@ -588,7 +588,7 @@ const WorkflowEditor = () => {
           users:
             formData.approverType === "SpecificUsers" ? formData.users : [],
           approverMode: formData.approverMode,
-          deadline: dayjs.utc(formData.deadline).endOf("day").toISOString(),
+          deadlineHours: formData.deadlineHours,
           enableEscalation: formData.enableEscalation === "yes" ? true : false,
           escalationUsers:
             formData.enableEscalation === "yes" ? formData.escalationUsers : [],
@@ -636,11 +636,11 @@ const WorkflowEditor = () => {
       if (formData.approverType === "SpecificUsers" && !step.users.length) {
         errors.push(`Step ${index + 1} has no users selected`);
       }
-      if (!step.deadline) {
+      if (!step.deadlineHours) {
         errors.push(`Step ${index + 1} has no deadline set`);
       }
-      if (dayjs(step.deadline) < dayjs(new Date())) {
-        errors.push(`Step ${index + 1} deadline can not be in the past`);
+      if (step.deadlineHours <= 0) {
+        errors.push(`Step ${index + 1} deadline must be greater than zero (0)`);
       }
       if (step.enableEscalation && step.escalationUsers.length === 0) {
         errors.push(
@@ -727,7 +727,7 @@ const WorkflowEditor = () => {
           users:
             formData.approverType === "SpecificUsers" ? formData.users : [],
           approverMode: formData.approverMode,
-          deadline: dayjs.utc(formData.deadline).endOf("day").toISOString(),
+          deadlineHours: formData.deadlineHours,
           enableEscalation: formData.enableEscalation === "yes" ? true : false,
           escalationUsers:
             formData.enableEscalation === "yes" ? formData.escalationUsers : [],
@@ -775,11 +775,11 @@ const WorkflowEditor = () => {
       if (formData.approverType === "SpecificUsers" && !step.users.length) {
         errors.push(`Step ${index + 1} has no users selected`);
       }
-      if (!step.deadline) {
+      if (!step.deadlineHours) {
         errors.push(`Step ${index + 1} has no deadline set`);
       }
-      if (dayjs(step.deadline) < dayjs(new Date())) {
-        errors.push(`Step ${index + 1} deadline can not be in the past`);
+      if (step.deadlineHours <= 0) {
+        errors.push(`Step ${index + 1} deadline must be greater than zero (0)`);
       }
       if (step.enableEscalation && step.escalationUsers.length === 0) {
         errors.push(
@@ -909,7 +909,7 @@ const WorkflowEditor = () => {
           users:
             formData.approverType === "SpecificUsers" ? formData.users : [],
           approverMode: formData.approverMode,
-          deadline: dayjs.utc(formData.deadline).endOf("day").toISOString(),
+          deadlineHours: formData.deadlineHours,
           enableEscalation: formData.enableEscalation === "yes" ? true : false,
           escalationUsers:
             formData.enableEscalation === "yes" ? formData.escalationUsers : [],

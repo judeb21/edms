@@ -316,18 +316,18 @@ const StepEditFormPanel = ({
           </label>
           <div className="flex items-center gap-2">
             <input
-              type="date"
-              value={formData.deadline}
+              type="number"
+              value={formData.deadlineHours}
               onChange={(e) =>
                 onChange({
                   ...formData,
-                  deadline: e.target.value,
+                  deadlineHours: e.target.value,
                 })
               }
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brand-blue"
-              placeholder="00"
+              placeholder="0"
             />
-            {/* <div>Hours</div> */}
+            <div>Hours</div>
           </div>
         </div>
 
