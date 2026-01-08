@@ -151,7 +151,7 @@ const StepOverviewPanel = ({
             <div className="flex justify-between">
               <span className="text-[#999999]">Deadline</span>
               <span className="text-primary-gray capitalize">
-                {formatDate(dayjs.utc(step.deadline)) || "Not set"}
+                {formatDate(dayjs.utc(step.deadlineHours)) || "Not set"}
               </span>
             </div>
             <div className="flex justify-between">

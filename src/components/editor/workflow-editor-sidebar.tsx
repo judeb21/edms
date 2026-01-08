@@ -79,9 +79,9 @@ const WorkflowSidebar = ({
                       : "Specific Users"}
                   </span>
                   <span className="h-[8px] w-[8px] rounded bg-[#D9D9D9]"></span>
-                  {step.deadline && (
+                  {step.deadlineHours && (
                     <span className="text-[12px] text-primary-gray">
-                      {dayjs.utc(step.deadline).format("YYYY-MM-DD")}
+                      {dayjs.utc(step.deadlineHours).format("YYYY-MM-DD")}
                     </span>
                   )}
                 </div>
