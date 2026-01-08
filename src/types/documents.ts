@@ -100,9 +100,14 @@ export interface DocumentBatchDetails {
   files: DocumentFiles[];
 }
 
+export interface DocumentUser {
+  name: string;
+  email: string;
+}
+
 export interface DocumentSharePayload {
   documentId?: string;
-  shareWithEmail: string[];
+  users: DocumentUser[];
   permission: "viewer" | "commenter" | "editor";
   message?: string;
 }

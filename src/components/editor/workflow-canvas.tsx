@@ -157,10 +157,10 @@ const WorkflowStepNode = ({
                 ? "Role-based"
                 : "Specific Users"}
             </span>
-            {step.deadline && (
+            {step.deadlineHours && (
               <span className="px-3 py-2 bg-blue-100 text-brand-blue rounded-[20px] text-[16px] flex items-center gap-[8px]">
                 <Clock4 size={16} />
-                {dayjs.utc(step.deadline).format("YYYY-MM-DD")}
+                {dayjs.utc(step.deadlineHours).format("YYYY-MM-DD")}
               </span>
             )}
           </div>
