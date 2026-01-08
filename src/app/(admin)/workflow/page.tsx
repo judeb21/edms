@@ -1,19 +1,52 @@
 "use client";
 
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
-import { WorkFlowDataTable } from "@/components/tables/workflowTable";
+import {
+  WorkFlowDataTable,
+} from "@/components/tables/workflowTable";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   useDeleteWorkflow,
   useGetAllWorkflows,
 } from "@/hooks/api/useWorkflowQuery";
 import { FetchWorkflowObject, WorkflowTypes } from "@/types/workflow";
 import { AxiosError } from "axios";
-import { Loader2, Plus, Search, X } from "lucide-react";
+import { ChevronDown, Loader2, Plus, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+
+const statusType = [
+  {
+    name: "Active",
+    value: "Active",
+  },
+  {
+    name: "Archived",
+    value: "Archived",
+  },
+  {
+    name: "Configured",
+    value: "Configured",
+  },
+  {
+    name: "Draft",
+    value: "Draft",
+  },
+  {
+    name: "Inactive",
+    value: "Inactive",
+  },
+];
 
 export default function WorkFlowPage() {
   const [deleteLoader, setLoader] = useState(false);
@@ -22,6 +55,7 @@ export default function WorkFlowPage() {
   const breadcrumbItems = [{ label: "Workflow" }];
   const [payloadParams, setPayloadParams] = useState<FetchWorkflowObject>({
     workflowName: "",
+    status: "Active",
   });
 
   const { data, isFetching } = useGetAllWorkflows(payloadParams);
@@ -39,6 +73,10 @@ export default function WorkFlowPage() {
 
   const handleSearch = (value: string) => {
     setPayloadParams({ ...payloadParams, workflowName: value });
+  };
+
+  const handleStatus = (value: string) => {
+    setPayloadParams({ ...payloadParams, status: value });
   };
 
   const onClear = () => {
@@ -109,6 +147,12 @@ export default function WorkFlowPage() {
 
         <div className="flex items-center gap-[20px] md:flex-row flex-col w-full mt-4">
           <div className="md:max-w-[300px] w-full">
+            <Label
+              htmlFor="keyword"
+              className="text-left block text-[13px] text-[#464646] font-[family-name:var(--font-dm)]"
+            >
+              Keyword
+            </Label>
             <div className="relative mt-1">
               <Search
                 className="text-[#A9A9A9] absolute top-[15px] left-2"
@@ -129,6 +173,48 @@ export default function WorkFlowPage() {
                 />
               )}
             </div>
+          </div>
+
+          {/* Department filter */}
+          <div className="col-span-1 grid items-center w-full md:w-[150px]">
+            <Label
+              htmlFor="channel"
+              className="text-left block text-[13px] text-[#464646] font-[family-name:var(--font-dm)]"
+            >
+              Status
+            </Label>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="md:w-[200px] mt-1 w-full h-[50px] sm:justify-between focus-visible:ring-1 font-[family-name:var(--font-dm)] text-[#3D4F5C] truncate"
+                >
+                  <span>{payloadParams.status || "All"}</span>
+                  <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                className="font-[family-name:var(--font-poppins)] text-[12px] md:min-w-[200px] w-full h-40 overflow-auto"
+              >
+                <DropdownMenuRadioGroup
+                  value={payloadParams.status}
+                  onValueChange={(e) => handleStatus(e)}
+                >
+                  <DropdownMenuRadioItem value="">All</DropdownMenuRadioItem>
+                  {statusType?.map((status) => {
+                    return (
+                      <DropdownMenuRadioItem
+                        value={status.value}
+                        key={status.name}
+                      >
+                        {status.name}
+                      </DropdownMenuRadioItem>
+                    );
+                  })}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
