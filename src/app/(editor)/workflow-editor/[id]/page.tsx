@@ -215,7 +215,7 @@ const WorkflowEditor = () => {
       return;
     }
 
-    if (!formData.deadline) {
+    if (!formData.deadlineHours) {
       toast.warning("Step has no deadline set", {
         unstyled: true,
         position: "top-right",
