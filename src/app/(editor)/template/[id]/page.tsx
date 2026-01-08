@@ -212,7 +212,7 @@ const WorkflowEditor = () => {
       return;
     }
 
-     if (!formData.deadlineHours) {
+    if (!formData.deadlineHours) {
       toast.warning("Step has no deadline set", {
         unstyled: true,
         position: "top-right",
@@ -539,25 +539,32 @@ const WorkflowEditor = () => {
   };
 
   const editStep = (step: Step): void => {
+    setIsEditing(false);
+
     setSelectedStep(step);
-    setIsEditing(true);
-    setFormData({
-      id: `step-${step.id}`,
-      stepName: step.stepName,
-      approverType: step.approverType,
-      role: step.roles,
-      approverMode: step.approverMode,
-      deadlineHours: step.deadlineHours,
-      users: step.users,
-      enableEscalation: step.enableEscalation ? "yes" : "no",
-      escalationUsers: step.escalationUsers,
-      conditions: step?.conditions?.length
-        ? step?.conditions[0]
-        : {
-            department: "",
-            flowToRole: "",
-          },
-    });
+
+    // Use setTimeout to ensure state update completes
+    setTimeout(() => {
+      setFormData({
+        id: `step-${step.id}`,
+        stepName: step.stepName,
+        approverType: step.approverType,
+        role: step.roles,
+        approverMode: step.approverMode,
+        deadlineHours: step.deadlineHours,
+        users: step.users,
+        enableEscalation: step.enableEscalation ? "yes" : "no",
+        escalationUsers: step.escalationUsers,
+        conditions: step?.conditions?.length
+          ? step?.conditions[0]
+          : {
+              department: "",
+              flowToRole: "",
+            },
+      });
+
+      setIsEditing(true);
+    }, 0);
   };
 
   const deleteStep = (stepId: string): void => {
@@ -637,7 +644,7 @@ const WorkflowEditor = () => {
         errors.push(`Step ${index + 1} has no deadline set`);
       }
       if (step.deadlineHours <= 0) {
-        errors.push(`Step ${index + 1} deadline must be greater than zero (0)`)
+        errors.push(`Step ${index + 1} deadline must be greater than zero (0)`);
       }
       if (step.enableEscalation && step.escalationUsers.length === 0) {
         errors.push(
@@ -871,6 +878,10 @@ const WorkflowEditor = () => {
     setSavedTemplate(false);
   };
 
+  const handleStepSelection = (step: Step) => {
+    editStep(step);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[100vh]">
@@ -917,7 +928,7 @@ const WorkflowEditor = () => {
           selectedStep={selectedStep}
           stepCount={Number(configureStepData?.stepCount)}
           onAddStep={addStep}
-          onSelectStep={setSelectedStep}
+          onSelectStep={handleStepSelection}
         />
 
         {/* Right Panel - Getting Started */}

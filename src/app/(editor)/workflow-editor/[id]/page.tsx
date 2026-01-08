@@ -99,10 +99,9 @@ const WorkflowEditor = () => {
     },
   });
 
-  const {
-    data: configureStepData,
-    isLoading,
-  } = useGetConfiguredWorkflowSteps(params.id as string);
+  const { data: configureStepData, isLoading } = useGetConfiguredWorkflowSteps(
+    params.id as string
+  );
 
   const configureSteps: WorkflowRetrievedSteps[] = React.useMemo(() => {
     return configureStepData?.steps as WorkflowRetrievedSteps[];
@@ -542,25 +541,32 @@ const WorkflowEditor = () => {
   };
 
   const editStep = (step: Step): void => {
+    setIsEditing(false);
+
     setSelectedStep(step);
-    setIsEditing(true);
-    setFormData({
-      id: `step-${step.id}`,
-      stepName: step.stepName,
-      approverType: step.approverType,
-      role: step.roles,
-      approverMode: step.approverMode,
-      deadlineHours: step.deadlineHours,
-      users: step.users,
-      enableEscalation: step.enableEscalation ? "yes" : "no",
-      escalationUsers: step.escalationUsers,
-      conditions: step?.conditions?.length
-        ? step?.conditions[0]
-        : {
-            department: "",
-            flowToRole: "",
-          },
-    });
+
+    // Use setTimeout to ensure state update completes
+    setTimeout(() => {
+      setFormData({
+        id: `step-${step.id}`,
+        stepName: step.stepName,
+        approverType: step.approverType,
+        role: step.roles,
+        approverMode: step.approverMode,
+        deadlineHours: step.deadlineHours,
+        users: step.users,
+        enableEscalation: step.enableEscalation ? "yes" : "no",
+        escalationUsers: step.escalationUsers,
+        conditions: step?.conditions?.length
+          ? step?.conditions[0]
+          : {
+              department: "",
+              flowToRole: "",
+            },
+      });
+
+      setIsEditing(true);
+    }, 0);
   };
 
   const deleteStep = (stepId: string): void => {
@@ -979,6 +985,10 @@ const WorkflowEditor = () => {
     setSavedTemplate(false);
   };
 
+  const handleStepSelection = (step: Step) => {
+    editStep(step);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[100vh]">
@@ -1025,7 +1035,7 @@ const WorkflowEditor = () => {
           stepCount={Number(configureStepData?.stepCount)}
           selectedStep={selectedStep}
           onAddStep={addStep}
-          onSelectStep={setSelectedStep}
+          onSelectStep={handleStepSelection}
         />
 
         {/* Right Panel - Getting Started */}
@@ -1046,6 +1056,7 @@ const WorkflowEditor = () => {
         {/* Right Panel - Edit Form */}
         {isEditing && selectedStep && (
           <StepEditFormPanel
+            key={selectedStep.id}
             step={selectedStep}
             formData={formData}
             onClose={() => setIsEditing(false)}

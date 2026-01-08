@@ -81,7 +81,7 @@ const WorkflowSidebar = ({
                   <span className="h-[8px] w-[8px] rounded bg-[#D9D9D9]"></span>
                   {step.deadlineHours && (
                     <span className="text-[12px] text-primary-gray">
-                      {dayjs.utc(step.deadlineHours).format("YYYY-MM-DD")}
+                      {step.deadlineHours} hour{step.deadlineHours === 1 ? "" : "s"}
                     </span>
                   )}
                 </div>
