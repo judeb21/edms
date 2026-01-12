@@ -43,7 +43,7 @@ export function toFormData(data: DocumentFormDataPayload): FormData {
   });
 
   // 4. Append boolean safely as a string
-  formData.append("addWorkflow", String(data.addWorkflow));
+  formData.append("addWorkflow", JSON.stringify(data.addWorkflow));
 
   // 5. Append workflow only if provided
   if (data.workflowName) {
@@ -54,7 +54,32 @@ export function toFormData(data: DocumentFormDataPayload): FormData {
 }
 
 async function uploadProcessDocument(payload: DocumentFormDataPayload) {
-  const formData = toFormData(payload);
+  // const formData = toFormData(payload);
+
+  const formData = new FormData();
+
+  // Append files
+  payload.file.forEach((f) => {
+    formData.append("file", f);
+  });
+
+  // Append tags
+  payload?.tags?.forEach((tag) => {
+    formData.append("tags", tag);
+  });
+
+  // Append individual fields as JSON strings
+  formData.append("title", payload.title);
+  formData.append("description", payload.description);
+  formData.append("category", payload.category);
+  formData.append("department", payload.department);
+  
+  // ✅ Append boolean as actual boolean (wrapped in JSON)
+  formData.append("addWorkflow", JSON.stringify(payload.addWorkflow));
+  
+  if (payload.workflowName) {
+    formData.append("workflowName", JSON.stringify(payload.workflowName));
+  }
 
   return authenticatedAxios.post(`/documents/upload`, formData, {
     headers: {
