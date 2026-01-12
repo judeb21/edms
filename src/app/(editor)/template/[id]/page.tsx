@@ -879,7 +879,31 @@ const WorkflowEditor = () => {
   };
 
   const handleStepSelection = (step: Step) => {
-    editStep(step);
+    setSelectedStep(step);
+    setIsEditing(true);
+
+    // Use setTimeout to ensure state update completes
+    setTimeout(() => {
+      setFormData({
+        id: `step-${step.id}`,
+        stepName: step.stepName,
+        approverType: step.approverType,
+        role: step.roles,
+        approverMode: step.approverMode,
+        deadlineHours: step.deadlineHours,
+        users: step.users,
+        enableEscalation: step.enableEscalation ? "yes" : "no",
+        escalationUsers: step.escalationUsers,
+        conditions: step?.conditions?.length
+          ? step?.conditions[0]
+          : {
+              department: "",
+              flowToRole: "",
+            },
+      });
+
+      setIsEditing(false);
+    }, 0);
   };
 
   if (isLoading) {

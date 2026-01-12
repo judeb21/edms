@@ -117,7 +117,7 @@ export default function TemplatesPage() {
             </span>
           </Button>
         </div>
-        <div className="grid grid-cols-4 gap-[24px] mt-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,250px))] !gap-[24px] mt-3">
           {templates?.map((template) => {
             return (
               <WorkflowTemplateCard

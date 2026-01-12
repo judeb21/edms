@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { format, isBefore, isSameDay, startOfDay } from "date-fns";
+import { format, startOfDay } from "date-fns";
 import { Calendar as CalendarIcon, Loader2, X } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -61,7 +61,6 @@ export function DateRangeFilter({
       }
 
       if (dateTo) {
-         
         const parsed = parseLocalDate(dateTo);
         setTo(parsed);
         setToDate(parsed);
@@ -76,12 +75,12 @@ export function DateRangeFilter({
     }
   }, [dateFrom, dateTo, openOnMount, isInitialized]);
 
-  const isRangeValid =
-    from && to && (isBefore(from, to) || isSameDay(from, to));
+  // const isRangeValid =
+  //   from && to && (isBefore(from, to) || isSameDay(from, to));
 
-  useEffect(() => {
-    onDateChange({ dateFrom, dateTo: isRangeValid ? dateTo : undefined });
-  }, [from, to, isRangeValid, onDateChange]);
+  // useEffect(() => {
+  //   onDateChange({ dateFrom, dateTo: isRangeValid ? dateTo : undefined });
+  // }, [from, to, isRangeValid, onDateChange]);
 
   const formatDisplayDate = (date?: Date) =>
     date
@@ -92,16 +91,20 @@ export function DateRangeFilter({
       : undefined;
 
   const handleDateApply = () => {
-    if (fromDate) setFrom(dayjs(fromDate).utc().startOf("day").toDate());
-    if (toDate) setTo(dayjs(toDate).utc().endOf("day").toDate());
+    if (fromDate) setFrom(fromDate);
+    if (toDate) setTo(toDate);
     onDateChange({ dateFrom: fromDate, dateTo: toDate });
+    console.info({
+      From: fromDate,
+      To: toDate,
+    });
     setFromPopoverOpen(false);
     setToPopoverOpen(false);
   };
 
   const handleDateReset = () => {
-    setFromDate(from);
-    setToDate(to);
+    setFromDate(undefined);
+    setToDate(undefined);
     updateDateFilter();
     setFromPopoverOpen(false);
     setToPopoverOpen(false);
@@ -181,8 +184,8 @@ export function DateRangeFilter({
             variant="ghost"
             size="icon"
             onClick={() => {
-            //   setFrom(undefined);
-            //   setTo(undefined);
+              setFrom(undefined);
+              setTo(undefined);
               onClose();
             }}
           >
