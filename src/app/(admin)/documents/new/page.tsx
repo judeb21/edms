@@ -19,6 +19,7 @@ import {
   CloudAlert,
   CloudUpload,
   Eye,
+  File,
   Info,
   Loader2,
   Repeat,
@@ -165,7 +166,7 @@ export default function NewDocumentPage() {
       title: formData.title,
       description: formData.description,
       category: formData.category,
-      //   tags: formData.tags,
+      tags: formData.tags,
       department: formData.department,
       addWorkflow: formData.workflowAdded,
       workflowName: formData.workflow,
@@ -499,6 +500,16 @@ export default function NewDocumentPage() {
 
   const documentIsImage = (file: File) => {
     return file.type.startsWith("image/");
+  };
+
+  const isPDF = (file: File) => {
+    switch (file.type) {
+      case "application/pdf":
+        return true;
+
+      default:
+        return false;
+    }
   };
 
   const disableForm =
@@ -898,11 +909,27 @@ export default function NewDocumentPage() {
                       className="w-[80%] mx-auto h-[250px] object-cover rounded"
                     />
                   ) : (
-                    <iframe
-                      src={files[0]?.previewUrl}
-                      className="w-[80%] mx-auto h-[400px] border rounded"
-                      title={formData.title}
-                    />
+                    <>
+                      {isPDF(files[0]?.file) ? (
+                        <iframe
+                          src={files[0]?.previewUrl}
+                          className="w-[80%] mx-auto h-[400px] border rounded"
+                          title={formData.title}
+                        />
+                      ) : (
+                        <div className="flex justify-between flex-col items-center mx-auto h-[400px]">
+                          <div className="flex justify-between flex-col items-center">
+                            <File className="h-50 w-50" strokeWidth={1} />
+                            <span className="font-medium truncate font-[family-name:var(--font-dm)] text-[14px]">
+                              {files[0].file.name}
+                            </span>
+                            <span className="font-medium truncate font-[family-name:var(--font-dm)] text-[14px]">
+                              {formatFileSize(files[0].file.size)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}

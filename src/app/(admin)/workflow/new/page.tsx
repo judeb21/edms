@@ -334,9 +334,12 @@ export default function WorkFlowPage() {
                         </FormLabel>
                         <FormControl>
                           <Input
-                            type="string"
-                            placeholder="Enter Number of Steps you want this workflow to be configure with"
-                            {...form.register("stepNo", { valueAsNumber: true})}
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            placeholder="Enter number of steps"
+                            onFocus={(e) => e.target.select()} // auto-select existing value
+                            {...form.register("stepNo")}
                             className="focus-visible:ring-0 h-[50px] rounded-[8px] border-[#cccccc]"
                           />
                         </FormControl>

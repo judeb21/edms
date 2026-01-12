@@ -1,9 +1,7 @@
 "use client";
 
 import { PageBreadcrumb } from "@/components/common/pageBreadCrumbs";
-import {
-  WorkFlowDataTable,
-} from "@/components/tables/workflowTable";
+import { WorkFlowDataTable } from "@/components/tables/workflowTable";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -58,7 +56,7 @@ export default function WorkFlowPage() {
     status: "Active",
   });
 
-  const { data, isFetching } = useGetAllWorkflows(payloadParams);
+  const { data, isFetching, refetch } = useGetAllWorkflows(payloadParams);
 
   //Delete workflow mutation
   const deleteWorkflow = useDeleteWorkflow();
@@ -90,6 +88,7 @@ export default function WorkFlowPage() {
       onSuccess: (response) => {
         setDeleteSuccessful(true);
         setLoader(false);
+        refetch();
         toast.success(response?.message, {
           unstyled: true,
           position: "top-right",
@@ -229,15 +228,13 @@ export default function WorkFlowPage() {
             </div>
           ) : (
             <>
-              {workflows?.length && (
-                <WorkFlowDataTable
-                  data={workflows as WorkflowTypes[]}
-                  showPagination={false}
-                  deleteLoader={deleteLoader}
-                  onDelete={handleDelete}
-                  onSuccess={onSuccess}
-                />
-              )}
+              <WorkFlowDataTable
+                data={workflows as WorkflowTypes[]}
+                showPagination={false}
+                deleteLoader={deleteLoader}
+                onDelete={handleDelete}
+                onSuccess={onSuccess}
+              />
             </>
           )}
         </div>

@@ -15,7 +15,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useGetDepartmentsQuery } from "@/hooks/api/useSmartUserQuery";
 import { DepartmentType } from "@/types/smartUserTypes";
 import dayjs from "dayjs";
-import { DateFilter } from "@/types";
+// import { DateFilter } from "@/types";
 import { DateRangeFilter } from "../ui/date-picker";
 import utc from "dayjs/plugin/utc";
 
@@ -69,20 +69,22 @@ export default function FilterHeader({
       const formattedToDate = dayjs().format("YYYY-MM-DD");
       onChange({
         ...formData,
-        dateFrom: dayjs(formattedFromDate).utc().startOf("day"),
-        dateTo: dayjs(formattedToDate).utc().startOf("day"),
+        dateFrom: dayjs.utc(formattedFromDate).startOf("day"),
+        dateTo: dayjs.utc(formattedToDate).startOf("day"),
       });
 
       setCardCustomDate(false);
       return;
     }
     if (Number(e) === 1) {
-      const formattedFromDate = dayjs().subtract(30, "day").format("YYYY-MM-DD");
+      const formattedFromDate = dayjs()
+        .subtract(30, "day")
+        .format("YYYY-MM-DD");
       const formattedToDate = dayjs().format("YYYY-MM-DD");
       onChange({
         ...formData,
-        dateFrom: dayjs(formattedFromDate).utc().startOf("day"),
-        dateTo: dayjs(formattedToDate).utc().startOf("day"),
+        dateFrom: dayjs.utc(formattedFromDate).startOf("day"),
+        dateTo: dayjs.utc(formattedToDate).startOf("day"),
       });
 
       setCardCustomDate(false);
@@ -101,34 +103,45 @@ export default function FilterHeader({
     setCardCustomDate(true);
   };
 
-  const getTicketCardDataRange = (range: DateFilter) => {
-    const { dateFrom, dateTo } = range;
-    const shouldSetDate = dateFrom && dateTo;
+  // const getTicketCardDataRange = (range: DateFilter) => {
+  //   const { dateFrom, dateTo } = range;
+  //   const shouldSetDate = dateFrom && dateTo;
 
-    // if (shouldSetDate) setCardCustomDate(false);
-    if (shouldSetDate) {
-      const formattedFromDate = dayjs(dateFrom).format("YYYY-MM-DD");
-      const formattedToDate = dayjs(dateTo).format("YYYY-MM-DD");
-      onChange({
-        ...formData,
-        dateFrom: dayjs(formattedFromDate).utc().startOf("day"),
-        dateTo: dayjs(formattedToDate).utc().endOf("day"),
-      });
+  //   // if (shouldSetDate) setCardCustomDate(false);
+  //   if (shouldSetDate) {
+  //     const formattedFromDate = dayjs(dateFrom).format("YYYY-MM-DD");
+  //     const formattedToDate = dayjs(dateTo).format("YYYY-MM-DD");
+  //     onChange({
+  //       ...formData,
+  //       dateFrom: dayjs.utc(formattedFromDate).startOf("day"),
+  //       dateTo: dayjs.utc(formattedToDate).endOf("day"),
+  //     });
 
-      return;
-    }
-  };
+  //     return;
+  //   }
+  // };
 
   //Stop unnecessary re-renders
-  /* eslint-disable */
+  
+   
   const handleDateChange = useCallback(
     (newRange: {
       dateFrom: string | Date | undefined;
       dateTo: string | Date | undefined;
     }) => {
-      getTicketCardDataRange(newRange);
+      const { dateFrom, dateTo } = newRange;
+      if (dateFrom && dateTo) {
+        const formattedFromDate = dayjs(dateFrom).format("YYYY-MM-DD");
+        const formattedToDate = dayjs(dateTo).format("YYYY-MM-DD");
+
+        onChange({
+          ...formData,
+          dateFrom: dayjs.utc(formattedFromDate).startOf("day"),
+          dateTo: dayjs.utc(formattedToDate).endOf("day"),
+        });
+      }
     },
-    []
+    [formData, onChange] // ✅ Add dependencies
   );
   // eslint-enable */
 
@@ -136,7 +149,7 @@ export default function FilterHeader({
     handleFilter("2");
     setTicketFilter("2");
     onChange({ ...formData, dateFrom: "", dateTo: "" });
-    setCardCustomDate(false);
+    // setCardCustomDate(false);
   };
 
   const onClear = () => {
