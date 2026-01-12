@@ -11,18 +11,22 @@ export const workflowSchema = z
     }),
     description: z.string(),
     scope: z.enum(["Global", "Department", "DocumentType"], {
-      error: "Scope is required",
+      message: "Scope is required",
     }),
     scopeValue: z.string().optional(),
     stepNo: z.preprocess(
       (val) => {
         if (typeof val === "string") {
-          const parsed = parseInt(val, 10);
+          const trimmed = val.trim();
+          if (trimmed === "") return undefined;
+          const parsed = parseInt(trimmed, 10);
           return isNaN(parsed) ? undefined : parsed;
         }
         return val;
       },
-      z.number().min(1, "Steps must be greater than 0")
+      z.number({
+        message: "Number of steps is required",
+      }).min(1, "Number of steps must be at least 1")
     ),
   })
   .superRefine((data, ctx) => {
@@ -54,8 +58,8 @@ export const WorkflowCreationValidation = () =>
     defaultValues: {
       name: "",
       description: "",
-      scope: "Global",
+      scope: "Global" as const,
       scopeValue: "",
-      stepNo: undefined,
+      stepNo: "" as any,
     },
   });
