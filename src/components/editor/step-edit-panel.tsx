@@ -153,8 +153,18 @@ const StepEditFormPanel = ({
 
     userOptions.forEach((u) => map.set(u.email.toLowerCase(), u));
 
-    return Array.from(map.values());
-  }, [reconciledEscalatedOptions, userOptions]);
+    // Get all values first
+    const allOptions = Array.from(map.values());
+
+    // Filter out users that are already selected in formData.users
+    const selectedUserEmails = new Set(
+      formData.users.map((u: WorkflowUserType) => u.email.toLowerCase())
+    );
+
+    return allOptions.filter(
+      (option) => !selectedUserEmails.has(option.email.toLowerCase())
+    );
+  }, [reconciledEscalatedOptions, userOptions, formData.users]);
 
   return (
     <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
@@ -464,7 +474,9 @@ const StepEditFormPanel = ({
               }}
               onLoadMore={fetchNextPage}
               hasMore={hasNextPage}
-              defaultOptions={mergedEscalatedOptions ? reconciledEscalatedOptions : []}
+              defaultOptions={
+                mergedEscalatedOptions ? reconciledEscalatedOptions : []
+              }
               isLoading={isFetchingNextPage}
               onSearch={setSearch}
               placeholder="Select users"
