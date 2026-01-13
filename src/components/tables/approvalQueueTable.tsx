@@ -478,24 +478,24 @@ export function ApprovalQueueTable(props: DataTableProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {/* APPROVE BUTTON */}
-              {queueData.activeStep.canApprove && (
+              {/* {queueData.activeStep.canApprove && ( */}
                 <Button
                   className="bg-brand-blue w-full py-[20px] hover:bg-brand-blue mt-4"
                   onClick={() => setModal(true)}
                 >
                   Approve
                 </Button>
-              )}
+              {/* )} */}
 
               {/* REJECT BUTTON */}
-              {queueData.activeStep.canReject && (
+              {/* {queueData.activeStep.canReject && ( */}
                 <Button
                   className="bg-[#DD6A57] w-full py-[20px] hover:bg-[#DD6A57] mt-4"
                   onClick={() => setRejectionModal(true)}
                 >
                   Reject
                 </Button>
-              )}
+              {/* )} */}
 
               {/* REQUEST CHANGE BUTTON */}
               {/* {queueData.activeStep.canRequestChanges && (
