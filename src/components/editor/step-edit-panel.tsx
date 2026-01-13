@@ -252,7 +252,7 @@ const StepEditFormPanel = ({
               Users
             </label>
             <MultiSelect
-              key={mergedOptions.length}
+              // key={mergedOptions.length}
               options={mergedOptions}
               onValueChange={(userIds) => console.log("User IDs:", userIds)} // Optional: keep for debugging
               onSelectionChange={(selectedUsers) => {
@@ -443,7 +443,7 @@ const StepEditFormPanel = ({
               Escalate to
             </label>
             <MultiSelect
-              key={mergedEscalatedOptions?.length}
+              // key={mergedEscalatedOptions?.length}
               options={mergedEscalatedOptions}
               onValueChange={(userIds) =>
                 console.log("Escalated User IDs:", userIds)
