@@ -32,6 +32,11 @@ export default function DocumentsPage() {
   const handleSearchClear = () =>
     setPayloadParams({ ...payloadParams, keyword: "" });
 
+  const handleChangedPayload = (value: FetchDocumentObject) => {
+    // console.log("Value", value);
+    setPayloadParams({ ...value, page: 1 });
+  };
+
   const getNext = () => {
     const nextPayload = {
       page: payloadParams.page + 1,
@@ -95,7 +100,7 @@ export default function DocumentsPage() {
         <FilterHeader
           formData={payloadParams}
           handleSearchClear={handleSearchClear}
-          onChange={setPayloadParams}
+          onChange={handleChangedPayload}
           isFetching={isFetching}
         />
       </div>
