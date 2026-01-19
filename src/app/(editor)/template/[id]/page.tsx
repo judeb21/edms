@@ -6,6 +6,7 @@ import {
   ConditionsType,
   Step,
   StepTemplate,
+  StepUserInput,
   WorkFlowConfigurationPayload,
   WorkflowRetrievedSteps,
   WorkFlowTemplatePayload,
@@ -35,11 +36,11 @@ interface FormData {
   stepName: string;
   approverType: "RoleBased" | "SpecificUsers";
   role: string[];
-  users: WorkflowUserType[];
+  users: StepUserInput[];
   approverMode: "AllApprovers" | "Anyone";
   deadlineHours: number;
   enableEscalation: "yes" | "no";
-  escalationUsers: WorkflowUserType[];
+  escalationUsers: StepUserInput[];
   conditions?: ConditionsType;
 }
 
@@ -87,11 +88,11 @@ const WorkflowEditor = () => {
     stepName: "",
     approverType: "SpecificUsers",
     role: [],
-    users: [] as WorkflowUserType[],
+    users: [] as StepUserInput[],
     approverMode: "AllApprovers",
     deadlineHours: 0,
     enableEscalation: "yes",
-    escalationUsers: [] as WorkflowUserType[],
+    escalationUsers: [] as StepUserInput[],
     conditions: {
       department: "",
       flowToRole: "",
@@ -99,7 +100,7 @@ const WorkflowEditor = () => {
   });
 
   const { data: configureStepData, isLoading } = useGetTemplateWorkflowSteps(
-    params.id as string
+    params.id as string,
   );
 
   const configureSteps: WorkflowRetrievedSteps[] = React.useMemo(() => {
@@ -110,8 +111,32 @@ const WorkflowEditor = () => {
     return configureStepData?.templateName as string;
   }, [configureStepData, isLoading]);
 
+  const isWorkflowUser = (user: StepUserInput): user is WorkflowUserType =>
+    "email" in user;
+
+  const normalizeUser = (user: StepUserInput): WorkflowUserType => {
+    if (isWorkflowUser(user)) {
+      return user; // already normalized
+    }
+
+    return {
+      email: user.Email,
+      name: user.Name,
+      dept: user.Dept,
+      roles: user.Roles,
+    };
+  };
+
   useEffect(() => {
     const updatedSteps: Step[] = configureSteps?.map((step, index) => {
+      const users: WorkflowUserType[] =
+        step.approvalType === "SpecificUsers"
+          ? step.users.map((user) => normalizeUser(user))
+          : [];
+      const escalatedUsers: WorkflowUserType[] = step.enableEscalation
+        ? step.escalationUsers.map((user) => normalizeUser(user))
+        : [];
+
       return {
         ...step,
         id: `step-${index + 1}`,
@@ -119,11 +144,11 @@ const WorkflowEditor = () => {
         name: step.stepName,
         approverType: step.approvalType,
         roles: step?.roles,
-        users: step.approvalType === "SpecificUsers" ? step.users : [],
+        users: users,
         approverMode: step.approverMode,
         deadlineHours: step.deadlineHours,
         enableEscalation: step.enableEscalation,
-        escalationUsers: step.enableEscalation ? step.escalationUsers : [],
+        escalationUsers: escalatedUsers,
         conditions: step.conditions,
         configured: true,
       };
@@ -343,7 +368,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -513,7 +538,7 @@ const WorkflowEditor = () => {
                     "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
                   title: "text-[#E71D36]",
                 },
-              }
+              },
             );
           },
         });
@@ -532,7 +557,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -620,7 +645,7 @@ const WorkflowEditor = () => {
           order: index + 1,
           configured: false,
         };
-      })
+      }),
     );
 
     if (steps.length === 0) {
@@ -648,7 +673,7 @@ const WorkflowEditor = () => {
       }
       if (step.enableEscalation && step.escalationUsers.length === 0) {
         errors.push(
-          `Step ${index + 1} has escalation enabled but no users selected`
+          `Step ${index + 1} has escalation enabled but no users selected`,
         );
       }
     });
@@ -675,6 +700,15 @@ const WorkflowEditor = () => {
               title: "text-[#E71D36]",
             },
           });
+
+          const responseSteps = steps.map((step) => {
+            return {
+              ...step,
+              configured: true,
+            };
+          });
+
+          setSteps(responseSteps);
         },
         onError: (error) => {
           setLoader(false);
@@ -694,7 +728,7 @@ const WorkflowEditor = () => {
                   "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
                 title: "text-[#E71D36]",
               },
-            }
+            },
           );
         },
       });
@@ -710,7 +744,7 @@ const WorkflowEditor = () => {
               "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
             title: "text-[#E71D36]",
           },
-        }
+        },
       );
     }
   };
@@ -746,7 +780,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -787,7 +821,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -848,7 +882,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -934,6 +968,7 @@ const WorkflowEditor = () => {
         isDeactivated={isDeactivated}
         validated={validated}
         templateSaving={templateSaving}
+        isTemplate={true}
         templateSuccessSaved={templateSuccessSaved}
       />
 
@@ -974,6 +1009,7 @@ const WorkflowEditor = () => {
         {isEditing && selectedStep && (
           <StepEditFormPanel
             step={selectedStep}
+            steps={steps} 
             formData={formData}
             onClose={() => setIsEditing(false)}
             onSave={saveStep}

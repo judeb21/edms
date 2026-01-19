@@ -16,6 +16,7 @@ import LoaderButton from "../common/loader-button";
 
 const StepEditFormPanel = ({
   step,
+  steps,
   formData,
   onClose,
   onSave,
@@ -26,6 +27,7 @@ const StepEditFormPanel = ({
   stepLength,
 }: {
   step: Step;
+  steps: Step[];
   formData: any;
   onClose: () => void;
   onSave: () => void;
@@ -54,7 +56,7 @@ const StepEditFormPanel = ({
           .trim()
           .localeCompare(b.departmentName.trim(), undefined, {
             sensitivity: "base",
-          })
+          }),
       ) ?? ([] as DepartmentType[]);
 
     return sortedData;
@@ -65,7 +67,7 @@ const StepEditFormPanel = ({
       rolesData?.sort((a, b) =>
         a.name
           .trim()
-          .localeCompare(b.name.trim(), undefined, { sensitivity: "base" })
+          .localeCompare(b.name.trim(), undefined, { sensitivity: "base" }),
       ) ?? ([] as RolesType[]);
 
     return sortedData;
@@ -85,6 +87,41 @@ const StepEditFormPanel = ({
         })) ?? []
     );
   }, [userData, search]);
+
+  // Get all users from OTHER steps (excluding current step)
+  const usersInOtherSteps = React.useMemo(() => {
+    const emails = new Set<string>();
+
+    // Safety check: ensure steps array exists
+    if (!steps || !Array.isArray(steps)) {
+      return emails;
+    }
+
+    steps.forEach((s) => {
+      // Skip the current step being edited
+      if (s.id === step.id) return;
+
+      // Add users from this step (with safety check)
+      if (s.users && Array.isArray(s.users)) {
+        (s.users as WorkflowUserType[]).forEach((u) => {
+          if (u?.email) {
+            emails.add(u.email.toLowerCase());
+          }
+        });
+      }
+
+      // Add escalation users from this step (with safety check)
+      if (s.escalationUsers && Array.isArray(s.escalationUsers)) {
+        (s.escalationUsers as WorkflowUserType[]).forEach((u) => {
+          if (u?.email) {
+            emails.add(u.email.toLowerCase());
+          }
+        });
+      }
+    });
+
+    return emails;
+  }, [steps, step.id]);
 
   const defaultOptions = React.useMemo(() => {
     return formData.users.map((u: WorkflowUserType) => ({
@@ -112,59 +149,82 @@ const StepEditFormPanel = ({
     if (!userOptions.length) return defaultOptions;
 
     const userOptionMap = new Map(
-      userOptions.map((u) => [u.email?.toLowerCase(), u])
+      userOptions.map((u) => [u.email?.toLowerCase(), u]),
     );
 
-    return defaultOptions.map(
-      (d: WorkflowUserType) => userOptionMap.get(d.email?.toLowerCase()) ?? d
-    );
-  }, [defaultOptions, userOptions]);
+    return defaultOptions
+      .map(
+        (d: WorkflowUserType) => userOptionMap.get(d.email?.toLowerCase()) ?? d,
+      )
+      .filter(
+        (u: WorkflowUserType) => !usersInOtherSteps.has(u.email?.toLowerCase()),
+      );
+  }, [defaultOptions, userOptions, usersInOtherSteps]);
 
   const reconciledEscalatedOptions = React.useMemo(() => {
     if (!userOptions.length) return defaultOptions;
 
     const userOptionMap = new Map(
-      userOptions.map((u) => [u.email?.toLowerCase(), u])
+      userOptions.map((u) => [u.email?.toLowerCase(), u]),
     );
 
-    return defaultEscalatedOptions.map(
-      (d: WorkflowUserType) => userOptionMap.get(d.email?.toLowerCase()) ?? d
-    );
-  }, [defaultEscalatedOptions, userOptions]);
+    return defaultEscalatedOptions
+      .map(
+        (d: WorkflowUserType) => userOptionMap.get(d.email?.toLowerCase()) ?? d,
+      )
+      .filter(
+        (u: WorkflowUserType) => !usersInOtherSteps.has(u.email?.toLowerCase()),
+      );
+  }, [defaultEscalatedOptions, userOptions, usersInOtherSteps]);
 
   const mergedOptions = React.useMemo(() => {
     const map = new Map<string, any>();
 
     reconciledDefaultOptions.forEach((u: WorkflowUserType) =>
-      map.set(u.email.toLowerCase(), u)
+      map.set(u?.email?.toLowerCase(), u),
     );
 
-    userOptions.forEach((u) => map.set(u.email.toLowerCase(), u));
+    // Filter userOptions to exclude users from other steps
+    userOptions.forEach((u) => {
+      if (!usersInOtherSteps.has(u.email?.toLowerCase())) {
+        map.set(u.email.toLowerCase(), u);
+      }
+    });
 
     return Array.from(map.values());
-  }, [reconciledDefaultOptions, userOptions]);
+  }, [reconciledDefaultOptions, userOptions, usersInOtherSteps]);
 
   const mergedEscalatedOptions = React.useMemo(() => {
     const map = new Map<string, any>();
 
     reconciledEscalatedOptions.forEach((u: WorkflowUserType) =>
-      map.set(u.email.toLowerCase(), u)
+      map.set(u?.email?.toLowerCase(), u),
     );
 
-    userOptions.forEach((u) => map.set(u.email.toLowerCase(), u));
+    // Filter userOptions to exclude users from other steps
+    userOptions.forEach((u) => {
+      if (!usersInOtherSteps.has(u.email?.toLowerCase())) {
+        map.set(u.email.toLowerCase(), u);
+      }
+    });
 
     // Get all values first
     const allOptions = Array.from(map.values());
 
     // Filter out users that are already selected in formData.users
     const selectedUserEmails = new Set(
-      formData.users.map((u: WorkflowUserType) => u.email.toLowerCase())
+      formData.users.map((u: WorkflowUserType) => u?.email?.toLowerCase()),
     );
 
     return allOptions.filter(
-      (option) => !selectedUserEmails.has(option.email.toLowerCase())
+      (option) => !selectedUserEmails.has(option?.email?.toLowerCase()),
     );
-  }, [reconciledEscalatedOptions, userOptions, formData.users]);
+  }, [
+    reconciledEscalatedOptions,
+    userOptions,
+    formData.users,
+    usersInOtherSteps,
+  ]);
 
   return (
     <div className="w-96 bg-white border-l border-gray-200 flex flex-col">

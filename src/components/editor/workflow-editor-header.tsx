@@ -37,6 +37,7 @@ const WorkflowHeader = ({
   isDeactivated,
   templateSaving,
   templateSuccessSaved,
+  isTemplate,
 }: {
   workflowName: string;
   status: WorkflowStatus;
@@ -54,6 +55,7 @@ const WorkflowHeader = ({
   isDeactivated: boolean;
   templateSaving: boolean;
   templateSuccessSaved: boolean;
+  isTemplate: boolean;
 }) => {
   const [deactivateModal, setModal] = useState(false);
   const [templateConfirmationModal, setConfirmationModal] = useState(false);
@@ -136,19 +138,21 @@ const WorkflowHeader = ({
               )}
               Validate
             </Button>
-            <Button
-              variant={"outline"}
-              disabled={!stepsLength}
-              className={`px-4 py-[14px] rounded text-[12px] ${
-                !stepsLength
-                  ? "border-[#A9A9A9] text-primary-gray cursor-not-allowed"
-                  : "bg-white text-primary-gray hover:bg-white border-primary-gray"
-              }`}
-              onClick={onTemplateSave}
-            >
-              <Save className="w-[20px] h-[20px] mr-1" color={"#464646"} />
-              Save As Template
-            </Button>
+            {!isTemplate && (
+              <Button
+                variant={"outline"}
+                disabled={!stepsLength}
+                className={`px-4 py-[14px] rounded text-[12px] ${
+                  !stepsLength
+                    ? "border-[#A9A9A9] text-primary-gray cursor-not-allowed"
+                    : "bg-white text-primary-gray hover:bg-white border-primary-gray"
+                }`}
+                onClick={onTemplateSave}
+              >
+                <Save className="w-[20px] h-[20px] mr-1" color={"#464646"} />
+                Save As Template
+              </Button>
+            )}
             <Button
               onClick={onActivate}
               disabled={activationLoader}

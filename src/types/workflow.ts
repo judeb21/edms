@@ -20,12 +20,22 @@ export interface WorkflowPayload {
 }
 
 export interface WorkflowUserType {
-  id: string;
+  id?: string;
   email: string;
   name: string;
   dept: string;
   roles: string[];
 }
+
+export interface RawUser {
+  Id?: string;
+  Email: string;
+  Name: string;
+  Dept: string;
+  Roles: string[];
+}
+
+export type StepUserInput = RawUser | WorkflowUserType;
 
 export interface ConditionsType {
   department: string;
@@ -40,11 +50,11 @@ export interface Step {
   configured: boolean;
   approverType: "RoleBased" | "SpecificUsers";
   roles: string[];
-  users: WorkflowUserType[];
+  users: StepUserInput[];
   approverMode: "AllApprovers" | "Anyone";
   deadlineHours: number;
   enableEscalation: boolean;
-  escalationUsers: WorkflowUserType[];
+  escalationUsers: StepUserInput[];
   conditions?: ConditionsType[];
   updatedAt?: string;
 }
@@ -57,11 +67,11 @@ export interface StepTemplate {
   configured?: boolean;
   approverType: "RoleBased" | "SpecificUsers";
   roles: string[];
-  users: WorkflowUserType[];
+  users: StepUserInput[];
   approverMode: "AllApprovers" | "Anyone";
   deadlineHours: number;
   enableEscalation: boolean;
-  escalationUsers: WorkflowUserType[];
+  escalationUsers: StepUserInput[];
   conditions?: ConditionsType[];
   updatedAt?: string;
 }
@@ -88,7 +98,7 @@ export interface WorkflowRetrievedSteps {
   stepName: string;
   approvalType: "RoleBased" | "SpecificUsers";
   roles: string[];
-  users: WorkflowUserType[];
+  users: StepUserInput[];
   approverMode: "AllApprovers" | "Anyone";
   deadlineHours: number;
   enableEscalation: boolean;

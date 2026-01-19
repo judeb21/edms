@@ -53,7 +53,7 @@ export default function WorkFlowPage() {
   const breadcrumbItems = [{ label: "Workflow" }];
   const [payloadParams, setPayloadParams] = useState<FetchWorkflowObject>({
     workflowName: "",
-    status: "Active",
+    status: "",
   });
 
   const { data, isFetching, refetch } = useGetAllWorkflows(payloadParams);
