@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import SuccessModal from "@/components/workflow/modal-successful";
 import {
+  Asterisk,
   CircleX,
   CloudAlert,
   CloudUpload,
@@ -133,7 +134,7 @@ export default function NewDocumentPage() {
       data?.sort((a, b) =>
         a.name.trim().localeCompare(b.name.trim(), undefined, {
           sensitivity: "base",
-        })
+        }),
       ) ?? ([] as WorkflowTypes[]);
     return sortedData;
   }, [data]);
@@ -147,7 +148,7 @@ export default function NewDocumentPage() {
           .trim()
           .localeCompare(b.departmentName.trim(), undefined, {
             sensitivity: "base",
-          })
+          }),
       ) ?? ([] as DepartmentType[]);
 
     return sortedData;
@@ -193,7 +194,7 @@ export default function NewDocumentPage() {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -290,7 +291,7 @@ export default function NewDocumentPage() {
     const selectedFiles = Array.from(e.target.files || []);
     const newFilesSize = selectedFiles.reduce(
       (acc, file) => acc + file.size,
-      0
+      0,
     );
     const validFiles: UploadFile[] = [];
 
@@ -345,7 +346,7 @@ export default function NewDocumentPage() {
 
   const uploadSingleFile = async (
     fileData: UploadFile,
-    updateCallback: (updates: Partial<UploadFile>) => void
+    updateCallback: (updates: Partial<UploadFile>) => void,
   ) => {
     const formData = new FormData();
     formData.append("file", fileData.file);
@@ -362,7 +363,7 @@ export default function NewDocumentPage() {
             const percent = Math.round((e.loaded * 100) / (e.total || 1));
             updateCallback({ progress: percent });
           },
-        }
+        },
       );
 
       updateCallback({
@@ -381,12 +382,12 @@ export default function NewDocumentPage() {
       curr.map((f) =>
         f.file === file.file
           ? { ...f, error: false, uploading: true, progress: 0 }
-          : f
-      )
+          : f,
+      ),
     );
     uploadSingleFile(file, (updates) => {
       setFiles((curr) =>
-        curr.map((f) => (f.file === file.file ? { ...f, ...updates } : f))
+        curr.map((f) => (f.file === file.file ? { ...f, ...updates } : f)),
       );
     });
   };
@@ -439,7 +440,7 @@ export default function NewDocumentPage() {
     const filtered = suggestions.filter(
       (s) =>
         s.toLowerCase().includes(val.toLowerCase()) &&
-        !formData?.tags?.includes(s)
+        !formData?.tags?.includes(s),
     );
     setFilteredSuggestions(filtered);
   };
@@ -671,7 +672,10 @@ export default function NewDocumentPage() {
           </div>
 
           <div className="space-y-2 mt-[36px]">
-            <Label>Document Title</Label>
+            <Label>
+              Document Title{" "}
+              <Asterisk strokeWidth={1} size={15} className="-ml-1" />
+            </Label>
             <Input
               placeholder="Add Document Title"
               className="focus-visible:ring-0 h-[50px] rounded-[8px] border-[#cccccc]"
@@ -680,7 +684,10 @@ export default function NewDocumentPage() {
           </div>
 
           <div className="space-y-2 mt-[36px]">
-            <Label>Document Description</Label>
+            <Label>
+              Document Description{" "}
+              <Asterisk strokeWidth={1} size={15} className="-ml-1" />
+            </Label>
             <Textarea
               placeholder="Add Document Description"
               className="focus-visible:ring-0 resize-none h-30 rounded-[8px] border-[#cccccc]"
@@ -689,7 +696,9 @@ export default function NewDocumentPage() {
           </div>
 
           <div className="space-y-2 mt-[36px]">
-            <Label>Category</Label>
+            <Label>
+              Category <Asterisk strokeWidth={1} size={15} className="-ml-1" />
+            </Label>
             <Select
               onValueChange={(e) => {
                 handleInputChange("category", e);
@@ -709,7 +718,9 @@ export default function NewDocumentPage() {
           </div>
 
           <div className="space-y-2 mt-[36px]">
-            <Label>Tags</Label>
+            <Label>
+              Tags <Asterisk strokeWidth={1} size={15} className="-ml-1" />
+            </Label>
             <div className="flex flex-wrap items-center gap-2 border rounded-md px-3 py-2 focus-within:ring-0 focus-within:ring-offset-0 transition h-auto min-h-[50px]">
               {/* Tags */}
               {/* Use Space, or Comma to create tags */}
@@ -757,7 +768,10 @@ export default function NewDocumentPage() {
           </div>
 
           <div className="space-y-2 mt-[36px]">
-            <Label>Department</Label>
+            <Label>
+              Department{" "}
+              <Asterisk strokeWidth={1} size={15} className="-ml-1" />
+            </Label>
             <Select
               onValueChange={(e) => {
                 handleInputChange("department", e);

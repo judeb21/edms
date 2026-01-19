@@ -6,6 +6,7 @@ import {
   ConditionsType,
   Step,
   StepTemplate,
+  StepUserInput,
   WorkFlowConfigurationPayload,
   WorkflowRetrievedSteps,
   WorkflowStatus,
@@ -36,11 +37,11 @@ interface FormData {
   stepName: string;
   approverType: "RoleBased" | "SpecificUsers";
   role: string[];
-  users: WorkflowUserType[];
+  users: StepUserInput[];
   approverMode: "AllApprovers" | "Anyone";
   deadlineHours: number;
   enableEscalation: "yes" | "no";
-  escalationUsers: WorkflowUserType[];
+  escalationUsers: StepUserInput[];
   conditions?: ConditionsType;
 }
 
@@ -88,7 +89,7 @@ const WorkflowEditor = () => {
     stepName: "",
     approverType: "SpecificUsers",
     role: [],
-    users: [] as WorkflowUserType[],
+    users: [] as StepUserInput[],
     approverMode: "AllApprovers",
     deadlineHours: 0,
     enableEscalation: "yes",
@@ -100,7 +101,7 @@ const WorkflowEditor = () => {
   });
 
   const { data: configureStepData, isLoading } = useGetConfiguredWorkflowSteps(
-    params.id as string
+    params.id as string,
   );
 
   const configureSteps: WorkflowRetrievedSteps[] = React.useMemo(() => {
@@ -345,7 +346,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -515,7 +516,7 @@ const WorkflowEditor = () => {
                     "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
                   title: "text-[#E71D36]",
                 },
-              }
+              },
             );
           },
         });
@@ -534,7 +535,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -570,13 +571,70 @@ const WorkflowEditor = () => {
   };
 
   const deleteStep = (stepId: string): void => {
-    setSteps(steps.filter((s) => s.id !== stepId));
+    setSteps((prevSteps) => {
+      const updatedSteps = prevSteps.filter((s) => s.id !== stepId);
+
+      return updatedSteps;
+    });
+
     if (selectedStep?.id === stepId) {
       setSelectedStep(null);
       setIsEditing(false);
     }
+
     setValidated(false);
   };
+
+  // const deleteStep = (stepId: string): void => {
+  //   setLoader(true);
+
+  //   const updatedSteps = steps.filter((s) => s.id !== stepId);
+
+  //   const payload: WorkFlowConfigurationPayload = {
+  //     templateName: configureStepName,
+  //     useTemplate: false,
+  //     templateId: params.id as string,
+  //     saveAsTemplate: false,
+  //     steps: updatedSteps,
+  //   };
+
+  //   configureWorkflow.mutate(payload, {
+  //     onSuccess: (response) => {
+  //       setIsEditing(false);
+  //       setSelectedStep(null);
+  //       setValidated(false);
+  //       setLoader(false);
+  //       setSavedStep(true);
+
+  //       // console.log("Response", response);
+  //       const responseSteps = steps.map((step) => {
+  //         if (selectedStep?.id === stepId) {
+  //           setSelectedStep(null);
+  //           setIsEditing(false);
+  //         }
+  //         return step;
+  //       });
+
+  //       setSteps(responseSteps);
+  //     },
+  //     onError: (error) => {
+  //       setLoader(false);
+  //       setSavedStep(false);
+  //       toast.error(
+  //         error instanceof Error ? error.message : "Failed to delete step",
+  //         {
+  //           unstyled: true,
+  //           position: "top-right",
+  //           classNames: {
+  //             toast:
+  //               "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+  //             title: "text-[#E71D36]",
+  //           },
+  //         },
+  //       );
+  //     },
+  //   });
+  // };
 
   const validateWorkflow = (): void => {
     const errors: string[] = [];
@@ -622,7 +680,7 @@ const WorkflowEditor = () => {
           order: index + 1,
           configured: false,
         };
-      })
+      }),
     );
 
     if (steps.length === 0) {
@@ -650,7 +708,7 @@ const WorkflowEditor = () => {
       }
       if (step.enableEscalation && step.escalationUsers.length === 0) {
         errors.push(
-          `Step ${index + 1} has escalation enabled but no users selected`
+          `Step ${index + 1} has escalation enabled but no users selected`,
         );
       }
     });
@@ -696,7 +754,7 @@ const WorkflowEditor = () => {
                   "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
                 title: "text-[#E71D36]",
               },
-            }
+            },
           );
         },
       });
@@ -712,7 +770,7 @@ const WorkflowEditor = () => {
               "capitalize bg-[#E31D1C0D] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
             title: "text-[#E71D36]",
           },
-        }
+        },
       );
     }
   };
@@ -761,7 +819,7 @@ const WorkflowEditor = () => {
           order: index + 1,
           configured: false,
         };
-      })
+      }),
     );
 
     if (steps.length === 0) {
@@ -789,7 +847,7 @@ const WorkflowEditor = () => {
       }
       if (step.enableEscalation && step.escalationUsers.length === 0) {
         errors.push(
-          `Step ${index + 1} has escalation enabled but no users selected`
+          `Step ${index + 1} has escalation enabled but no users selected`,
         );
       }
     });
@@ -837,7 +895,7 @@ const WorkflowEditor = () => {
                   "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
                 title: "text-[#E71D36]",
               },
-            }
+            },
           );
         },
       });
@@ -854,7 +912,7 @@ const WorkflowEditor = () => {
               "capitalize bg-[#E31D1C0D] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
             title: "text-[#E71D36]",
           },
-        }
+        },
       );
     }
   };
@@ -894,7 +952,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -955,7 +1013,7 @@ const WorkflowEditor = () => {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -1042,6 +1100,7 @@ const WorkflowEditor = () => {
         validated={validated}
         templateSaving={templateSaving}
         templateSuccessSaved={templateSuccessSaved}
+        isTemplate={false}
       />
 
       <div className="flex h-screen bg-gray-50">
@@ -1082,6 +1141,7 @@ const WorkflowEditor = () => {
           <StepEditFormPanel
             key={selectedStep.id}
             step={selectedStep}
+            steps={steps} 
             formData={formData}
             onClose={() => setIsEditing(false)}
             onSave={saveStep}

@@ -6,9 +6,10 @@ import { z } from "zod";
 
 export const workflowSchema = z
   .object({
-    name: z.string().min(1, {
-      message: "Workflow name is required",
-    }),
+    name: z
+      .string()
+      .trim()
+      .min(1, "Workflow name cannot be empty or just spaces"),
     description: z.string(),
     scope: z.enum(["Global", "Department", "DocumentType"], {
       message: "Scope is required",
@@ -24,9 +25,11 @@ export const workflowSchema = z
         }
         return val;
       },
-      z.number({
-        message: "Number of steps is required",
-      }).min(1, "Number of steps must be at least 1")
+      z
+        .number({
+          message: "Number of steps is required",
+        })
+        .min(1, "Number of steps must be at least 1"),
     ),
   })
   .superRefine((data, ctx) => {

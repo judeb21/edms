@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "../ui/badge";
-import { FileText, Loader2 } from "lucide-react";
+import { File, FileText, Loader2 } from "lucide-react";
 import dayjs from "dayjs";
 import GenericModal from "../workflow/generic-modal";
 import { useEffect, useRef, useState } from "react";
@@ -194,7 +194,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
     {
       accessorKey: "contributor",
       header: () => {
-        return <div className="p-[10px]">Contributor</div>;
+        return <div className="p-[10px]">Approvers</div>;
       },
       cell: ({ row }) => {
         const document = row.original;
@@ -281,7 +281,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -312,7 +312,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -375,16 +375,19 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   <Image
                     src={queueData.document.blobPath}
                     alt="document preview"
-                    width={32}
-                    height={32}
+                    width={320}
+                    height={320}
                     className="w-[80%] mx-auto h-[200px] object-contain rounded"
                   />
                 ) : (
-                  <iframe
-                    src={`https://docs.google.com/gview?url=${encodeURIComponent(queueData.document.blobPath)}&embedded=true`}
-                    className="w-[80%] mx-auto h-[400px] border rounded"
-                    title={queueData.document.title}
-                  />
+                  // <iframe
+                  //   src={`https://docs.google.com/gview?url=${encodeURIComponent(queueData.document.blobPath)}&embedded=true`}
+                  //   className="w-[80%] mx-auto h-[400px] border rounded"
+                  //   title={queueData.document.title}
+                  // />
+                  <div className="w-[80%] border rounded mx-auto">
+                    <File strokeWidth={1} className="h-[150px] w-full" />
+                  </div>
                 )}
               </div>
 
@@ -414,7 +417,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
               {/* Contributor */}
               <div>
                 <p className="text-[14px] text-primary-gray font-semibold">
-                  Contributor
+                  Approver
                 </p>
                 <p className="text-[13px] font-medium text-[#464646]">
                   {queueData.activeStep.assignedApprovers
@@ -429,7 +432,7 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   Department
                 </p>
                 <div className="text-[13px] font-medium text-[#464646]">
-                  {queueData.activeStep.department}
+                  {queueData.document.department}
                 </div>
               </div>
 
@@ -443,15 +446,13 @@ export function ApprovalQueueTable(props: DataTableProps) {
                 </div>
               </div>
 
-              {/* Date Submitted */}
+              {/* Submitted By */}
               <div className="text-right">
                 <p className="text-[14px] text-primary-gray font-semibold">
-                  Submission Date
+                  Submitted By
                 </p>
                 <p className="text-[13px] font-medium text-[#464646]">
-                  {dayjs(queueData.activeStep.submittedAt).format(
-                    "MMMM DD, YYYY"
-                  )}
+                  {queueData.document.submittedByUserName}
                 </p>
               </div>
 
@@ -474,27 +475,39 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   {Status[queueData.activeStep.status]}
                 </div>
               </div>
+
+              {/* Date Submitted */}
+              <div className="">
+                <p className="text-[14px] text-primary-gray font-semibold">
+                  Submission Date
+                </p>
+                <p className="text-[13px] font-medium text-[#464646]">
+                  {dayjs(queueData.activeStep.submittedAt).format(
+                    "MMMM DD, YYYY",
+                  )}
+                </p>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6 place-items-center">
               {/* APPROVE BUTTON */}
               {/* {queueData.activeStep.canApprove && ( */}
-                <Button
-                  className="bg-brand-blue w-full py-[20px] hover:bg-brand-blue mt-4"
-                  onClick={() => setModal(true)}
-                >
-                  Approve
-                </Button>
+              <Button
+                className="bg-brand-blue w-full py-[20px] hover:bg-brand-blue mt-4"
+                onClick={() => setModal(true)}
+              >
+                Approve
+              </Button>
               {/* )} */}
 
               {/* REJECT BUTTON */}
               {/* {queueData.activeStep.canReject && ( */}
-                <Button
-                  className="bg-[#DD6A57] w-full py-[20px] hover:bg-[#DD6A57] mt-4"
-                  onClick={() => setRejectionModal(true)}
-                >
-                  Reject
-                </Button>
+              <Button
+                className="bg-[#DD6A57] w-full py-[20px] hover:bg-[#DD6A57] mt-4"
+                onClick={() => setRejectionModal(true)}
+              >
+                Reject
+              </Button>
               {/* )} */}
 
               {/* REQUEST CHANGE BUTTON */}
@@ -630,9 +643,9 @@ export function ApprovalQueueTable(props: DataTableProps) {
                   <Image
                     src={queueData.document.blobPath}
                     alt="Document"
-                    width={32}
-                    height={32}
-                    className="w-[80%] mx-auto h-[250px] object-cover rounded"
+                    height={350}
+                    width={450}
+                    className="w-[80%] mx-auto object-cover rounded h-[250px]"
                   />
                 ) : (
                   <iframe

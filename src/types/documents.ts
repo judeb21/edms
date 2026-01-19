@@ -66,6 +66,7 @@ export interface QueueDocumentDetails {
   workflowDefinitionId: null;
   workflowName: string;
   batchId: string;
+  submittedByUserName?: string;
 }
 
 export interface DocumentResponse {
