@@ -213,6 +213,29 @@ const WorkflowEditor = () => {
       return;
     }
 
+    // Check for duplicate step names
+    const isDuplicateName = steps.some(
+      (step) =>
+        step.id !== selectedStep?.id &&
+        step.stepName.trim().toLowerCase() ===
+          formData.stepName.trim().toLowerCase(),
+    );
+
+    if (isDuplicateName) {
+      toast.warning(
+        "A step with this name already exists. Please use a unique name.",
+        {
+          unstyled: true,
+          position: "top-right",
+          classNames: {
+            toast:
+              "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+          },
+        },
+      );
+      return;
+    }
+
     if (formData.approverType === "RoleBased" && !formData.role) {
       toast.warning("Please select a role", {
         unstyled: true,
@@ -384,6 +407,29 @@ const WorkflowEditor = () => {
             "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
         },
       });
+      return;
+    }
+
+    // Check for duplicate step names
+    const isDuplicateName = steps.some(
+      (savedStep) =>
+        savedStep.id !== formData?.id &&
+        savedStep.stepName.trim().toLowerCase() ===
+          formData.stepName.trim().toLowerCase(),
+    );
+
+    if (isDuplicateName) {
+      toast.warning(
+        "A step with this name already exists. Please use a unique name.",
+        {
+          unstyled: true,
+          position: "top-right",
+          classNames: {
+            toast:
+              "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+          },
+        },
+      );
       return;
     }
 
@@ -659,6 +705,19 @@ const WorkflowEditor = () => {
       if (!step.stepName.trim()) {
         errors.push(`Step ${index + 1} has no name`);
       }
+      // Check for duplicate step names
+      const isDuplicateName = steps.some(
+        (savedStep) =>
+          savedStep.id !== step?.id &&
+          savedStep.stepName.trim().toLowerCase() ===
+            step.stepName.trim().toLowerCase(),
+      );
+
+      if (isDuplicateName) {
+        errors.push(
+          `A step with this name already exists. Please use a unique name.`,
+        );
+      }
       if (step.approverType === "RoleBased" && !step.roles.length) {
         errors.push(`Step ${index + 1} has no role selected`);
       }
@@ -750,40 +809,177 @@ const WorkflowEditor = () => {
   };
 
   const activateWorkflow = (): void => {
-    setActivationLoader(true);
-    activateWorkflows.mutate(params?.id as string, {
-      onSuccess: () => {
-        setActivationLoader(false);
-        setSuccessModal(true);
-        toast.success("Workflow activated successfully", {
-          unstyled: false,
-          position: "top-right",
-          classNames: {
-            toast:
-              "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
-            title: "text-[#E71D36]",
-          },
-        });
-      },
-      onError: (error) => {
-        setLoader(false);
-        setActivationLoader(false);
-        toast.error(
-          error instanceof AxiosError
-            ? error.response?.data?.message
-            : "Failed to activate workflow",
-          {
-            unstyled: true,
+    const errors: string[] = [];
+
+    const updatedSteps: StepTemplate[] = steps.map((step) => {
+      if (step.id === selectedStep?.id) {
+        return {
+          id: formData.id,
+          approvalType: formData.approverType,
+          order: steps.length,
+          stepName: formData.stepName,
+          name: formData.stepName,
+          approverType: formData.approverType,
+          roles: formData.approverType === "SpecificUsers" ? [] : formData.role,
+          users:
+            formData.approverType === "SpecificUsers" ? formData.users : [],
+          approverMode: formData.approverMode,
+          deadlineHours: formData.deadlineHours,
+          enableEscalation: formData.enableEscalation === "yes" ? true : false,
+          escalationUsers:
+            formData.enableEscalation === "yes" ? formData.escalationUsers : [],
+          conditions:
+            formData.conditions && formData.conditions.department
+              ? [formData.conditions as ConditionsType]
+              : [],
+          configured: false,
+        };
+      }
+      return {
+        ...step,
+        conditions:
+          step.conditions?.length && step.conditions.filter(Boolean)
+            ? [formData.conditions as ConditionsType]
+            : [],
+      };
+    });
+
+    setSteps(
+      updatedSteps.map((step, index) => {
+        return {
+          ...step,
+          id: `step-${index + 1}`,
+          order: index + 1,
+          configured: false,
+        };
+      }),
+    );
+
+    if (steps.length === 0) {
+      errors.push("At least one step is required");
+    }
+
+    updatedSteps.forEach((step, index) => {
+      // if (!step.configured) {
+      //   errors.push(`Step ${index + 1} is not configured`);
+      // }
+      if (!step.stepName.trim()) {
+        errors.push(`Step ${index + 1} has no name`);
+      }
+      // Check for duplicate step names
+      const isDuplicateName = steps.some(
+        (savedStep) =>
+          savedStep.id !== step?.id &&
+          savedStep.stepName.trim().toLowerCase() ===
+            step.stepName.trim().toLowerCase(),
+      );
+
+      if (isDuplicateName) {
+        // Check for duplicate step names
+        const isDuplicateName = steps.some(
+          (savedStep) =>
+            savedStep.id !== step?.id &&
+            savedStep.stepName.trim().toLowerCase() ===
+              step.stepName.trim().toLowerCase(),
+        );
+
+        if (isDuplicateName) {
+          errors.push(
+            `A step with this name already exists. Please use a unique name.`,
+          );
+        }
+      }
+      if (step.approverType === "RoleBased" && !step.roles.length) {
+        errors.push(`Step ${index + 1} has no role selected`);
+      }
+      if (formData.approverType === "SpecificUsers" && !step.users.length) {
+        errors.push(`Step ${index + 1} has no users selected`);
+      }
+      if (!step.deadlineHours) {
+        errors.push(`Step ${index + 1} has no deadline set`);
+      }
+      if (step.deadlineHours <= 0) {
+        errors.push(`Step ${index + 1} deadline must be greater than zero (0)`);
+      }
+      if (step.enableEscalation && step.escalationUsers.length === 0) {
+        errors.push(
+          `Step ${index + 1} has escalation enabled but no users selected`,
+        );
+      }
+    });
+
+    setValidationErrors(errors);
+
+    if (errors.length === 0) {
+      setActivationLoader(true);
+      activateWorkflows.mutate(params?.id as string, {
+        onSuccess: () => {
+          setActivationLoader(false);
+          setValidated(true);
+          setSuccessModal(true);
+          toast.success("Workflow activated successfully", {
+            unstyled: false,
             position: "top-right",
             classNames: {
               toast:
-                "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+                "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
+          });
+
+          const responseSteps = steps.map((step) => {
+            return {
+              ...step,
+              configured: true,
+            };
+          });
+
+          setSteps(responseSteps);
+        },
+        onError: (error) => {
+          setLoader(false);
+          setActivationLoader(false);
+          toast.error(
+            error instanceof AxiosError
+              ? error.response?.data?.message
+              : "Failed to activate workflow",
+            {
+              unstyled: true,
+              position: "top-right",
+              classNames: {
+                toast:
+                  "capitalize bg-white z-10 flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+                title: "text-[#E71D36]",
+              },
+            },
+          );
+
+          const responseSteps = steps.map((step) => {
+            return {
+              ...step,
+              configured: true,
+            };
+          });
+
+          setSteps(responseSteps);
+        },
+      });
+    } else {
+      setValidated(false);
+      setActivationLoader(false);
+      toast.warning(
+        `Activation failed with ${errors.length} error(s). Please check the details.`,
+        {
+          unstyled: true,
+          position: "top-right",
+          classNames: {
+            toast:
+              "capitalize bg-[#E31D1C0D] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+            title: "text-[#E71D36]",
           },
-        );
-      },
-    });
+        },
+      );
+    }
   };
 
   const deactivateWorkflow = (reason: string): void => {
@@ -1009,7 +1205,7 @@ const WorkflowEditor = () => {
         {isEditing && selectedStep && (
           <StepEditFormPanel
             step={selectedStep}
-            steps={steps} 
+            steps={steps}
             formData={formData}
             onClose={() => setIsEditing(false)}
             onSave={saveStep}

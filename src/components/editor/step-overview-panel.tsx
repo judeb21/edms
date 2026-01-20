@@ -85,7 +85,7 @@ const StepOverviewPanel = ({
       </div>
 
       <div className="p-6 px-3 space-y-6">
-        <div className="shadow-lg rounded-[16px] py-[24px] px-[32px]">
+        <div className="shadow-lg rounded-[16px] py-[16px] px-[32px]">
           <h2 className="text-primary-gray text-[15px] mb-[12px] font-bold">
             Overview
           </h2>
@@ -127,7 +127,7 @@ const StepOverviewPanel = ({
           </div>
         </div>
 
-        <div className="shadow-lg rounded-[16px] py-[24px] px-[32px]">
+        <div className="shadow-lg rounded-[16px] py-[16px] px-[32px]">
           <h4 className="text-primary-gray text-[15px] mb-[12px] font-semibold">
             Quick Stats
           </h4>
@@ -164,21 +164,21 @@ const StepOverviewPanel = ({
           </div>
         </div>
 
-        <div className="shadow-lg rounded-[16px] py-[24px] px-[32px]">
+        <div className="shadow-lg rounded-[16px] py-[16px] px-[32px] pb-[24px]">
           <h4 className="text-[15px] font-semibold text-primary-gray mb-4">
             Quick Actions
           </h4>
           <div className="space-y-2">
             <button
               onClick={onEdit}
-              className="cursor-pointer w-full flex items-center px-4 py-2 text-sm text-primary-gray hover:bg-gray-50 rounded border border-gray-200"
+              className="cursor-pointer w-full flex items-center px-4 py-2 text-[13px] text-primary-gray hover:bg-gray-50 rounded border border-gray-200"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Edit Step
             </button>
             <button
               onClick={onDelete}
-              className="cursor-pointer w-full flex items-center px-4 py-2 text-sm text-[#FC5A5A] hover:bg-red-50 rounded border border-gray-200"
+              className="cursor-pointer w-full flex items-center px-4 py-2 text-[13px] text-[#FC5A5A] hover:bg-red-50 rounded border border-gray-200"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Step

@@ -191,6 +191,29 @@ const WorkflowEditor = () => {
       return;
     }
 
+    // Check for duplicate step names
+    const isDuplicateName = steps.some(
+      (step) =>
+        step.id !== selectedStep?.id &&
+        step.stepName.trim().toLowerCase() ===
+          formData.stepName.trim().toLowerCase(),
+    );
+
+    if (isDuplicateName) {
+      toast.warning(
+        "A step with this name already exists. Please use a unique name.",
+        {
+          unstyled: true,
+          position: "top-right",
+          classNames: {
+            toast:
+              "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+          },
+        },
+      );
+      return;
+    }
+
     if (formData.approverType === "RoleBased" && !formData.role) {
       toast.warning("Please select a role", {
         unstyled: true,
@@ -362,6 +385,29 @@ const WorkflowEditor = () => {
             "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
         },
       });
+      return;
+    }
+
+    // Check for duplicate step names
+    const isDuplicateName = steps.some(
+      (step) =>
+        step.id !== selectedStep?.id &&
+        step.stepName.trim().toLowerCase() ===
+          formData.stepName.trim().toLowerCase(),
+    );
+
+    if (isDuplicateName) {
+      toast.warning(
+        "A step with this name already exists. Please use a unique name.",
+        {
+          unstyled: true,
+          position: "top-right",
+          classNames: {
+            toast:
+              "bg-[#ffcc00] rounded-[8px] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
+          },
+        },
+      );
       return;
     }
 
@@ -694,6 +740,29 @@ const WorkflowEditor = () => {
       if (!step.stepName.trim()) {
         errors.push(`Step ${index + 1} has no name`);
       }
+      // Check for duplicate step names
+      const isDuplicateName = steps.some(
+        (savedStep) =>
+          savedStep.id !== step?.id &&
+          savedStep.stepName.trim().toLowerCase() ===
+            step.stepName.trim().toLowerCase(),
+      );
+
+      if (isDuplicateName) {
+        // Check for duplicate step names
+        const isDuplicateName = steps.some(
+          (savedStep) =>
+            savedStep.id !== step?.id &&
+            savedStep.stepName.trim().toLowerCase() ===
+              step.stepName.trim().toLowerCase(),
+        );
+
+        if (isDuplicateName) {
+          errors.push(
+            `A step with this name already exists. Please use a unique name.`,
+          );
+        }
+      }
       if (step.approverType === "RoleBased" && !step.roles.length) {
         errors.push(`Step ${index + 1} has no role selected`);
       }
@@ -735,6 +804,15 @@ const WorkflowEditor = () => {
               title: "text-[#E71D36]",
             },
           });
+
+          const responseSteps = steps.map((step) => {
+            return {
+              ...step,
+              configured: true,
+            };
+          });
+
+          setSteps(responseSteps);
         },
         onError: (error) => {
           setLoader(false);
@@ -832,6 +910,29 @@ const WorkflowEditor = () => {
       // }
       if (!step.stepName.trim()) {
         errors.push(`Step ${index + 1} has no name`);
+      }
+      // Check for duplicate step names
+      const isDuplicateName = steps.some(
+        (savedStep) =>
+          savedStep.id !== step?.id &&
+          savedStep.stepName.trim().toLowerCase() ===
+            step.stepName.trim().toLowerCase(),
+      );
+
+      if (isDuplicateName) {
+        // Check for duplicate step names
+        const isDuplicateName = steps.some(
+          (savedStep) =>
+            savedStep.id !== step?.id &&
+            savedStep.stepName.trim().toLowerCase() ===
+              step.stepName.trim().toLowerCase(),
+        );
+
+        if (isDuplicateName) {
+          errors.push(
+            `A step with this name already exists. Please use a unique name.`,
+          );
+        }
       }
       if (step.approverType === "RoleBased" && !step.roles.length) {
         errors.push(`Step ${index + 1} has no role selected`);
@@ -1141,7 +1242,7 @@ const WorkflowEditor = () => {
           <StepEditFormPanel
             key={selectedStep.id}
             step={selectedStep}
-            steps={steps} 
+            steps={steps}
             formData={formData}
             onClose={() => setIsEditing(false)}
             onSave={saveStep}
