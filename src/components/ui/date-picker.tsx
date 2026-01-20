@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { format, startOfDay } from "date-fns";
 import { Calendar as CalendarIcon, Loader2, X } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+// import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverTrigger,
@@ -30,6 +30,155 @@ type DateRangeFilterProps = {
   isFetching: boolean;
 };
 
+// const formatDisplayDate = (date: Date) => {
+//   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+//   return `${months[date.getMonth()]}. ${getOrdinal(date.getDate())}, ${date.getFullYear()}`;
+// };
+
+// Simple Calendar Component
+const SimpleCalendar = ({
+  selected,
+  onSelect,
+  month,
+  onMonthChange,
+  disabled,
+}: {
+  selected?: Date;
+  onSelect: (date: Date) => void;
+  month?: Date;
+  onMonthChange?: (date: Date) => void;
+  disabled?: (date: Date) => boolean;
+}) => {
+  const [currentMonth, setCurrentMonth] = useState(
+    month || selected || new Date(),
+  );
+
+  useEffect(() => {
+    /* eslint-disable */
+    if (month) setCurrentMonth(month);
+    // eslint-enable */
+  }, [month]);
+
+  const year = currentMonth.getFullYear();
+  const monthIndex = currentMonth.getMonth();
+
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  const firstDay = new Date(year, monthIndex, 1).getDay();
+
+  const days = [];
+  for (let i = 0; i < firstDay; i++) {
+    days.push(null);
+  }
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push(i);
+  }
+
+  const handleYearChange = (newYear: number) => {
+    const newDate = new Date(newYear, monthIndex, 1);
+    setCurrentMonth(newDate);
+    onMonthChange?.(newDate);
+  };
+
+  const handleMonthChange = (newMonthIndex: number) => {
+    const newDate = new Date(year, newMonthIndex, 1);
+    setCurrentMonth(newDate);
+    onMonthChange?.(newDate);
+  };
+
+  const isSelected = (day: number) => {
+    if (!selected) return false;
+    return (
+      selected.getDate() === day &&
+      selected.getMonth() === monthIndex &&
+      selected.getFullYear() === year
+    );
+  };
+
+  const isDisabled = (day: number) => {
+    const date = new Date(year, monthIndex, day);
+    return disabled ? disabled(date) : false;
+  };
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const years = Array.from(
+    { length: 100 },
+    (_, i) => new Date().getFullYear() - i,
+  );
+
+  return (
+    <div className="p-4 bg-white rounded-lg shadow-lg">
+      <div className="flex gap-2 mb-4">
+        <select
+          value={monthIndex}
+          onChange={(e) => handleMonthChange(Number(e.target.value))}
+          className="flex-1 px-2 py-1 border rounded"
+        >
+          {months.map((m, i) => (
+            <option key={i} value={i}>
+              {m}
+            </option>
+          ))}
+        </select>
+        <select
+          value={year}
+          onChange={(e) => handleYearChange(Number(e.target.value))}
+          className="flex-1 px-2 py-1 border rounded"
+        >
+          {years.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
+          <div
+            key={d}
+            className="text-center text-xs font-semibold text-gray-600 p-2"
+          >
+            {d}
+          </div>
+        ))}
+        {days.map((day, i) => (
+          <div key={i} className="aspect-square">
+            {day && (
+              <button
+                onClick={() =>
+                  !isDisabled(day) && onSelect(new Date(year, monthIndex, day))
+                }
+                disabled={isDisabled(day)}
+                className={`w-full h-full rounded-md text-sm ${
+                  isSelected(day)
+                    ? "bg-blue-500 text-white font-bold"
+                    : isDisabled(day)
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "hover:bg-gray-100"
+                }`}
+              >
+                {day}
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export function DateRangeFilter({
   onDateChange,
   updateDateFilter,
@@ -44,6 +193,9 @@ export function DateRangeFilter({
   const [to, setTo] = useState<Date | undefined>();
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>();
+
+  const [fromMonth, setFromMonth] = useState<Date | undefined>();
+  const [toMonth, setToMonth] = useState<Date | undefined>();
 
   const [fromPopoverOpen, setFromPopoverOpen] = useState(false);
   const [toPopoverOpen, setToPopoverOpen] = useState(false);
@@ -75,6 +227,42 @@ export function DateRangeFilter({
     }
   }, [dateFrom, dateTo, openOnMount, isInitialized]);
 
+  const handleFromMonthChange = (newMonth: Date) => {
+    setFromMonth(newMonth);
+
+    if (fromDate) {
+      const newDate = new Date(
+        newMonth.getFullYear(),
+        newMonth.getMonth(),
+        fromDate.getDate(),
+      );
+
+      if (newDate.getMonth() !== newMonth.getMonth()) {
+        newDate.setDate(0);
+      }
+
+      setFromDate(startOfDay(newDate));
+    }
+  };
+
+  const handleToMonthChange = (newMonth: Date) => {
+    setToMonth(newMonth);
+
+    if (toDate) {
+      const newDate = new Date(
+        newMonth.getFullYear(),
+        newMonth.getMonth(),
+        toDate.getDate(),
+      );
+
+      if (newDate.getMonth() !== newMonth.getMonth()) {
+        newDate.setDate(0);
+      }
+
+      setToDate(startOfDay(newDate));
+    }
+  };
+
   // const isRangeValid =
   //   from && to && (isBefore(from, to) || isSameDay(from, to));
 
@@ -86,7 +274,7 @@ export function DateRangeFilter({
     date
       ? `${format(date, "MMM")}. ${getOrdinal(date.getDate())}, ${format(
           date,
-          "yyyy"
+          "yyyy",
         )}`
       : undefined;
 
@@ -125,7 +313,7 @@ export function DateRangeFilter({
                   variant="outline"
                   className={cn(
                     "w-full justify-start text-left font-normal",
-                    !fromDate && "text-muted-foreground"
+                    !fromDate && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -137,11 +325,14 @@ export function DateRangeFilter({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  captionLayout="dropdown"
+                <SimpleCalendar
                   selected={fromDate}
-                  onSelect={(d) => d && setFromDate(startOfDay(d))}
+                  onSelect={(d) => {
+                    d && setFromDate(startOfDay(d));
+                    setFromMonth(d);
+                  }}
+                  month={fromMonth}
+                  onMonthChange={handleFromMonthChange}
                   disabled={(d) => d > new Date()}
                 />
               </PopoverContent>
@@ -157,7 +348,7 @@ export function DateRangeFilter({
                   variant="outline"
                   className={cn(
                     "w-full justify-start text-left font-normal",
-                    !toDate && "text-muted-foreground"
+                    !toDate && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -165,10 +356,14 @@ export function DateRangeFilter({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
+                <SimpleCalendar
                   selected={toDate}
-                  onSelect={(d) => d && setToDate(startOfDay(d))}
+                  onSelect={(d) => {
+                    d && setToDate(startOfDay(d));
+                    setToMonth(d);
+                  }}
+                  month={toMonth}
+                  onMonthChange={handleToMonthChange}
                   disabled={(d) =>
                     d > new Date() || (fromDate ? d < fromDate : false)
                   }
