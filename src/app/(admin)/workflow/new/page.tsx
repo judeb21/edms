@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Asterisk } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   WorkflowCreationValidation,
@@ -72,7 +72,7 @@ export default function WorkFlowPage() {
           .trim()
           .localeCompare(b.departmentName.trim(), undefined, {
             sensitivity: "base",
-          })
+          }),
       ) ?? ([] as DepartmentType[]);
 
     return sortedData;
@@ -124,7 +124,7 @@ export default function WorkFlowPage() {
                 "capitalize bg-[#E31D1C0D] flex md:max-w-[420px] p-[8px] items-center gap-[10px] font-[family-name:var(--font-dm)] font-[500]",
               title: "text-[#E71D36]",
             },
-          }
+          },
         );
       },
     });
@@ -167,6 +167,11 @@ export default function WorkFlowPage() {
                       <FormItem>
                         <FormLabel className="text-primary-gray font-semibold text-[15px]">
                           Workflow Name
+                          <Asterisk
+                            strokeWidth={1}
+                            size={15}
+                            className="-ml-1"
+                          />
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -211,6 +216,11 @@ export default function WorkFlowPage() {
                       <FormItem>
                         <FormLabel className="text-[15px] text-primary-gray font-semibold">
                           Scope
+                          <Asterisk
+                            strokeWidth={1}
+                            size={15}
+                            className="-ml-1"
+                          />
                         </FormLabel>
                         <FormControl>
                           <Select
@@ -250,6 +260,11 @@ export default function WorkFlowPage() {
                         <FormItem>
                           <FormLabel className="text-[15px] text-primary-gray font-semibold">
                             Select Department
+                            <Asterisk
+                              strokeWidth={1}
+                              size={15}
+                              className="-ml-1"
+                            />
                           </FormLabel>
                           <FormControl>
                             <Select
@@ -291,6 +306,11 @@ export default function WorkFlowPage() {
                         <FormItem>
                           <FormLabel className="text-[15px] text-primary-gray font-semibold">
                             Select Document Type
+                            <Asterisk
+                              strokeWidth={1}
+                              size={15}
+                              className="-ml-1"
+                            />
                           </FormLabel>
                           <FormControl>
                             <Select
@@ -331,6 +351,11 @@ export default function WorkFlowPage() {
                       <FormItem>
                         <FormLabel className="text-primary-gray font-semibold text-[15px]">
                           Number of Steps
+                          <Asterisk
+                            strokeWidth={1}
+                            size={15}
+                            className="-ml-1"
+                          />
                         </FormLabel>
                         <FormControl>
                           <Input

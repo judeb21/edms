@@ -819,7 +819,7 @@ export default function NewDocumentPage() {
                   <SelectTrigger className="w-full !h-[50px]">
                     <SelectValue placeholder="Select Workflow" />
                   </SelectTrigger>
-                  <SelectContent className="">
+                  <SelectContent className="!h-[300px]">
                     {workflows?.map((workflow) => (
                       <SelectItem value={workflow.name} key={workflow.id}>
                         {workflow.name}
